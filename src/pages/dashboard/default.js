@@ -19,6 +19,7 @@ import TotalIncome from 'sections/widget/chart/TotalIncome';
 import { ArrowDown, ArrowUp, Book, Calendar, CloudChange, Fatrows, User, DollarSquare, PasswordCheck } from 'iconsax-react';
 import WelcomeBanner from 'sections/dashboard/default/WelcomeBanner';
 import RecentTransactions from './recent-transactions-table';
+import QuickActions from './quick-actions';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -97,7 +98,6 @@ const DashboardDefault = () => {
         {/* <Grid container spacing={3}> */}
         <Grid item xs={12}>
           <RepeatCustomerRate />
-          
         </Grid>
         {/* <Grid item xs={12}>
             <ProjectOverview />
@@ -112,16 +112,14 @@ const DashboardDefault = () => {
       </Grid> */}
 
       {/* row 3 */}
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={9}>
         <RecentTransactions />
       </Grid>
-      <Grid item xs={12} md={6}>
-        <TotalIncome />
+      <Grid item xs={12} md={3}>
+        <QuickActions />
       </Grid>
     </Grid>
   );
 };
-
-
 
 export default DashboardDefault;

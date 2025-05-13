@@ -30,26 +30,25 @@ const widget = {
       url: '/dashboard/default',
       icon: icons.home
     },
-    
     {
       id: 'nfc',
       title: <FormattedMessage id="NFC Wristbands" />,
       type: 'item',
-      url: '/widget/nfc',
-      icon: icons.cpu,
+      url: '/nfc-wristbands',
+      icon: icons.cpu
     },
     {
       id: 'pos',
       title: <FormattedMessage id="POS Management" />,
       type: 'item',
-      url: '/widget/pos',
+      url: '/pos-management',
       icon: icons.pos
-
-    },{
+    },
+    {
       id: 'schools',
       title: <FormattedMessage id="Schools" />,
       type: 'item',
-      url: '/widget/data',
+      url: '/schools',
       icon: icons.data
     }
   ]

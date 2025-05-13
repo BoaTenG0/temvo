@@ -10,15 +10,15 @@ import {
 
 // import { Add } from 'iconsax-react';
 import {
-//   Button,
-//   Chip,
+  //   Button,
+  //   Chip,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-//   Typography,
+  //   Typography,
   useMediaQuery
 } from '@mui/material';
 
@@ -36,7 +36,7 @@ function ReactTable({ columns, data, renderRowSubComponent, isLoading }) {
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
 
   const filterTypes = useMemo(() => renderFilterTypes, []);
-  const sortBy = { id: 'email', desc: false };
+  const sortBy = { id: 'school', desc: false };
 
   const {
     getTableProps,
@@ -160,77 +160,97 @@ ReactTable.propTypes = {
   columns: PropTypes.array,
   data: PropTypes.array,
   getHeaderProps: PropTypes.func,
-//   handleAdd: PropTypes.func,
   renderRowSubComponent: PropTypes.any
 };
 
 const RecentTransactions = () => {
   const theme = useTheme();
-//   const { user } = useAuth();
+  //   const { user } = useAuth();
   const mode = theme.palette.mode;
-const loading = false
-  const columns = useMemo(() => [
-    {
-      Header: ({ getToggleAllPageRowsSelectedProps }) => <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />,
-      accessor: 'selection',
-      Cell: ({ row }) => <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />,
-      disableSortBy: true
-    },
-    {
-      Header: '#',
-      accessor: 'id',
-      className: 'cell-center'
-    },
-
-    {
+  const loading = false;
+  const columns = useMemo(
+    () => [
+      {
+        Header: ({ getToggleAllPageRowsSelectedProps }) => <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />,
+        accessor: 'selection',
+        Cell: ({ row }) => <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />,
+        disableSortBy: true
+      },
+      {
+        Header: '#',
+        accessor: 'id',
+        className: 'cell-center'
+      },
+      {
         Header: 'Type',
-        accessor: 'type',
-        Cell: ({ value }) => <img src={value} alt="" style={{ width: '50px', height: '50px', borderRadius: 50 }} />
-    },
-
-    {
+        accessor: 'type'
+      },
+      {
         Header: 'School',
-        accessor: 'school',
-        Cell: ({ value }) => <img src={value} alt="" style={{ width: '50px', height: '50px', borderRadius: 50 }} />
-    },
-
-    {
+        accessor: 'school'
+      },
+      {
         Header: 'Amount',
         accessor: 'amount',
-        Cell: ({ value }) => <img src={value} alt="" style={{ width: '50px', height: '50px', borderRadius: 50 }} />
-    },
-
-    {
-        Header: 'Debited Temvo ID',
-        accessor: 'debit_id',
-        Cell: ({ value }) => <img src={value} alt="" style={{ width: '50px', height: '50px', borderRadius: 50 }} />
-    },
-
-    {
-        Header: 'Credite Temvo ID',
-        accessor: 'credit_id',
-        Cell: ({ value }) => <img src={value} alt="" style={{ width: '50px', height: '50px', borderRadius: 50 }} />
-    },
-
-    {
+        Cell: ({ value }) => <span>{parseFloat(value).toFixed(2)}</span>
+      },
+      {
+        Header: 'Debited Device ID',
+        accessor: 'debit_id'
+      },
+      {
+        Header: 'Credited Device ID',
+        accessor: 'credit_id'
+      },
+      {
         Header: 'Time',
         accessor: 'time',
-        Cell: ({ value }) => <img src={value} alt="" style={{ width: '50px', height: '50px', borderRadius: 50 }} />
-    },
+        Cell: ({ value }) => {
+          const date = new Date(value);
+          return <span>{date.toLocaleString()}</span>;
+        }
+      }
+    ],
+    [theme, mode]
+  );
 
-    
-
-   
-  ], [theme, mode]);
+  const data = useMemo(
+    () => [
+      {
+        id: 1,
+        type: 'Student Purchase',
+        school: 'Accra Academy',
+        amount: 7.0,
+        debit_id: 'stu-acc7-6820',
+        credit_id: 'pos-aca179000',
+        time: '2025-05-13T10:25:00Z'
+      },
+      {
+        id: 2,
+        type: 'Student Withdrawal',
+        school: 'Accra Academy',
+        amount: 10.8,
+        debit_id: 'stu-acc7-6820',
+        credit_id: 'pos-aca179000',
+        time: '2025-05-13T10:30:00Z'
+      },
+      {
+        id: 3,
+        type: 'Student Withdrawal',
+        school: 'Accra Academy',
+        amount: 10.8,
+        debit_id: 'stu-acc7-6820',
+        credit_id: 'pos-aca179000',
+        time: '2025-05-13T10:32:00Z'
+      }
+    ],
+    []
+  );
 
   return (
     <MainCard content={false}>
       <ScrollX>
-        <ReactTable
-          columns={columns}
-          data={[]}
-          isLoading={loading}
-        />
+        <ReactTable columns={columns} data={data || []} isLoading={loading} />
       </ScrollX>
     </MainCard>
   );

@@ -1,0 +1,18 @@
+@import "rsuite/dist/rsuite.css";
+
+.rs-btn-link {
+  color: #1a667a;
+}
+
+.rs-calendar-table-cell-selected .rs-calendar-table-cell-content {
+  background-color: #1a667a;
+}
+.rs-btn-primary {
+  background-color: #1a667a;
+  border-color: #1a667a;
+}
+
+.rs-btn-primary:hover {
+  background-color: #007069;
+  border-color: #1a667a;
+}

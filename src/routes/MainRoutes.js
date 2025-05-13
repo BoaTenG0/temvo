@@ -14,6 +14,9 @@ const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics
 const WidgetStatistics = Loadable(lazy(() => import('pages/widget/statistics')));
 const WidgetData = Loadable(lazy(() => import('pages/widget/data')));
 const WidgetChart = Loadable(lazy(() => import('pages/widget/chart')));
+const NFC = Loadable(lazy(() => import('pages/nfc-wristbands')));
+const POS = Loadable(lazy(() => import('pages/pos-management')));
+const SCH = Loadable(lazy(() => import('pages/schools')));
 
 // render - applications
 const AppChat = Loadable(lazy(() => import('pages/apps/chat')));
@@ -490,6 +493,18 @@ const MainRoutes = {
         {
           path: 'sample-page',
           element: <SamplePage />
+        },
+        {
+          path: 'nfc-wristbands',
+          element: <NFC />
+        },
+        {
+          path: 'pos-management',
+          element: <POS />
+        },
+        {
+          path: 'schools',
+          element: <SCH />
         },
         {
           path: 'price',

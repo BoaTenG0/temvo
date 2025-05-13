@@ -16,8 +16,9 @@ import Transactions from 'sections/widget/data/Transactions';
 import TotalIncome from 'sections/widget/chart/TotalIncome';
 
 // assets
-import { ArrowDown, ArrowUp, Book, Calendar, CloudChange, Wallet3 } from 'iconsax-react';
+import { ArrowDown, ArrowUp, Book, Calendar, CloudChange, Fatrows, User, DollarSquare, PasswordCheck } from 'iconsax-react';
 import WelcomeBanner from 'sections/dashboard/default/WelcomeBanner';
+import RecentTransactions from './recent-transactions-table';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -35,7 +36,7 @@ const DashboardDefault = () => {
         <EcommerceDataCard
           title="Total Schools"
           count="3000"
-          iconPrimary={<Wallet3 />}
+          iconPrimary={<Fatrows />}
           percentage={
             <Typography color="primary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <ArrowUp size={16} style={{ transform: 'rotate(45deg)' }} /> 30.6%
@@ -50,7 +51,7 @@ const DashboardDefault = () => {
           title="Total Students"
           count="290+"
           color="warning"
-          iconPrimary={<Book color={theme.palette.warning.dark} />}
+          iconPrimary={<User color={theme.palette.warning.dark} />}
           percentage={
             <Typography color="warning.dark" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <ArrowDown size={16} style={{ transform: 'rotate(-45deg)' }} /> 30.6%
@@ -65,7 +66,7 @@ const DashboardDefault = () => {
           title="Total Successful Transactions (GHC)"
           count="1,568"
           color="success"
-          iconPrimary={<Calendar color={theme.palette.success.darker} />}
+          iconPrimary={<DollarSquare color={theme.palette.success.darker} />}
           percentage={
             <Typography color="success.darker" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <ArrowUp size={16} style={{ transform: 'rotate(45deg)' }} /> 30.6%
@@ -80,7 +81,7 @@ const DashboardDefault = () => {
           title="Total POS Devices"
           count="200"
           color="error"
-          iconPrimary={<CloudChange color={theme.palette.error.dark} />}
+          iconPrimary={<PasswordCheck color={theme.palette.error.dark} />}
           percentage={
             <Typography color="error.dark" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <ArrowDown size={16} style={{ transform: 'rotate(45deg)' }} /> 30.6%
@@ -96,6 +97,7 @@ const DashboardDefault = () => {
         {/* <Grid container spacing={3}> */}
         <Grid item xs={12}>
           <RepeatCustomerRate />
+          
         </Grid>
         {/* <Grid item xs={12}>
             <ProjectOverview />
@@ -111,7 +113,7 @@ const DashboardDefault = () => {
 
       {/* row 3 */}
       <Grid item xs={12} md={6}>
-        <Transactions />
+        <RecentTransactions />
       </Grid>
       <Grid item xs={12} md={6}>
         <TotalIncome />
@@ -119,5 +121,7 @@ const DashboardDefault = () => {
     </Grid>
   );
 };
+
+
 
 export default DashboardDefault;

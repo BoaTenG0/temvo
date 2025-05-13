@@ -36,7 +36,7 @@ const EcommerceDataCard = ({ title, count, percentage, color, iconPrimary, child
               <Avatar variant="rounded" color={color}>
                 {iconPrimary}
               </Avatar>
-              <Typography sx={{ fontSize: '0.58rem', fontWeight: 'bold' }}>{title}</Typography>
+              <Typography sx={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{title}</Typography>
             </Stack>
             {/* <IconButton
               color="secondary"

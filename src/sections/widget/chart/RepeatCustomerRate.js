@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // material-ui
-import { Chip, ListItemButton, Menu, Stack, Typography } from '@mui/material';
+import {  ListItemButton, Menu, Stack, Typography } from '@mui/material';
 
 // project-imports
 import RepeatCustomerChart from './RepeatCustomerChart';
@@ -29,7 +29,7 @@ const RepeatCustomerRate = () => {
   return (
     <MainCard>
       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-        <Typography variant="h5">Repeat customer rate</Typography>
+        <Typography variant="h5">Transaction Trend</Typography>
         <IconButton
           color="secondary"
           id="wallet-button"
@@ -64,8 +64,8 @@ const RepeatCustomerRate = () => {
         </Menu>
       </Stack>
       <Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={0.5} sx={{ mt: 1 }}>
-        <Typography variant="subtitle1">5.44%</Typography>
-        <Chip color="success" variant="filled" label="+2.6%" size="small" sx={{ bgcolor: 'success.main', borderRadius: 1 }} />
+        {/* <Typography variant="subtitle1">5.44%</Typography>
+        <Chip color="success" variant="filled" label="+2.6%" size="small" sx={{ bgcolor: 'success.main', borderRadius: 1 }} /> */}
       </Stack>
       <RepeatCustomerChart />
     </MainCard>

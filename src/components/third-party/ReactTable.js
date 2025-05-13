@@ -7,6 +7,7 @@ import {
   Box,
   Checkbox,
   Chip,
+  CircularProgress,
   FormControl,
   Grid,
   ListItemText,
@@ -564,3 +565,22 @@ EmptyTable.propTypes = {
   msg: PropTypes.string,
   colSpan: PropTypes.number
 };
+
+export const TableLoading = ({ colSpan }) => {
+  return (
+    <TableRow>
+      <TableCell colSpan={colSpan}>
+        <StyledGridOverlay alignItems="center" justifyContent="center" spacing={1}>
+          <Stack spacing={2} justifyContent="center" alignItems="center">
+            <CircularProgress color="primary" />
+            <Typography variant="subtitle1">Loading...</Typography>
+          </Stack>
+        </StyledGridOverlay>
+      </TableCell>
+    </TableRow>
+  );
+};
+
+TableLoading.propTypes = {
+  colSpan: PropTypes.number
+}; 

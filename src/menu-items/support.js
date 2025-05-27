@@ -24,10 +24,10 @@ const support = {
   type: 'group',
   children: [
     {
-      id: 'sample-page',
-      title: <FormattedMessage id="System Setting" />,
+      id: 'system-settings',
+      title: <FormattedMessage id="System Settings" />,
       type: 'item',
-      url: '/sample-page',
+      url: '/system-settings',
       icon: icons.settings
     }
     // {

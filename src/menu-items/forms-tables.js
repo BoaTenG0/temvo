@@ -28,7 +28,7 @@ const formsTables = {
       id: 'validation',
       title: <FormattedMessage id="User Management" />,
       type: 'item',
-      url: '/forms/validation',
+      url: '/user-management',
       icon: icons.user
     }
     // {

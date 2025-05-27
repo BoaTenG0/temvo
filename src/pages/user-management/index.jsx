@@ -26,8 +26,7 @@ import {
   Tabs,
   Tab,
   Modal,
-  Alert,
-  Tooltip
+  Alert
 } from '@mui/material';
 
 import { DateRangePicker } from 'rsuite';
@@ -110,6 +109,7 @@ const theme = createTheme({
         }
       }
     },
+
     MuiChip: {
       styleOverrides: {
         root: {
@@ -124,24 +124,22 @@ const theme = createTheme({
 const initialWristbands = [
   {
     id: 1,
-    schoolName: 'Accra Academy',
-    schoolNumber: '879809-0109',
-    schoolRegion: 'Greater Accra',
-    students: '3000',
-    pos: '25',
-    wristbands: '2500',
-    status: 'Assigned'
+    userName: 'Fred',
+    email: 'fred@temvo.com',
+    phoneNumber: '02445588660',
+    role: 'Super Admin',
+    assignedSchool: 'N/A',
+    status: 'Active'
   },
-  {
+   {
     id: 2,
-    schoolName: 'VVU JHS',
-    schoolNumber: '87980-3494',
-    schoolRegion: 'Greater Accra',
-    students: '3000',
-    pos: '25',
-    wristbands: '2500',
-    status: 'Unassigned'
-  }
+    userName: 'Kwame',
+    email: 'kwame@school.com',
+    phoneNumber: '02445588660',
+    role: 'Super Admin',
+    assignedSchool: 'Accra Academy',
+    status: 'Inactive'
+  },
 ];
 const modalStyle = {
   position: 'absolute',
@@ -170,8 +168,6 @@ export default function WristbandManagement() {
   const [newWristbandOpen, setNewWristbandOpen] = useState(false);
   const [bulkWristbandOpen, setBulkWristbandOpen] = useState(false);
   const [assignWristbandOpen, setAssignWristbandOpen] = useState(false);
-  const [openView, setOpenView] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
 
   const [newWristband, setNewWristband] = useState({
     modelName: '',
@@ -183,8 +179,6 @@ export default function WristbandManagement() {
     school: 'Accra Academy',
     count: ''
   });
-
-  const [openDelete, setOpenDelete] = useState(false);
   const assignedCount = wristbands.filter((w) => w.status === 'Assigned').length;
   const unassignedCount = wristbands.filter((w) => w.status === 'Unassigned').length;
 
@@ -249,10 +243,6 @@ export default function WristbandManagement() {
 
     setFilteredWristbands(filtered);
   }, [wristbands, tabValue, school, status, dateRange, searchTerm, tableSearchTerm]);
-  const handleOpenEdit = () => setOpenEdit(true);
-  const handleOpenView = () => setOpenView(true);
-  const handleCloseEdit = () => setOpenEdit(false);
-  const handleCloseView = () => setOpenView(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -290,13 +280,6 @@ export default function WristbandManagement() {
     setAssignData({ school: 'Accra Academy', count: '' });
   };
 
-  const toggleViewSchDetails = () => {
-    setOpenDelete(!openDelete);
-  };
-
-  const toggleEditSchDetails = () => {
-    setOpenDelete(!openDelete);
-  };
   // Form handlers
   const handleNewWristbandChange = (e) => {
     const { name, value } = e.target;
@@ -398,10 +381,10 @@ export default function WristbandManagement() {
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={8}>
                   <Typography variant="h4" component="h1" gutterBottom>
-                    Manage Schools
+                    Manage Users
                   </Typography>
                   <Typography variant="subtitle1" color="text.secondary">
-                    Issue, reassign, and deactivate NFC wristbands and POS Devices for Schools.
+                    Manage administrators in the TEMVO Ecosystem
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -429,33 +412,19 @@ export default function WristbandManagement() {
               {filtersExpanded && (
                 <Box sx={{ p: 3, pt: 1 }}>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={4}>
                       <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                         {/* <Building fontSize="small" sx={{ mr: 0.5 }} /> */}
-                        School Name
+                        Role
                       </Typography>
                       <TextField select fullWidth size="small" value={school} onChange={(e) => setSchool(e.target.value)}>
                         <MenuItem value="All">All</MenuItem>
-                        <MenuItem value="Accra Academy">Accra Academy</MenuItem>
-                        <MenuItem value="Other School">Other School</MenuItem>
+                        <MenuItem value="Super Admin">Super Admin</MenuItem>
+                        <MenuItem value="Admin">Admin</MenuItem>
                       </TextField>
                     </Grid>
 
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                        {/* <Building fontSize="small" sx={{ mr: 0.5 }} /> */}
-                        Region
-                      </Typography>
-                      <TextField select fullWidth size="small" value={school} onChange={(e) => setSchool(e.target.value)}>
-                        <MenuItem value="All">All</MenuItem>
-                        <MenuItem value="Other School">All</MenuItem>
-                        <MenuItem value="Accra Academy">Greater Accra</MenuItem>
-                        <MenuItem value="Other School">Central Region</MenuItem>
-                        <MenuItem value="Other School">Volta Region</MenuItem>
-                      </TextField>
-                    </Grid>
-
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={4}>
                       <Typography variant="subtitle2" gutterBottom>
                         Status
                       </Typography>
@@ -465,7 +434,8 @@ export default function WristbandManagement() {
                         <MenuItem value="Unassigned">Inactive</MenuItem>
                       </TextField>
                     </Grid>
-                    <Grid item xs={12} md={3}>
+
+                    <Grid item xs={12} md={4}>
                       <Typography variant="subtitle2" gutterBottom>
                         Global Search
                       </Typography>
@@ -493,9 +463,9 @@ export default function WristbandManagement() {
           <Card sx={{ borderRadius: 2 }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={tabValue} onChange={handleTabChange} sx={{ px: 2, pt: 1 }}>
-                <Tab label="All Schools" />
-                <Tab label="Assigned" />
-                <Tab label="Unassigned" />
+                <Tab label="All Users" />
+                <Tab label="Active" />
+                <Tab label="Inactive" />
               </Tabs>
             </Box>
 
@@ -509,14 +479,14 @@ export default function WristbandManagement() {
                 gap: 2
               }}
             >
-              <Typography variant="h6">Schools List</Typography>
+              <Typography variant="h6">Users List</Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                 <Button variant="outlined" color="primary" startIcon={<Add />} size="small" onClick={handleOpenNewWristband}>
-                  Register New School
+                  Add New User
                 </Button>
-                <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={handleOpenBulkWristband}>
+                {/* <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={handleOpenBulkWristband}>
                   Register Bulk Schools
-                </Button>
+                </Button> */}
               </Stack>
             </Box>
 
@@ -545,12 +515,11 @@ export default function WristbandManagement() {
               <Table sx={{ minWidth: 650 }} size="medium">
                 <TableHead>
                   <TableRow>
-                    <TableCell>School Name</TableCell>
-                    <TableCell>School ID</TableCell>
-                    <TableCell>School Region </TableCell>
-                    <TableCell>Total Students</TableCell>
-                    <TableCell>No. of POS</TableCell>
-                    <TableCell>No. of Wristbands</TableCell>
+                    <TableCell>User Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Phone Number </TableCell>
+                    <TableCell>Role</TableCell>
+                    <TableCell>Assigned School</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell align="center">Actions</TableCell>
                   </TableRow>
@@ -559,55 +528,32 @@ export default function WristbandManagement() {
                   {filteredWristbands.length > 0 ? (
                     filteredWristbands.map((row) => (
                       <TableRow key={row.id} hover>
-                        <TableCell>{row.schoolName}</TableCell>
-                        <TableCell>{row.schoolNumber}</TableCell>
-                        <TableCell>{row.schoolRegion}</TableCell>
-                        <TableCell>{row.students}</TableCell>
-                        <TableCell>{row.pos}</TableCell>
-                        <TableCell>{row.wristbands}</TableCell>
+                        <TableCell>{row.userName}</TableCell>
+                        <TableCell>{row.email}</TableCell>
+                        <TableCell>{row.phoneNumber}</TableCell>
+                        <TableCell>{row.role}</TableCell>
+                        <TableCell>{row.assignedSchool}</TableCell>
                         <TableCell>
                           <Chip
                             label={row.status}
-                            color={row.status === 'Assigned' ? 'success' : 'warning'}
+                            color={row.status === 'Active' ? 'success' : 'warning'}
                             size="small"
                             sx={{
                               fontWeight: 500,
-                              bgcolor: row.status === 'Assigned' ? 'success.light' : 'warning.light',
-                              color: row.status === 'Assigned' ? 'success.main' : 'warning.main',
+                              bgcolor: row.status === 'Active' ? 'success.light' : 'warning.light',
+                              color: row.status === 'Active' ? 'success.main' : 'warning.main',
                               border: 'none'
                             }}
                           />
                         </TableCell>
                         <TableCell align="center">
-                          <Tooltip title="View School Details">
-                            <IconButton size="small" color="primary" onClick={handleOpenView}>
-                              <Eye fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
+                          <IconButton size="small" color="primary">
+                            <Edit fontSize="small" />
+                          </IconButton>
 
-                          <Tooltip title="View Assigned Wristbands">
-                            <IconButton size="small" color="primary">
-                              <WatchStatus fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-
-                          <Tooltip title="View Assigned POS">
-                            <IconButton size="small" color="primary">
-                              <TableDocument fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-
-                          <Tooltip title="Edit School Details">
-                            <IconButton size="small" color="primary" onClick={handleOpenEdit}>
-                              <Edit fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-
-                          <Tooltip title="Deactivate School">
-                            <IconButton size="small" color="primary">
-                              <CloseCircle fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
+                          <IconButton size="small" color="primary">
+                            <CloseCircle fontSize="small" />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))
@@ -615,7 +561,7 @@ export default function WristbandManagement() {
                     <TableRow>
                       <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
                         <Typography variant="body1" color="text.secondary">
-                          No POS Devices found matching the current filters
+                          No Users found matching the current filters
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -640,88 +586,75 @@ export default function WristbandManagement() {
           <Box sx={modalStyle}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" component="h2">
-                Register New POS
+                Register New User
               </Typography>
               <IconButton onClick={handleCloseNewWristband} size="small">
                 <CloseCircle fontSize="small" />
               </IconButton>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Register a new POS in the TEMVO POS system.
+              Register a new user in the TEMVO POS system.
             </Typography>
 
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <Typography variant="subtitle2" gutterBottom>
-                  School Name
+                  User Name
                 </Typography>
                 <TextField
                   fullWidth
-                  name="schoolName"
-                  placeholder="Enter School Name"
-                  value={newWristband.modelName}
+                  name="userName"
+                  placeholder="Enter User Name"
+                  value={newWristband.userName}
                   onChange={handleNewWristbandChange}
                 />
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="subtitle2" gutterBottom>
-                  School ID
+                  Email
                 </Typography>
                 <TextField
                   fullWidth
-                  name="schoolNumber"
-                  placeholder="Enter School ID"
-                  value={newWristband.modelNumber}
+                  name="email"
+                  placeholder="Enter Email"
+                  value={newWristband.email}
                   onChange={handleNewWristbandChange}
                 />
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="subtitle2" gutterBottom>
-                  Region
+                  Phone Number
                 </Typography>
                 <TextField
                   fullWidth
-                  name="schoolRegion"
-                  placeholder="Enter School's Region"
-                  value={newWristband.serialNumber}
+                  name="phoneNumber"
+                  placeholder="Enter Phone Number"
+                  value={newWristband.phonerNumber}
                   onChange={handleNewWristbandChange}
                 />
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="subtitle2" gutterBottom>
-                  Admin Name
+                  Role
                 </Typography>
                 <TextField
                   fullWidth
-                  name="adminName"
-                  placeholder="Enter School's Admin Name"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Number
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="adminNumber"
-                  placeholder="Enter Admin's Number"
-                  value={newWristband.serialNumber}
+                  name="role"
+                  placeholder="Enter Role"
+                  value={newWristband.role}
                   onChange={handleNewWristbandChange}
                 />
               </Grid>
 
               <Grid item xs={6}>
                 <Typography variant="subtitle2" gutterBottom>
-                  Admin Email
+                  Assigned School
                 </Typography>
                 <TextField
                   fullWidth
-                  name="adminEmail"
-                  placeholder="Enter Admin's Email"
-                  value={newWristband.serialNumber}
+                  name="assigneSchool"
+                  placeholder="Enter Assigned School"
+                  value={newWristband.assignedSchool}
                   onChange={handleNewWristbandChange}
                 />
               </Grid>
@@ -737,14 +670,14 @@ export default function WristbandManagement() {
                 onClick={handleRegisterWristband}
                 disabled={!newWristband.modelName || !newWristband.modelNumber || !newWristband.serialNumber}
               >
-                Register POS
+                Register User
               </Button>
             </Box>
           </Box>
         </Modal>
 
         {/* Register Bulk Wristbands Modal */}
-        <Modal open={bulkWristbandOpen} onClose={handleCloseBulkWristband} aria-labelledby="register-bulk-wristbands-modal">
+        {/* <Modal open={bulkWristbandOpen} onClose={handleCloseBulkWristband} aria-labelledby="register-bulk-wristbands-modal">
           <Box sx={modalStyle}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" component="h2">
@@ -802,10 +735,10 @@ export default function WristbandManagement() {
               </Button>
             </Box>
           </Box>
-        </Modal>
+        </Modal> */}
 
         {/* Assign Wristband Modal */}
-        <Modal open={assignWristbandOpen} onClose={handleCloseAssignWristband} aria-labelledby="assign-wristband-modal">
+        {/* <Modal open={assignWristbandOpen} onClose={handleCloseAssignWristband} aria-labelledby="assign-wristband-modal">
           <Box sx={modalStyle}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" component="h2">
@@ -860,255 +793,7 @@ export default function WristbandManagement() {
               </Button>
             </Box>
           </Box>
-        </Modal>
-
-        {/* View School Details Modal */}
-        <Modal open={openView} onClose={handleCloseView} aria-labelledby="view-details">
-          <Box sx={modalStyle}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" component="h2">
-                View School Details
-              </Typography>
-              <IconButton onClick={handleCloseView} size="small">
-                <CloseCircle fontSize="small" />
-              </IconButton>
-            </Box>
-
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  School Name
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="modelName"
-                  placeholder="Enter School Name"
-                  disabled
-                  value={newWristband.modelName}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  School ID
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="modelNumber"
-                  placeholder="Enter School ID"
-                  disabled
-                  value={newWristband.modelNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  School Region
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter School Region"
-                  disabled
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Name
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter Admin Name"
-                  disabled
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Number
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter Admin Number"
-                  disabled
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Email
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter Admin Email"
-                  disabled
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  No. of POS
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Number of POS Devices"
-                  disabled
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  No. of Wristbands
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Number of Wristbands"
-                  disabled
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </Modal>
-
-        {/* Edit School Details Modal */}
-        <Modal open={openEdit} onClose={handleCloseEdit} aria-labelledby="edit-details">
-          <Box sx={modalStyle}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" component="h2">
-                Edit School Details
-              </Typography>
-              <IconButton onClick={handleCloseEdit} size="small">
-                <CloseCircle fontSize="small" />
-              </IconButton>
-            </Box>
-
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  School Name
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="modelName"
-                  placeholder="Enter School Name"
-                  value={newWristband.modelName}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  School ID
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="modelNumber"
-                  placeholder="Enter School ID"
-                  value={newWristband.modelNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  School Region
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter School Region"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Name
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter Admin Name"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Number
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter Admin Number"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Admin Email
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Enter Admin Email"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  No. of POS
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Number of POS Devices"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  No. of Wristbands
-                </Typography>
-                <TextField
-                  fullWidth
-                  name="serialNumber"
-                  placeholder="Number of Wristbands"
-                  value={newWristband.serialNumber}
-                  onChange={handleNewWristbandChange}
-                />
-              </Grid>
-            </Grid>
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4, gap: 2 }}>
-              <Button variant="outlined" color="error" onClick={handleCloseEdit}>
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleRegisterWristband}
-                disabled={!newWristband.modelName || !newWristband.modelNumber || !newWristband.serialNumber}
-              >
-                Register Wristband
-              </Button>
-            </Box>
-          </Box>
-        </Modal>
+        </Modal> */}
       </Box>
     </ThemeProvider>
   );

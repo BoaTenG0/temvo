@@ -17,6 +17,9 @@ const WidgetChart = Loadable(lazy(() => import('pages/widget/chart')));
 const NFC = Loadable(lazy(() => import('pages/nfc-wristbands')));
 const POS = Loadable(lazy(() => import('pages/pos-management')));
 const SCH = Loadable(lazy(() => import('pages/schools')));
+const Transactions = Loadable(lazy(() => import('pages/transactions')));
+const Reports = Loadable(lazy(() => import('pages/reports')));
+const UserManagement = Loadable(lazy(() => import('pages/user-management')));
 
 // render - applications
 const AppChat = Loadable(lazy(() => import('pages/apps/chat')));
@@ -123,7 +126,7 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const MaintenanceComingSoon2 = Loadable(lazy(() => import('pages/maintenance/coming-soon/coming-soon2')));
 
 // render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
+const SystemSettings = Loadable(lazy(() => import('pages/system-settings')));
 const Landing = Loadable(lazy(() => import('pages/landing')));
 const ContactUS = Loadable(lazy(() => import('pages/contact-us')));
 const PricingPage = Loadable(lazy(() => import('pages/extra-pages/price/price1')));
@@ -491,8 +494,8 @@ const MainRoutes = {
           ]
         },
         {
-          path: 'sample-page',
-          element: <SamplePage />
+          path: 'system-settings',
+          element: <SystemSettings />
         },
         {
           path: 'nfc-wristbands',
@@ -505,6 +508,18 @@ const MainRoutes = {
         {
           path: 'schools',
           element: <SCH />
+        },
+        {
+          path: 'transactions',
+          element: <Transactions />
+        },
+        {
+          path: 'reports',
+          element: <Reports />
+        },
+        {
+          path: 'user-management',
+          element: <UserManagement />
         },
         {
           path: 'price',

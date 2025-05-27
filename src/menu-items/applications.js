@@ -41,17 +41,19 @@ const applications = {
       id: 'transactions',
       title: <FormattedMessage id="Transactions" />,
       type: 'item',
-      url: '/apps/chat',
-      icon: icons.transactions
-      //   breadcrumbs: false
+      url: '/transactions',
+      icon: icons.transactions,
+      breadcrumbs: false
     },
     {
       id: 'reports',
       title: <FormattedMessage id="Reports & Analysis" />,
       type: 'item',
-      url: '/apps/calendar',
-      icon: icons.reports
+      url: '/reports',
+      icon: icons.reports,
+      breadcrumbs: false
     }
+
     // {
     //   id: 'kanban',
     //   title: <FormattedMessage id="kanban" />,

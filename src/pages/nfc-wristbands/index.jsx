@@ -46,9 +46,6 @@ export default function WristbandManagement() {
     return { assignedCount: assigned, unassignedCount: unassigned };
   }, [wristbandsData]);
 
-  console.log('🚀 ~ WristbandManagement ~ wristbandsData:', wristbandsData);
-  console.log('🚀 ~ WristbandManagement ~ schoolsData:', schoolsData?.data.content);
-
   // Use actions hook with real data
   const actions = useWristbandActions(state, updateState, toggleModal, resetForm, wristbandsData);
 

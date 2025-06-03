@@ -21,10 +21,12 @@ import {
   Tab,
   Tooltip,
   TablePagination,
-  CircularProgress
+  CircularProgress,
+  Skeleton
 } from '@mui/material';
 import { Add, Additem, DocumentUpload, SearchFavorite1, Setting3, Trash } from 'iconsax-react';
 import { format } from 'date-fns';
+import { useGetGeneralSchoolById } from 'api/requests';
 
 const rowsPerPageOptions = [10, 20, 50, 100];
 
@@ -48,6 +50,29 @@ const formatDate = (dateString) => {
   } catch {
     return 'N/A';
   }
+};
+
+// SchoolName component integrated within the file
+const SchoolName = ({ schoolId }) => {
+  const { data: schoolData, isLoading, error } = useGetGeneralSchoolById(schoolId);
+
+  if (!schoolId) {
+    return <Typography variant="body2">N/A</Typography>;
+  }
+
+  if (isLoading) {
+    return <Skeleton variant="text" width={120} height={20} />;
+  }
+
+  if (error) {
+    return (
+      <Typography variant="body2" color="error">
+        Error loading school
+      </Typography>
+    );
+  }
+
+  return <Typography variant="body2">{schoolData?.name || `School ${schoolId}`}</Typography>;
 };
 
 const WristbandTable = ({
@@ -145,7 +170,7 @@ const WristbandTable = ({
               <TableCell>Model Number</TableCell>
               <TableCell>Serial Number</TableCell>
               <TableCell>Date Registered</TableCell>
-              <TableCell>Date Assigned</TableCell>
+              {/* <TableCell>Date Assigned</TableCell> */}
               <TableCell>Assigned School</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="center">Actions</TableCell>
@@ -168,8 +193,9 @@ const WristbandTable = ({
                   <TableCell>{row.modelNumber || 'N/A'}</TableCell>
                   <TableCell>{row.serialNumber || 'N/A'}</TableCell>
                   <TableCell>{formatDate(row.createdAt)}</TableCell>
-                  <TableCell>{row.schoolId ? formatDate(row.updatedAt) : 'N/A'}</TableCell>
-                  <TableCell>{row.schoolId ? `School ${row.schoolId}` : 'N/A'}</TableCell>
+                  <TableCell>
+                    <SchoolName schoolId={row.schoolId} />
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={row.status}

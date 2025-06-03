@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState, useMemo } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -7,7 +7,7 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 
 // project-imports
 import NavGroup from './NavGroup';
-import menuItem from 'menu-items';
+import { getMenuItems } from 'menu-items';
 import { Menu } from 'menu-items/dashboard';
 
 import { useSelector } from 'store';
@@ -19,6 +19,10 @@ import { MenuOrientation } from 'config';
 
 const Navigation = () => {
   const theme = useTheme();
+  const userInfo = useSelector((state) => state.user.userInfo);
+
+  // Get menu items based on user type - memoized to prevent infinite re-renders
+  const menuItem = useMemo(() => getMenuItems(userInfo?.userType), [userInfo?.userType]);
 
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -34,7 +38,7 @@ const Navigation = () => {
   //     // eslint-disable-next-line
   //   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setMenuItems(menuItem);
     // eslint-disable-next-line
   }, [menuItem]);
@@ -58,21 +62,21 @@ const Navigation = () => {
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 
   const lastItem = isHorizontal ? HORIZONTAL_MAX_ITEM : null;
-  let lastItemIndex = menuItems.items.length - 1;
+  let lastItemIndex = menuItems?.items.length - 1;
   let remItems = [];
   let lastItemId;
 
   if (lastItem && lastItem < menuItems.items.length) {
-    lastItemId = menuItems.items[lastItem - 1].id;
+    lastItemId = menuItems?.items[lastItem - 1].id;
     lastItemIndex = lastItem - 1;
-    remItems = menuItems.items.slice(lastItem - 1, menuItems.items.length).map((item) => ({
+    remItems = menuItems?.items.slice(lastItem - 1, menuItems.items.length).map((item) => ({
       title: item.title,
       elements: item.children,
       icon: item.icon
     }));
   }
 
-  const navGroups = menuItems.items.slice(0, lastItemIndex + 1).map((item) => {
+  const navGroups = menuItems?.items.slice(0, lastItemIndex + 1).map((item) => {
     switch (item.type) {
       case 'group':
         return (

@@ -6,10 +6,21 @@ import formsTables from './forms-tables';
 import support from './support';
 // import pages from './pages';
 
-// ==============================|| MENU ITEMS ||============================== //
-
+// Function to get menu items based on user type
+const getMenuItems = (userType) => {
+  console.log('🚀 ~ getMenuItems ~ userType:', userType);
+  if (userType === 'SUPER_ADMIN') {
+    return {
+      items: [widget, applications, formsTables, support]
+    };
+  }
+  return {
+    items: [widget, support]
+  };
+};
 const menuItems = {
   items: [widget, applications, formsTables, support]
 };
 
 export default menuItems;
+export { getMenuItems };

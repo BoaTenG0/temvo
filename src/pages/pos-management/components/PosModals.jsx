@@ -1,0 +1,63 @@
+import React from 'react';
+import NewPosModal from './modals/NewPosModal';
+import BulkPosModal from './modals/BulkPosModal';
+import AssignPosModal from './modals/AssignPosModal';
+import DeletePosModal from './modals/DeletePosModal';
+
+const PosModals = ({
+  state,
+  actions,
+  onFormChange
+}) => {
+  const handleNewPosFormChange = (updates) => {
+    onFormChange('newPos', updates);
+  };
+
+  const handleAssignFormChange = (updates) => {
+    onFormChange('assignData', updates);
+  };
+
+  const handleFileChange = (file) => {
+    onFormChange('selectedFile', file);
+  };
+
+  return (
+    <>
+      {/* Register New POS Modal */}
+      <NewPosModal
+        open={state.modals.newPos}
+        onClose={actions.handleCloseNewPos}
+        formData={state.forms.newPos}
+        onFormChange={handleNewPosFormChange}
+        onSubmit={actions.handleRegisterPos}
+      />
+
+      {/* Register Bulk POS Modal */}
+      <BulkPosModal
+        open={state.modals.bulkPos}
+        onClose={actions.handleCloseBulkPos}
+        selectedFile={state.forms.selectedFile}
+        onFileChange={handleFileChange}
+        onSubmit={actions.handleBulkRegister}
+      />
+
+      {/* Assign POS Modal */}
+      <AssignPosModal
+        open={state.modals.assignPos}
+        onClose={actions.handleCloseAssignPos}
+        formData={state.forms.assignData}
+        onFormChange={handleAssignFormChange}
+        onSubmit={actions.handleAssignPosDevices}
+      />
+
+      {/* Delete POS Modal */}
+      <DeletePosModal
+        open={state.modals.delete}
+        onClose={actions.handleCloseDelete}
+        onConfirm={actions.handleDeletePos}
+      />
+    </>
+  );
+};
+
+export default PosModals;

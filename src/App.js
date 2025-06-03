@@ -14,6 +14,7 @@ import Notistack from 'components/third-party/Notistack';
 
 import { dispatch } from 'store';
 import { fetchMenu } from 'store/reducers/menu';
+import Providers from 'providers';
 
 // auth-provider
 import { JWTProvider as AuthProvider } from 'contexts/JWTContext';
@@ -39,15 +40,17 @@ const App = () => {
       <RTLLayout>
         <Locales>
           <ScrollTop>
-            <AuthProvider>
-              <>
-                <Notistack>
-                  <Routes />
-                  <Customization />
-                  <Snackbar />
-                </Notistack>
-              </>
-            </AuthProvider>
+            <Providers>
+              <AuthProvider>
+                <>
+                  <Notistack>
+                    <Routes />
+                    <Customization />
+                    <Snackbar />
+                  </Notistack>
+                </>
+              </AuthProvider>
+            </Providers>
           </ScrollTop>
         </Locales>
       </RTLLayout>

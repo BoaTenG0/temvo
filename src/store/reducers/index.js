@@ -12,6 +12,7 @@ import productReducer from './product';
 import cartReducer from './cart';
 import kanban from './kanban';
 import invoice from './invoice';
+import userReducer from './user';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -30,7 +31,9 @@ const reducers = combineReducers({
   ),
   product: productReducer,
   kanban,
-  invoice
+  invoice,
+  // persist user
+  user: userReducer
 });
 
 export default reducers;

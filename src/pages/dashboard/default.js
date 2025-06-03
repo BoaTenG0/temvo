@@ -8,12 +8,6 @@ import EcommerceDataCard from 'components/cards/statistics/EcommerceDataCard';
 import EcommerceDataChart from 'sections/widget/chart/EcommerceDataChart';
 
 import RepeatCustomerRate from 'sections/widget/chart/RepeatCustomerRate';
-import ProjectOverview from 'sections/widget/chart/ProjectOverview';
-import ProjectRelease from 'sections/dashboard/default/ProjectRelease';
-import AssignUsers from 'sections/widget/statistics/AssignUsers';
-
-import Transactions from 'sections/widget/data/Transactions';
-import TotalIncome from 'sections/widget/chart/TotalIncome';
 
 // assets
 import { ArrowDown, ArrowUp, Book, Calendar, CloudChange, Fatrows, User, DollarSquare, PasswordCheck } from 'iconsax-react';
@@ -28,9 +22,9 @@ const DashboardDefault = () => {
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <WelcomeBanner />
-      </Grid> */}
+      </Grid>
 
       {/* row 1 */}
       <Grid item xs={12} sm={6} lg={3}>
@@ -95,21 +89,10 @@ const DashboardDefault = () => {
 
       {/* row 2 */}
       <Grid item xs={12} md={9} lg={12}>
-        {/* <Grid container spacing={3}> */}
         <Grid item xs={12}>
           <RepeatCustomerRate />
         </Grid>
-        {/* <Grid item xs={12}>
-            <ProjectOverview />
-          </Grid> */}
-        {/* </Grid> */}
       </Grid>
-      {/* <Grid item xs={12} md={4} lg={3}>
-        <Stack spacing={3}>
-          <ProjectRelease />
-          <AssignUsers />
-        </Stack>
-      </Grid> */}
 
       {/* row 3 */}
       <Grid item xs={12} md={9}>

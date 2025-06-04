@@ -37,6 +37,7 @@ const WristbandModals = ({ state, actions, onFormChange, refetchWristbands, scho
         selectedFile={state.forms.selectedFile}
         onFileChange={handleFileChange}
         onSubmit={actions.handleBulkRegister}
+        refetchWristbands={refetchWristbands}
       />
 
       {/* Assign Wristbands Modal */}

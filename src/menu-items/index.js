@@ -8,7 +8,6 @@ import support from './support';
 
 // Function to get menu items based on user type
 const getMenuItems = (userType) => {
-  console.log('🚀 ~ getMenuItems ~ userType:', userType);
   if (userType === 'SUPER_ADMIN') {
     return {
       items: [widget, applications, formsTables, support]

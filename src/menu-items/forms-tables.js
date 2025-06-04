@@ -30,14 +30,14 @@ const formsTables = {
       type: 'item',
       url: '/user-management',
       icon: icons.user
+    },
+    {
+      id: 'roles',
+      title: <FormattedMessage id="Role & Permissions" />,
+      type: 'item',
+      url: '/roles',
+      icon: icons.wizard
     }
-    // {
-    //   id: 'wizard',
-    //   title: <FormattedMessage id="forms-wizard" />,
-    //   type: 'item',
-    //   url: '/forms/wizard',
-    //   icon: icons.wizard
-    // },
     // {
     //   id: 'forms-layout',
     //   title: <FormattedMessage id="layout" />,

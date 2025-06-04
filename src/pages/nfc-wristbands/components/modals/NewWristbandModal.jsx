@@ -116,7 +116,7 @@ const NewWristbandModal = ({ open, onClose, formData, onFormChange, refetchWrist
     );
   };
 
-  const isLoading = createWristbandMutation.isLoading;
+  const isLoading = createWristbandMutation.isPending;
 
   const renderContent = () => (
     <Grid container spacing={3}>

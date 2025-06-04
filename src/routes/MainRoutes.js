@@ -20,6 +20,7 @@ const SCH = Loadable(lazy(() => import('pages/schools')));
 const Transactions = Loadable(lazy(() => import('pages/transactions')));
 const Reports = Loadable(lazy(() => import('pages/reports')));
 const UserManagement = Loadable(lazy(() => import('pages/user-management')));
+const Roles = Loadable(lazy(() => import('pages/roles')));
 
 // render - applications
 const AppChat = Loadable(lazy(() => import('pages/apps/chat')));
@@ -520,6 +521,10 @@ const MainRoutes = {
         {
           path: 'user-management',
           element: <UserManagement />
+        },
+        {
+          path: 'roles',
+          element: <Roles />
         },
         {
           path: 'price',

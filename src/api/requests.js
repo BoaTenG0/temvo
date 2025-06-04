@@ -183,24 +183,142 @@ export const useGetGeneralSchoolById = (schoolId) => {
 };
 
 export const useCreateGeneralSchool = () => {
-  return useMutation((data) => userService.createGeneralSchool(data));
+  return useMutation({ mutationFn: (data) => userService.createGeneralSchool(data) });
 };
 
 export const useBulkUploadGeneralSchool = () => {
-  return useMutation((data) => userService.bulkUploadGeneralSchool(data));
+  return useMutation({ mutationFn: (data) => userService.bulkUploadGeneralSchool(data) });
 };
 
 export const useReAssignSchoolAdmin = (schoolId) => {
-  return useMutation((data) => userService.ReAssignSchoolAdmin(data, schoolId));
+  return useMutation({ mutationFn: (data) => userService.ReAssignSchoolAdmin(data, schoolId) });
 };
 
 export const useDeleteGenearalSchool = (schoolId) => {
-  return useMutation((data) => userService.deleteGenearalSchool(data, schoolId));
+  return useMutation({ mutationFn: () => userService.deleteGenearalSchool(schoolId) });
 };
 
-export const useGetGeneralSchool = () => {
+export const useGetGeneralSchool = (filters) => {
   return useQuery({
-    queryKey: ['general-school'],
-    queryFn: () => userService.getGeneralSchool()
+    queryKey: ['general-school', filters],
+    queryFn: () => userService.getGeneralSchool(filters)
+  });
+};
+
+export const useGetAllWallets = () => {
+  return useQuery({
+    queryKey: ['all-wallets'],
+    queryFn: () => userService.getAllWallets()
+  });
+};
+
+export const useGetUsers = (filters) => {
+  return useQuery({
+    queryKey: ['users', filters],
+    queryFn: () => userService.getUsers(filters)
+  });
+};
+
+export const useCreateUser = () => {
+  return useMutation({ mutationFn: (data) => userService.createUser(data) });
+};
+
+export const useBulkDeleteUsers = () => {
+  return useMutation({ mutationFn: (data) => userService.bulkDeleteUsers(data) });
+};
+
+export const useGetUnassignedAdmins = () => {
+  return useQuery({
+    queryKey: ['unassigned-admins'],
+    queryFn: () => userService.getUnassignedAdmins()
+  });
+};
+
+export const useGetProfile = () => {
+  return useQuery({
+    queryKey: ['profile'],
+    queryFn: () => userService.getProfile()
+  });
+};
+
+export const useChangePassword = () => {
+  return useMutation({ mutationFn: (data) => userService.changePassword(data) });
+};
+
+export const useEditUser = (userId) => {
+  return useMutation({ mutationFn: (data) => userService.editUser(data, userId) });
+};
+
+export const useDeleteUser = (userId) => {
+  return useMutation({ mutationFn: () => userService.deleteUser(userId) });
+};
+
+export const useGetUserById = (userId) => {
+  return useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => userService.getUserById(userId)
+  });
+};
+
+export const useGetRoles = (filters) => {
+  return useQuery({
+    queryKey: ['roles', filters],
+    queryFn: () => userService.getRoles(filters)
+  });
+};
+
+export const useCreateRole = () => {
+  return useMutation({ mutationFn: (data) => userService.createRole(data) });
+};
+
+export const useGetRoleById = (roleId) => {
+  return useQuery({
+    queryKey: ['role', roleId],
+    queryFn: () => userService.getRoleById(roleId)
+  });
+};
+
+export const useEditRole = (roleId) => {
+  return useMutation({ mutationFn: (data) => userService.editRole(data, roleId) });
+};
+
+export const useDeleteRole = (roleId) => {
+  return useMutation({ mutationFn: () => userService.deleteRole(roleId) });
+};
+
+export const useGetPermissions = (filters) => {
+  return useQuery({
+    queryKey: ['permissions', filters],
+    queryFn: () => userService.getPermissions(filters)
+  });
+};
+
+export const useCreatePermission = () => {
+  return useMutation({ mutationFn: (data) => userService.createPermission(data) });
+};
+
+export const useBulkCreatePermission = () => {
+  return useMutation({ mutationFn: (data) => userService.bulkCreatePermission(data) });
+};
+
+export const useGetPermissionById = (permissionId) => {
+  return useQuery({
+    queryKey: ['permission', permissionId],
+    queryFn: () => userService.getPermissionById(permissionId)
+  });
+};
+
+export const useUpdatePermission = (permissionId) => {
+  return useMutation({ mutationFn: (data) => userService.updatePermission(data, permissionId) });
+};
+
+export const useDeletePermission = (permissionId) => {
+  return useMutation({ mutationFn: () => userService.deletePermission(permissionId) });
+};
+
+export const useGetBulkUploadJobStatus = (jobId) => {
+  return useQuery({
+    queryKey: ['bulk-upload-status', jobId],
+    queryFn: () => userService.getBulkUploadJobStatus(jobId)
   });
 };

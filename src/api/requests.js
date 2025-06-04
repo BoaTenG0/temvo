@@ -49,35 +49,35 @@ export const useGetPOS = (filters) => {
 };
 
 export const useCreatePOS = () => {
-  return useMutation((data) => userService.createPOS(data));
+  return useMutation({ mutationFn: (data) => userService.createPOS(data) });
 };
 
 export const useBulkUploadPOS = () => {
-  return useMutation((data) => userService.bulkUploadPOS(data));
+  return useMutation({ mutationFn: (data) => userService.bulkUploadPOS(data) });
 };
 
 export const useAutoAssignToSchool = () => {
-  return useMutation((data) => userService.autoAssignToSchool(data));
+  return useMutation({ mutationFn: (data) => userService.autoAssignToSchool(data) });
 };
 
 export const useAssignToSchool = () => {
-  return useMutation((data) => userService.assignToSchool(data));
+  return useMutation({ mutationFn: (data) => userService.assignToSchool(data) });
 };
 
 export const useDeactivatePOS = (posId) => {
-  return useMutation((data) => userService.deactivatePOS(data, posId));
+  return useMutation({ mutationFn: (data) => userService.deactivatePOS(data, posId) });
 };
 
 export const useActivatePOS = (posId) => {
-  return useMutation((data) => userService.activatePOS(data, posId));
+  return useMutation({ mutationFn: (data) => userService.activatePOS(data, posId) });
 };
 
 export const useReAssignPOS = (posId) => {
-  return useMutation((data) => userService.reAssignPOS(data, posId));
+  return useMutation({ mutationFn: (data) => userService.reAssignPOS(data, posId) });
 };
 
 export const useUnassignPOS = () => {
-  return useMutation((data) => userService.unassignPOS(data));
+  return useMutation({ mutationFn: (data) => userService.unassignPOS(data) });
 };
 
 export const useGetPOSForSchool = (schoolId) => {
@@ -101,8 +101,8 @@ export const useGetBulkUploadCredentials = (posId) => {
   });
 };
 
-export const useDeletePOSDevice = () => {
-  return useMutation((posId) => userService.deletePOSDevice(posId));
+export const useDeletePOSDevice = (posId) => {
+  return useMutation({ mutationFn: () => userService.deletePOSDevice(posId) });
 };
 
 export const useGetWristbands = (filters) => {

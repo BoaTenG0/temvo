@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { initialNewWristband, initialAssignData } from '../constants/wristbandConstants';
+import dayjs from 'dayjs';
 
 export const useWristbandState = () => {
   // Consolidated state object
+  const initialStartDate = dayjs().subtract(7, 'days');
+  const initialEndDate = dayjs();
   const [state, setState] = useState({
     // Pagination and display
     page: 0,
@@ -12,8 +15,8 @@ export const useWristbandState = () => {
 
     // Search and filters
     searchTerm: '',
-    dateRange: [null, null],
-    school: 'All',
+    dateRange: [initialStartDate.toDate(), initialEndDate.toDate()],
+    school: '',
     status: 'All',
     tableSearchTerm: '',
 

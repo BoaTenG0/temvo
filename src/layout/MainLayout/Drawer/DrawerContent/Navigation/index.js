@@ -20,6 +20,7 @@ import { MenuOrientation } from 'config';
 const Navigation = () => {
   const theme = useTheme();
   const userInfo = useSelector((state) => state.user.userInfo);
+  console.log('🚀 ~ Navigation ~ userInfo:', userInfo);
 
   // Get menu items based on user type - memoized to prevent infinite re-renders
   const menuItem = useMemo(() => getMenuItems(userInfo?.userType), [userInfo?.userType]);

@@ -32,6 +32,8 @@ export const useWristbandActions = (state, updateState, toggleModal, resetForm) 
   };
 
   const handleDateRangeChange = (newValue) => {
+    console.log('🚀 ~ handleDateRangeChange ~ newValue:', newValue);
+
     updateState({ dateRange: newValue });
   };
 

@@ -14,10 +14,16 @@ import WristbandFilters from './components/WristbandFilters';
 import WristbandTable from './components/WristbandTable';
 import WristbandModals from './components/WristbandModals';
 import { useGetGeneralSchool, useGetWristbands } from 'api/requests';
+function convertDateJS(isoDateString) {
+  const date = new Date(isoDateString);
+  return date.toISOString(); // returns full ISO string like "2025-06-10T03:37:21.719Z"
+}
 
 export default function WristbandManagement() {
   // Use consolidated state management
   const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = useWristbandState();
+  console.log('🚀 ~ WristbandManagement ~ state:', state.school);
+  console.log('🚀 ~ WristbandManagement ~ state:', state.dateRange);
 
   // Get wristbands with pagination and filters
   const {
@@ -28,7 +34,10 @@ export default function WristbandManagement() {
     page: state.page,
     size: state.rowsPerPage,
     search: state.searchTerm || state.tableSearchTerm || '',
-    sort: ['desc']
+    sort: ['desc'],
+    schoolId: state.school !== '' ? state.school : '',
+    createdAtFrom: convertDateJS(state.dateRange[0]),
+    createdAtTo: convertDateJS(state.dateRange[1])
   });
 
   // Get all schools for filters

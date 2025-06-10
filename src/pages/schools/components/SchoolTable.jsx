@@ -27,6 +27,7 @@ import {
 } from '@mui/material';
 import { Add, DocumentUpload, SearchFavorite1, Eye, WatchStatus, TableDocument, Edit, CloseCircle, Trash } from 'iconsax-react';
 import { rowsPerPageOptions, tabLabels } from '../constants/schoolConstants';
+import { useNavigate } from 'react-router';
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
@@ -53,6 +54,7 @@ const SchoolTable = ({
   onDeleteSchool
 }) => {
   const schools = schoolsData?.content || [];
+  const navigate = useNavigate();
 
   return (
     <Card sx={{ borderRadius: 2 }}>
@@ -159,7 +161,14 @@ const SchoolTable = ({
                     </TableCell> */}
                   <TableCell align="center">
                     <Tooltip title="View School Details">
-                      <IconButton size="small" color="info" onClick={() => onViewSchool(row)}>
+                      <IconButton
+                        size="small"
+                        color="info"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/schools/ViewSchool/${row.id}`);
+                        }}
+                      >
                         <Eye size={18} />
                       </IconButton>
                     </Tooltip>

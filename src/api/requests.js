@@ -18,6 +18,24 @@ export const useGetParentById = (parentId) => {
     queryFn: () => userService.getParentById(parentId)
   });
 };
+export const useGetAllTransactionBySchool = (filters, schoolId) => {
+  return useQuery({
+    queryKey: ['getAllTransactionBySchool', filters, schoolId],
+    queryFn: () => userService.getAllTransactionBySchool(filters, schoolId)
+  });
+};
+export const useGetAllVendorsBySchool = (filters, schoolId) => {
+  return useQuery({
+    queryKey: ['getAllVendorsBySchool', filters, schoolId],
+    queryFn: () => userService.getAllVendorsBySchool(filters, schoolId)
+  });
+};
+export const useGetStudentsBySchool = (filters, schoolId) => {
+  return useQuery({
+    queryKey: ['getStudentsBySchool', filters, schoolId],
+    queryFn: () => userService.getStudentsBySchool(filters, schoolId)
+  });
+};
 
 export const useDeleteParent = () => {
   return useMutation((parentId) => userService.deleteParent(parentId));
@@ -34,10 +52,10 @@ export const useGetWards = (parentId) => {
   });
 };
 
-export const useGetSchoolById = (schoolId) => {
+export const useGetParentBySchoolIdd = (filters, schoolId) => {
   return useQuery({
-    queryKey: ['school', schoolId],
-    queryFn: () => userService.getSchoolById(schoolId)
+    queryKey: ['getParentBySchoolId', filters, schoolId],
+    queryFn: () => userService.getParentBySchoolId(filters, schoolId)
   });
 };
 
@@ -80,10 +98,10 @@ export const useUnassignPOS = () => {
   return useMutation({ mutationFn: (data) => userService.unassignPOS(data) });
 };
 
-export const useGetPOSForSchool = (schoolId) => {
+export const useGetPOSForSchool = (filters, schoolId) => {
   return useQuery({
-    queryKey: ['pos-for-school', schoolId],
-    queryFn: () => userService.getPOSForSchool(schoolId)
+    queryKey: ['pos-for-school', filters, schoolId],
+    queryFn: () => userService.getPOSForSchool(filters, schoolId)
   });
 };
 

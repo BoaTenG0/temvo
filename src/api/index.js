@@ -119,7 +119,10 @@ const Wristbands = {
 
 // wallet
 const Wallet = {
-  default: '/wallet'
+  default: '/wallets'
+};
+const Vendors = {
+  default: '/vendors'
 };
 
 const Users = {
@@ -181,8 +184,26 @@ const getWards = async (parentId) => {
 };
 
 // Get school by id
-const getSchoolById = async (schoolId) => {
-  return apiClient.get({ url: `${Parents.Parents}/school/${schoolId}` });
+const getParentBySchoolId = async (filters, schoolId) => {
+  const url = `${Parents.Parents}/school/${schoolId}`;
+  const params = new URLSearchParams();
+
+  if (filters) {
+    const { page, size, search, sort } = filters;
+
+    if (page !== undefined) params.append('page', String(page));
+    if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
+
+    // if (Array.isArray(sort)) {
+    //   sort.forEach((sortField) => {
+    //     params.append('sort', sortField);
+    //   });
+    // } else if (sort) {
+    //   params.append('sort', sort);
+    // }
+  }
+  return apiClient.get({ url: `${url}?${params.toString()}` });
 };
 const getGeneralSchoolById = async (schoolId) => {
   return apiClient.get({ url: `${Schools.default}/${schoolId}` });
@@ -282,8 +303,27 @@ const unassignPOS = async (data) => {
 };
 
 // Get POS device for school
-const getPOSForSchool = async (schoolId) => {
-  return apiClient.get({ url: `${POS.Default}/${schoolId}/by-school` });
+const getPOSForSchool = async (filters, schoolId) => {
+  const url = `${POS.Default}/${schoolId}/by-school`;
+  const params = new URLSearchParams();
+
+  if (filters) {
+    const { page, size, search, sort } = filters;
+
+    if (page !== undefined) params.append('page', String(page));
+    if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
+
+    // if (Array.isArray(sort)) {
+    //   sort.forEach((sortField) => {
+    //     params.append('sort', sortField);
+    //   });
+    // } else if (sort) {
+    //   params.append('sort', sort);
+    // }
+  }
+
+  return apiClient.get({ url: `${url}?${params.toString()}` });
 };
 
 const getPOSDeviceById = async (posId) => {
@@ -306,12 +346,16 @@ const getWristbands = async (filters) => {
   const params = new URLSearchParams();
 
   if (filters) {
-    const { page, size, search, unassign, sort } = filters;
+    const { page, size, search, unassign, sort, schoolId, createdAtFrom, createdAtTo } = filters;
+    console.log('🚀 ~ getWristbands ~ schoolId:', schoolId);
 
     if (page !== undefined) params.append('page', String(page));
     if (size !== undefined) params.append('size', String(size));
     if (search !== undefined) params.append('search', search);
-    if (unassign !== undefined) params.append('unassigned', String(unassign));
+    if (schoolId !== undefined) params.append('schoolId', schoolId);
+    if (createdAtFrom !== undefined) params.append('createdAtFrom', createdAtFrom);
+    if (createdAtTo !== undefined) params.append('createdAtTo', createdAtTo);
+    // if (unassign !== undefined) params.append('unassigned', String(unassign));
 
     // Append each sort value if it's an array
     if (Array.isArray(sort)) {
@@ -391,6 +435,97 @@ const getUnassignedWristbands = async () => {
 // get all wallets
 const getAllWallets = async () => {
   return apiClient.get({ url: `${Wallet.default}/wallets` });
+};
+const getAllTransactionBySchool = async (filters, schoolId) => {
+  const url = `${Wallet.default}/transactions/by-school/${schoolId}`;
+  const params = new URLSearchParams();
+
+  if (filters) {
+    const { page, size, search, sort, channel, provider, amountMax, amountMin, from, to, status, type } = filters;
+
+    if (page !== undefined) params.append('page', String(page));
+    if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
+    if (channel !== undefined) params.append('channel', channel);
+    if (provider !== undefined) params.append('provider', provider);
+    if (amountMax !== undefined) params.append('amountMax', amountMax);
+    if (amountMin !== undefined) params.append('amountMin', amountMin);
+    if (from !== undefined) params.append('from', from);
+    if (to !== undefined) params.append('to', to);
+    if (status !== undefined) params.append('status', status);
+    if (type !== undefined) params.append('type', type);
+
+    if (Array.isArray(sort)) {
+      sort.forEach((sortField) => {
+        params.append('sort', sortField);
+      });
+    } else if (sort) {
+      params.append('sort', sort);
+    }
+  }
+
+  return apiClient.get({ url: `${url}?${params.toString()}` });
+};
+const getAllVendorsBySchool = async (filters, schoolId) => {
+  const url = `${Vendors.default}/school/${schoolId}`;
+  const params = new URLSearchParams();
+
+  if (filters) {
+    const { page, size, search, sort, channel, provider, amountMax, amountMin, from, to, status, type } = filters;
+
+    if (page !== undefined) params.append('page', String(page));
+    if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
+    // if (channel !== undefined) params.append('channel', channel);
+    // if (provider !== undefined) params.append('provider', provider);
+    // if (amountMax !== undefined) params.append('amountMax', amountMax);
+    // if (amountMin !== undefined) params.append('amountMin', amountMin);
+    // if (from !== undefined) params.append('from', from);
+    // if (to !== undefined) params.append('to', to);
+    // if (status !== undefined) params.append('status', status);
+    // if (type !== undefined) params.append('type', type);
+
+    // if (Array.isArray(sort)) {
+    //   sort.forEach((sortField) => {
+    //     params.append('sort', sortField);
+    //   });
+    // } else if (sort) {
+    //   params.append('sort', sort);
+    // }
+  }
+
+  return apiClient.get({ url: `${url}?${params.toString()}` });
+};
+
+const getStudentsBySchool = async (filters, schoolId) => {
+  const url = `${Student.default}/school/${schoolId}`;
+  const params = new URLSearchParams();
+
+  if (filters) {
+    const { page, size, search } = filters;
+
+    if (page !== undefined) params.append('page', String(page));
+    if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
+    // if (channel !== undefined) params.append('channel', channel);
+    // if (provider !== undefined) params.append('provider', provider);
+    // if (amountMax !== undefined) params.append('amountMax', amountMax);
+    // if (amountMin !== undefined) params.append('amountMin', amountMin);
+    // if (from !== undefined) params.append('from', from);
+    // if (to !== undefined) params.append('to', to);
+    // if (status !== undefined) params.append('status', status);
+    // if (type !== undefined) params.append('type', type);
+
+    // if (Array.isArray(sort)) {
+    //   sort.forEach((sortField) => {
+    //     params.append('sort', sortField);
+    //   });
+    // } else if (sort) {
+    //   params.append('sort', sort);
+    // }
+  }
+
+  return apiClient.get({ url: `${url}?${params.toString()}` });
 };
 
 // users
@@ -605,16 +740,15 @@ const updateStudentStatus = async (data, studentId) => {
   return apiClient.patch({ url: `${Student.default}/${studentId}/status`, data });
 };
 
-
 //reassign student to another school
 const reassignStudentToSchool = async (data, studentId) => {
   return apiClient.patch({ url: `${Student.default}/${studentId}/reassign`, data });
 };
 
 // list students by school
-const getStudentsBySchool = async (schoolId) => {
-  return apiClient.get({ url: `${Student.default}/school/${schoolId}` });
-};
+// const getStudentsBySchool = async (schoolId) => {
+//   return apiClient.get({ url: `${Student.default}/school/${schoolId}` });
+// };
 
 // delete students in bulk
 const bulkDeleteStudents = async (data) => {
@@ -628,7 +762,7 @@ export const userService = {
   deleteParent,
   assignWards,
   getWards,
-  getSchoolById,
+  getParentBySchoolId,
   getPOS,
   createPOS,
   bulkUploadPOS,
@@ -644,6 +778,7 @@ export const userService = {
   deletePOSDevice,
   getWristbands,
   getWristbandById,
+  getAllTransactionBySchool,
   assignWristbandToStudent,
   assignWristbandToSchool,
   unassignWristbandFromStudent,
@@ -683,5 +818,7 @@ export const userService = {
   getPermissionById,
   updatePermission,
   deletePermission,
-  getBulkUploadJobStatus
+  getBulkUploadJobStatus,
+  getAllVendorsBySchool,
+  getStudentsBySchool
 };

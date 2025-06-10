@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Card, CardContent, Grid, Typography, TextField, MenuItem, Button, InputAdornment, Stack } from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography, TextField, MenuItem, Button, InputAdornment, Stack, Autocomplete } from '@mui/material';
 import { DateRangePicker } from 'rsuite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -40,22 +41,37 @@ const WristbandFilters = ({ state, schools, onToggleFilters, onSearchChange, onD
                   </Stack>
                 </LocalizationProvider>
               </Grid>
-
               <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                   School Name
                 </Typography>
+                <Autocomplete
+                  size="small"
+                  fullWidth
+                  value={state.school ? schools.find((s) => s.id === state.school) : { id: '', name: 'All Schools' }}
+                  onChange={(event, newValue) => {
+                    onSchoolChange(newValue?.id || ''); // Pass empty string for "All Schools"
+                  }}
+                  options={[{ id: '', name: 'All Schools' }, ...(schools || [])]}
+                  getOptionLabel={(option) => option?.name || ''}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  renderInput={(params) => <TextField {...params} label="Select School" variant="outlined" />}
+                />
+              </Grid>
+              {/* <Grid item xs={12} md={3}>
+                <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                  School Name
+                </Typography>
                 <TextField select fullWidth size="small" value={state.school} onChange={(e) => onSchoolChange(e.target.value)}>
-                  <MenuItem value="All">All Schools</MenuItem>
+                  <MenuItem value="">All Schools</MenuItem>
                   {schools?.map((school) => (
                     <MenuItem key={school.id} value={school.id}>
                       {school.name}
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
-
-              <Grid item xs={12} md={3}>
+              </Grid> */}
+              {/* <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom>
                   Status
                 </Typography>
@@ -66,8 +82,7 @@ const WristbandFilters = ({ state, schools, onToggleFilters, onSearchChange, onD
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
-
+              </Grid> */}
               <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom>
                   Global Search

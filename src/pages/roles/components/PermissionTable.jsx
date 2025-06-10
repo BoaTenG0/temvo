@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Table,
@@ -84,11 +85,11 @@ const PermissionTable = ({
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.palette.grey[50] }}>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Permission Name</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Resource</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Action</TableCell>
+              {/* <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Resource</TableCell> */}
+              {/* <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Action</TableCell> */}
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Description</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Created</TableCell>
+              {/* <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Status</TableCell> */}
+              {/* <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>Created</TableCell> */}
               <TableCell align="center" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Actions
               </TableCell>
@@ -125,30 +126,30 @@ const PermissionTable = ({
                       {formatPermissionName(permission.name)}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Chip label={permission.resource} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
-                  </TableCell>
-                  <TableCell>
+                  </TableCell> */}
+                  {/* <TableCell>
                     <Chip label={permission.action} size="small" color="primary" variant="outlined" sx={{ fontWeight: 500 }} />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Typography variant="body2" color="text.secondary">
                       {permission.description || 'No description'}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Chip
                       label={getStatusLabel(permission.active)}
                       color={getStatusColor(permission.active)}
                       size="small"
                       sx={{ fontWeight: 500 }}
                     />
-                  </TableCell>
-                  <TableCell>
+                  </TableCell> */}
+                  {/* <TableCell>
                     <Typography variant="body2" color="text.secondary">
                       {permission.createdAt ? new Date(permission.createdAt).toLocaleDateString() : 'N/A'}
                     </Typography>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell align="center">
                     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
                       <Tooltip title="View Permission">

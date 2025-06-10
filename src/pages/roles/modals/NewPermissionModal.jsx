@@ -39,9 +39,9 @@ const NewPermissionModal = ({ open, onClose, formData, onFormChange, refetchPerm
       const submitData = {
         name: formData.name.trim(),
         description: formData.description?.trim() || '',
-        resource: formData.resource.trim(),
-        action: formData.action.trim(),
-        active: formData.active
+        // resource: formData.resource.trim(),
+        // action: formData.action.trim(),
+        // active: formData.active
       };
 
       await createPermissionMutation.mutateAsync(submitData);

@@ -43,11 +43,18 @@ const refreshAccessToken = async () => {
       headers: { 'Content-Type': 'application/json;charset=utf-8' }
     });
 
-    const response = await refreshAxios.post('/auth/refresh-token', {
-      params: { refreshToken: refreshToken }
-    });
+    // const response = await refreshAxios.post('/auth/refresh-token', {
+    //   params: { refreshToken: refreshToken }
+    // });
+    const response = await refreshAxios.post(
+      '/auth/refresh-token',
+      {},
+      {
+        params: { refreshToken: refreshToken }
+      }
+    );
 
-    console.log('✅ Token refresh response:', response.data);
+    // console.log('✅ Token refresh response:', response.data);
 
     // Handle different response structures
     let newServiceToken;
@@ -94,12 +101,12 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem('serviceToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    //   console.log(
-    //     '📤 Request with token:',
-    //     config.method?.toUpperCase(),
-    //     config.url,
-    //     config.data instanceof FormData ? '(FormData)' : '(JSON)'
-    //   );
+      //   console.log(
+      //     '📤 Request with token:',
+      //     config.method?.toUpperCase(),
+      //     config.url,
+      //     config.data instanceof FormData ? '(FormData)' : '(JSON)'
+      //   );
     } else {
       console.log('⚠️ No token found for request:', config.method?.toUpperCase(), config.url);
     }

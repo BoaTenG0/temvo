@@ -66,9 +66,16 @@ const refreshAccessToken = async () => {
       throw new Error('No refresh token available');
     }
 
-    const response = await authAxios.post('/auth/refresh-token', {
-      params: { refreshToken: refreshToken }
-    });
+    // const response = await authAxios.post('/auth/refresh-token', {
+    //   params: { refreshToken: refreshToken }
+    // });
+    const response = await authAxios.post(
+      '/auth/refresh-token',
+      {},
+      {
+        params: { refreshToken: refreshToken }
+      }
+    );
 
     const { data } = response.data;
     const { accessToken } = data;

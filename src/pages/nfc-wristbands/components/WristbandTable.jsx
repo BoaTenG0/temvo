@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useMemo } from 'react';
 import {
   Box,
@@ -26,8 +27,7 @@ import {
 } from '@mui/material';
 import { Add, Additem, DocumentUpload, SearchFavorite1, Setting3, Trash } from 'iconsax-react';
 import { format } from 'date-fns';
-import { useGetGeneralSchoolById } from 'api/requests';
-
+import { SchoolName } from './getSchoolName'; // Adjust the import path as necessary
 const rowsPerPageOptions = [10, 20, 50, 100];
 
 const getStatusColor = (status) => {
@@ -50,29 +50,6 @@ const formatDate = (dateString) => {
   } catch {
     return 'N/A';
   }
-};
-
-// SchoolName component integrated within the file
-const SchoolName = ({ schoolId }) => {
-  const { data: schoolData, isLoading, error } = useGetGeneralSchoolById(schoolId);
-
-  if (!schoolId) {
-    return <Typography variant="body2">N/A</Typography>;
-  }
-
-  if (isLoading) {
-    return <Skeleton variant="text" width={120} height={20} />;
-  }
-
-  if (error) {
-    return (
-      <Typography variant="body2" color="error">
-        Error loading school
-      </Typography>
-    );
-  }
-
-  return <Typography variant="body2">{schoolData?.name || `School ${schoolId}`}</Typography>;
 };
 
 const WristbandTable = ({

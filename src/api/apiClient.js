@@ -94,18 +94,18 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem('serviceToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log(
-        '📤 Request with token:',
-        config.method?.toUpperCase(),
-        config.url,
-        config.data instanceof FormData ? '(FormData)' : '(JSON)'
-      );
+    //   console.log(
+    //     '📤 Request with token:',
+    //     config.method?.toUpperCase(),
+    //     config.url,
+    //     config.data instanceof FormData ? '(FormData)' : '(JSON)'
+    //   );
     } else {
       console.log('⚠️ No token found for request:', config.method?.toUpperCase(), config.url);
     }
 
     // Debug: Log final headers
-    console.log('🔍 Final request headers:', config.headers);
+    // console.log('🔍 Final request headers:', config.headers);
 
     return config;
   },

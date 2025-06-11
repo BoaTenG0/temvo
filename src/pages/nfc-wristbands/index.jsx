@@ -14,6 +14,7 @@ import WristbandFilters from './components/WristbandFilters';
 import WristbandTable from './components/WristbandTable';
 import WristbandModals from './components/WristbandModals';
 import { useGetGeneralSchool, useGetWristbands } from 'api/requests';
+import { useSelector } from 'store';
 function convertDateJS(isoDateString) {
   const date = new Date(isoDateString);
   return date.toISOString(); // returns full ISO string like "2025-06-10T03:37:21.719Z"
@@ -21,9 +22,8 @@ function convertDateJS(isoDateString) {
 
 export default function WristbandManagement() {
   // Use consolidated state management
+  const userInfo = useSelector((state) => state.user.userInfo);
   const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = useWristbandState();
-  console.log('🚀 ~ WristbandManagement ~ state:', state.school);
-  console.log('🚀 ~ WristbandManagement ~ state:', state.dateRange);
 
   // Get wristbands with pagination and filters
   const {
@@ -83,6 +83,7 @@ export default function WristbandManagement() {
             onDateRangeChange={actions.handleDateRangeChange}
             onSchoolChange={actions.handleSchoolChange}
             onStatusChange={actions.handleStatusChange}
+            userInfo={userInfo}
           />
 
           {/* Table Component */}

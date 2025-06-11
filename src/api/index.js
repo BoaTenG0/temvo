@@ -528,6 +528,57 @@ const getStudentsBySchool = async (filters, schoolId) => {
   return apiClient.get({ url: `${url}?${params.toString()}` });
 };
 
+// create vendors
+const createVendors = async (data) => {
+  return apiClient.post({ url: Vendors.default, data });
+};
+const createBulkVendors = async (data) => {
+  return apiClient.postFormData({ url: `${Vendors.default}/bulk-upload`, data });
+};
+
+const getVenders = async (filters) => {
+  const url = Vendors.default;
+  const params = new URLSearchParams();
+
+  if (filters) {
+    const { page, size, search } = filters;
+
+    if (page !== undefined) params.append('page', String(page));
+    if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
+
+    // if (Array.isArray(sort)) {
+    //   sort.forEach((sortField) => {
+    //     params.append('sort', sortField);
+    //   });
+    // } else if (sort) {
+    //   params.append('sort', sort);
+    // }
+  }
+
+  return apiClient.get({ url: `${url}?${params.toString()}` });
+};
+
+const editVendor = async (data, userId) => {
+  return apiClient.patch({ url: `${Vendors.default}/${userId}`, data });
+};
+
+// assign pos to vendor
+const assignPOStoVendor = (data, vendorId) => {
+  return apiClient.post({ url: `${Vendors.default}/${vendorId}/assign-pos`, data });
+};
+
+// get vendor by id
+const getVendorById = async (vendorId) => {
+  return apiClient.get({ url: `${Vendors.default}/${vendorId}` });
+};
+const deleteVendor = async (vendorId) => {
+  return apiClient.delete({ url: `${Vendors.default}/${vendorId}` });
+};
+const getPOSDeviceByVendorId = async (vendorId) => {
+  return apiClient.get({ url: `${Vendors.default}/${vendorId}/pos-devices` });
+};
+
 // users
 const getUsers = async (filters) => {
   const url = Users.default;
@@ -691,7 +742,7 @@ const getBulkUploadJobStatus = async (jobId) => {
 
 // students
 const getStudents = async (filters) => {
-  const url = Student.default;
+  const url = `${Student.default}/search`;
   const params = new URLSearchParams();
 
   if (filters) {
@@ -820,5 +871,22 @@ export const userService = {
   deletePermission,
   getBulkUploadJobStatus,
   getAllVendorsBySchool,
-  getStudentsBySchool
+  getStudentsBySchool,
+  getStudents,
+  getStudentById,
+  createStudent,
+  bulkUploadStudents,
+  deleteStudent,
+  updateStudent,
+  updateStudentStatus,
+  reassignStudentToSchool,
+  bulkDeleteStudents,
+  getVenders,
+  getVendorById,
+  createVendors,
+  editVendor,
+  deleteVendor,
+  assignPOStoVendor,
+  getPOSDeviceByVendorId,
+  createBulkVendors
 };

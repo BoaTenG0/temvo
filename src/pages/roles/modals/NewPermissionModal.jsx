@@ -38,7 +38,7 @@ const NewPermissionModal = ({ open, onClose, formData, onFormChange, refetchPerm
       // Prepare data for submission
       const submitData = {
         name: formData.name.trim(),
-        description: formData.description?.trim() || '',
+        description: formData.description?.trim() || ''
         // resource: formData.resource.trim(),
         // action: formData.action.trim(),
         // active: formData.active
@@ -110,7 +110,7 @@ const NewPermissionModal = ({ open, onClose, formData, onFormChange, refetchPerm
           />
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <Autocomplete
             fullWidth
             options={PERMISSION_RESOURCES}
@@ -154,7 +154,7 @@ const NewPermissionModal = ({ open, onClose, formData, onFormChange, refetchPerm
             clearOnBlur
             handleHomeEndKeys
           />
-        </Grid>
+        </Grid> */}
 
         <Grid item xs={12}>
           <TextField

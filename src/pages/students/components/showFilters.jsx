@@ -1,0 +1,148 @@
+'use client';
+
+import {
+  Box,
+  Typography,
+  Grid,
+  TextField,
+  MenuItem,
+  IconButton,
+  InputAdornment,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  useTheme
+} from '@mui/material';
+import { SearchNormal1, FilterSearch, TickCircle, CloseCircle } from 'iconsax-react';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
+const classes = ['All', 'Form 1', 'Form 2', 'Form 3', 'Form 4'];
+const statuses = ['All', 'Assigned', 'Unassigned'];
+
+export function StudentFilters({ filters, onFiltersChange, withWristbands, withoutWristbands }) {
+  const theme = useTheme();
+
+  const handleFilterChange = (field, value) => {
+    onFiltersChange({ [field]: value });
+  };
+
+  const toggleFiltersVisibility = () => {
+    onFiltersChange({ showFilters: !filters.showFilters });
+  };
+
+  return (
+    <Card elevation={0} sx={{ mb: 3, border: `1px solid ${theme.palette.divider}` }}>
+      <CardContent>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="h6" component="h2">
+              Filters
+            </Typography>
+            <IconButton size="small" onClick={toggleFiltersVisibility} sx={{ ml: 1 }}>
+              <FilterSearch size={18} />
+            </IconButton>
+          </Box>
+          <Box>
+            <Chip
+              icon={<TickCircle size={16} variant="Bold" />}
+              label={`With Wristbands: ${withWristbands}`}
+              color="primary"
+              variant="outlined"
+              sx={{ mr: 1 }}
+            />
+            <Chip
+              icon={<CloseCircle size={16} variant="Bold" />}
+              label={`Without Wristbands: ${withoutWristbands}`}
+              color="error"
+              variant="outlined"
+            />
+          </Box>
+        </Box>
+
+        {filters.showFilters && (
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={3}>
+              <Typography variant="body2" fontWeight="medium" gutterBottom>
+                Date Range
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  <DatePicker
+                    label="Start Date"
+                    value={filters.startDate}
+                    onChange={(date) => handleFilterChange('startDate', date)}
+                    slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                  />
+                  <DatePicker
+                    label="End Date"
+                    value={filters.endDate}
+                    onChange={(date) => handleFilterChange('endDate', date)}
+                    slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                  />
+                </Stack>
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Typography variant="body2" fontWeight="medium" gutterBottom>
+                Class
+              </Typography>
+              <TextField
+                select
+                fullWidth
+                size="small"
+                value={filters.selectedClass}
+                onChange={(e) => handleFilterChange('selectedClass', e.target.value)}
+              >
+                {classes.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Typography variant="body2" fontWeight="medium" gutterBottom>
+                Status
+              </Typography>
+              <TextField
+                select
+                fullWidth
+                size="small"
+                value={filters.selectedStatus}
+                onChange={(e) => handleFilterChange('selectedStatus', e.target.value)}
+              >
+                {statuses.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Typography variant="body2" fontWeight="medium" gutterBottom>
+                Global Search
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search Keyword"
+                value={filters.searchTerm}
+                onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchNormal1 size={18} />
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </Grid>
+          </Grid>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

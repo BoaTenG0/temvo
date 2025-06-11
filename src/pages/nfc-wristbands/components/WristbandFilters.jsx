@@ -8,7 +8,17 @@ import { Filter, SearchFavorite } from 'iconsax-react';
 import { predefinedRanges } from '../util';
 import { statusOptions } from '../constants/wristbandConstants';
 
-const WristbandFilters = ({ state, schools, onToggleFilters, onSearchChange, onDateRangeChange, onSchoolChange, onStatusChange }) => {
+const WristbandFilters = ({
+  state,
+  schools,
+  onToggleFilters,
+  onSearchChange,
+  onDateRangeChange,
+  onSchoolChange,
+  onStatusChange,
+  userInfo
+}) => {
+  console.log('🚀 ~ userInfo:', userInfo);
   return (
     <Card sx={{ mb: 4, borderRadius: 2 }}>
       <CardContent sx={{ p: 0 }}>
@@ -41,23 +51,26 @@ const WristbandFilters = ({ state, schools, onToggleFilters, onSearchChange, onD
                   </Stack>
                 </LocalizationProvider>
               </Grid>
-              <Grid item xs={12} md={3}>
-                <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                  School Name
-                </Typography>
-                <Autocomplete
-                  size="small"
-                  fullWidth
-                  value={state.school ? schools.find((s) => s.id === state.school) : { id: '', name: 'All Schools' }}
-                  onChange={(event, newValue) => {
-                    onSchoolChange(newValue?.id || ''); // Pass empty string for "All Schools"
-                  }}
-                  options={[{ id: '', name: 'All Schools' }, ...(schools || [])]}
-                  getOptionLabel={(option) => option?.name || ''}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  renderInput={(params) => <TextField {...params} label="Select School" variant="outlined" />}
-                />
-              </Grid>
+              {/* if (userType === 'SUPER_ADMIN') */}
+              {userInfo?.userType === 'SUPER_ADMIN' && (
+                <Grid item xs={12} md={3}>
+                  <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                    School Name
+                  </Typography>
+                  <Autocomplete
+                    size="small"
+                    fullWidth
+                    value={state.school ? schools.find((s) => s.id === state.school) : { id: '', name: 'All Schools' }}
+                    onChange={(event, newValue) => {
+                      onSchoolChange(newValue?.id || ''); // Pass empty string for "All Schools"
+                    }}
+                    options={[{ id: '', name: 'All Schools' }, ...(schools || [])]}
+                    getOptionLabel={(option) => option?.name || ''}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    renderInput={(params) => <TextField {...params} label="Select School" variant="outlined" />}
+                  />
+                </Grid>
+              )}
               {/* <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                   School Name

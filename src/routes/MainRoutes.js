@@ -17,6 +17,8 @@ const WidgetChart = Loadable(lazy(() => import('pages/widget/chart')));
 const NFC = Loadable(lazy(() => import('pages/nfc-wristbands')));
 const POS = Loadable(lazy(() => import('pages/pos-management')));
 const SCH = Loadable(lazy(() => import('pages/schools')));
+const Students = Loadable(lazy(() => import('pages/students')));
+const Vendors = Loadable(lazy(() => import('pages/vendors')));
 const SCHVIEW = Loadable(lazy(() => import('pages/schools/view-school')));
 const Transactions = Loadable(lazy(() => import('pages/transactions')));
 const Reports = Loadable(lazy(() => import('pages/reports')));
@@ -510,6 +512,14 @@ const MainRoutes = {
         {
           path: 'schools',
           element: <SCH />
+        },
+        {
+          path: 'students',
+          element: <Students />
+        },
+        {
+          path: 'vendors',
+          element: <Vendors />
         },
         {
           path: 'schools/ViewSchool/:id',

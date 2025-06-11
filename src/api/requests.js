@@ -340,3 +340,89 @@ export const useGetBulkUploadJobStatus = (jobId) => {
     queryFn: () => userService.getBulkUploadJobStatus(jobId)
   });
 };
+
+// students
+export const useGetStudents = (filters) => {
+  return useQuery({
+    queryKey: ['students', filters],
+    queryFn: () => userService.getStudents(filters)
+  });
+};
+export const useGetStudentById = (studentId) => {
+  return useQuery({
+    queryKey: ['student', studentId],
+    queryFn: () => userService.getStudentById(studentId)
+  });
+};
+export const useCreateStudent = () => {
+  return useMutation({ mutationFn: (data) => userService.createStudent(data) });
+};
+export const useBulkUploadStudents = () => {
+  return useMutation({ mutationFn: (data) => userService.bulkUploadStudents(data) });
+};
+export const useEditStudent = (studentId) => {
+  return useMutation({ mutationFn: (data) => userService.updateStudent(data, studentId) });
+};
+export const useDeleteStudent = (studentId) => {
+  return useMutation({ mutationFn: () => userService.deleteStudent(studentId) });
+};
+
+// bulk delete students
+export const useBulkDeleteStudents = () => {
+  return useMutation({ mutationFn: (data) => userService.bulkDeleteStudents(data) });
+};
+export const useGetStudentBySchoolId = (filters, schoolId) => {
+  return useQuery({
+    queryKey: ['students-by-school', filters, schoolId],
+    queryFn: () => userService.getStudentsBySchool(filters, schoolId)
+  });
+};
+
+export const useUpdateStudentStatus = (studentId) => {
+  return useMutation({ mutationFn: (data) => userService.updateStudentStatus(data, studentId) });
+};
+
+export const useReassignStudent = (studentId) => {
+  return useMutation({ mutationFn: (data) => userService.reassignStudentToSchool(data, studentId) });
+};
+
+// Function to handle creating a new vendor
+export const useCreateVendor = () => {
+  return useMutation({ mutationFn: (data) => userService.createVendors(data) });
+};
+
+// Function to handle bulk uploading vendors
+export const useBulkUploadVendors = () => {
+  return useMutation({ mutationFn: (data) => userService.bulkUploadVendors(data) });
+};
+
+export const useGetVendorById = (vendorId) => {
+  return useQuery({
+    queryKey: ['vendor', vendorId],
+    queryFn: () => userService.getVendorById(vendorId)
+  });
+};
+export const useEditVendor = (vendorId) => {
+  return useMutation({ mutationFn: (data) => userService.editVendor(data, vendorId) });
+};
+export const useDeleteVendor = (vendorId) => {
+  return useMutation({ mutationFn: () => userService.deleteVendor(vendorId) });
+};
+
+export const useAssignPOStoVendor = (vendorId) => {
+  return useMutation({ mutationFn: (data) => userService.assignPOStoVendor(data, vendorId) });
+};
+
+export const useGetPOSDeviceByVendorId = (vendorId) => {
+  return useQuery({
+    queryKey: ['pos-devices', vendorId],
+    queryFn: () => userService.getPOSDeviceByVendorId(vendorId)
+  });
+};
+
+export const useGetVendors = (filters) => {
+  return useQuery({
+    queryKey: ['vendors', filters],
+    queryFn: () => userService.getVenders(filters)
+  });
+};

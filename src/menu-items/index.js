@@ -1,7 +1,9 @@
 // project-imports
 import applications from './applications';
 import widget from './widget';
+import admin from './admin';
 import formsTables from './forms-tables';
+import adminTables from './admin-tables';
 // import chartsMap from './charts-map';
 import support from './support';
 // import pages from './pages';
@@ -14,7 +16,7 @@ const getMenuItems = (userType) => {
     };
   }
   return {
-    items: [widget, support]
+    items: [admin, applications, adminTables, support]
   };
 };
 const menuItems = {

@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Paper,
   Typography,
@@ -19,17 +19,23 @@ import {
   Chip,
   Grid,
   Card,
-  CardContent
+  CardContent,
+  IconButton
 } from '@mui/material';
-import { Shop, SearchNormal1, Call, Sms, Calendar, Location, MoneyRecive } from 'iconsax-react';
+import { Shop, SearchNormal1, Call, Sms, Calendar, Location, MoneyRecive, Edit2 } from 'iconsax-react';
 import { useTheme } from '@mui/material/styles';
-import { useGetAllVendorsBySchool } from 'api/requests';
+import { useGetAllVendorsBySchool, useEditVendor } from 'api/requests';
+import { VendorActionModal } from 'pages/vendors/component/modals';
+import { openSnackbar } from 'store/reducers/snackbar';
+import { dispatch } from 'store';
 
 const VendorsSection = ({ schoolId }) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
   const [searchTerm, setSearchTerm] = useState('');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
 
   const { data: vendorsData, isLoading, error } = useGetAllVendorsBySchool({ page, size, search: searchTerm }, schoolId);
 
@@ -56,6 +62,50 @@ const VendorsSection = ({ schoolId }) => {
       .map((n) => n[0])
       .join('')
       .toUpperCase();
+  };
+
+  const handleEditVendor = (vendor) => {
+    setSelectedVendor(vendor);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setSelectedVendor(null);
+  };
+
+  const editVendorMutation = useEditVendor(selectedVendor?.id);
+
+  const handleUpdateVendor = async (updatedData) => {
+    editVendorMutation.mutate(updatedData, {
+      onSuccess: () => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Vendor updated successfully',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: true
+          })
+        );
+        handleCloseEditModal();
+      },
+      onError: (error) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: error.message || 'Failed to update vendor',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+      }
+    });
   };
 
   if (isLoading) {
@@ -178,6 +228,7 @@ const VendorsSection = ({ schoolId }) => {
                 <TableCell>Status</TableCell>
                 <TableCell>Total Sales</TableCell>
                 <TableCell>Date Registered</TableCell>
+                <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -238,6 +289,11 @@ const VendorsSection = ({ schoolId }) => {
                       <Typography variant="body2">{vendor.createdAt ? formatDate(vendor.createdAt) : 'N/A'}</Typography>
                     </Box>
                   </TableCell>
+                  <TableCell align="center">
+                    <IconButton onClick={() => handleEditVendor(vendor)} title="Edit Vendor" size="small" color="primary">
+                      <Edit2 />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -257,8 +313,21 @@ const VendorsSection = ({ schoolId }) => {
           rowsPerPageOptions={[10, 20, 50, 100]}
         />
       </Paper>
+
+      {/* Edit Vendor Modal */}
+      <VendorActionModal
+        open={editModalOpen}
+        type="edit"
+        onClose={handleCloseEditModal}
+        onAction={handleUpdateVendor}
+        editData={selectedVendor}
+      />
     </Box>
   );
+};
+
+VendorsSection.propTypes = {
+  schoolId: PropTypes.string
 };
 
 export default VendorsSection;

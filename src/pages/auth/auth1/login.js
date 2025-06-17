@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Link } from 'react-router-dom';
 
 // material-ui
@@ -27,7 +28,7 @@ const Login = () => {
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
           <Logo />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <AuthSocButton>
@@ -50,7 +51,7 @@ const Login = () => {
           <AuthDivider>
             <Typography variant="body1">OR</Typography>
           </AuthDivider>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
             <Typography variant="h3">Login</Typography>

@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { Story, Fatrows, PresentionChart, PasswordCheck, CpuCharge, Home, People, UserMinus } from 'iconsax-react';
+import { Story, Fatrows, PresentionChart, PasswordCheck, CpuCharge, Home, People, UserMinus, UserAdd } from 'iconsax-react';
 
 // icons
 const icons = {
@@ -14,7 +14,8 @@ const icons = {
   cpu: CpuCharge,
   home: Home,
   people: People,
-  user: UserMinus
+  user: UserMinus,
+  user2: UserAdd
 };
 
 // ==============================|| MENU ITEMS - WIDGETS ||============================== //
@@ -60,6 +61,14 @@ const widget = {
       type: 'item',
       url: '/vendors',
       icon: icons.user,
+      breadcrumbs: false
+    },
+    {
+      id: 'parents',
+      title: <FormattedMessage id="Parents" />,
+      type: 'item',
+      url: '/parents',
+      icon: icons.user2,
       breadcrumbs: false
     }
   ]

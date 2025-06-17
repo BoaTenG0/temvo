@@ -21,20 +21,29 @@ import {
   TextField,
   MenuItem,
   Chip,
-  useTheme
+  useTheme,
+  Tooltip
 } from '@mui/material';
-import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile } from 'iconsax-react';
-import { ThemeProvider } from '../../pages/students/components/theme-provider';
+import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem } from 'iconsax-react';
+import { ThemeProvider } from '../students/components/theme-provider';
 // import { VendorActionModal } from '@/components/modals/VendorActionModal';
-import { VendorFilters } from './component/vendorFilters';
+import { ParentFilters } from './component/parentFilters';
 import { VendorActionModal } from './component/modals/vendorActionModal';
-import { useAssignPOStoVendor, useBulkUploadVendors, useCreateVendor, useDeleteVendor, useEditVendor, useGetVendors } from 'api/requests';
+import {
+  useAddParent,
+  useEditVendor,
+  useDeleteParent,
+  useAssignWards,
+  useGetParents,
+  useGetStudentBySchoolId,
+  useGetParentBySchoolIdd
+} from 'api/requests';
 import { dispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import { POSName } from 'pages/nfc-wristbands/components/getPOSName';
-import dayjs from "dayjs";
-import { convertDateJS } from "utils/hooks";
+import dayjs from 'dayjs';
+import { convertDateJS } from 'utils/hooks';
 // import { useSelector } from 'store';
 
 const formatDate = (dateString) => {
@@ -45,6 +54,7 @@ const formatDate = (dateString) => {
     return 'N/A';
   }
 };
+
 // Mock data
 const vendors = [
   {
@@ -121,6 +131,7 @@ export default function VendorManagement() {
       selectedStatus: 'All',
       selectedBusinessType: 'All',
       dateRange: [initialStartDate.toDate(), initialEndDate.toDate()],
+
       searchTerm: '',
       showFilters: true
     },
@@ -138,23 +149,26 @@ export default function VendorManagement() {
     // Table search state
     tableSearchTerm: ''
   });
-  const createVendorMutation = useCreateVendor();
+  const createParent = useAddParent();
   const editVendorMutation = useEditVendor(state.modal.editData?.id);
-  const deleteVendorMutation = useDeleteVendor(state.modal.editData?.id);
-  const assignVendor = useAssignPOStoVendor(userInfo?.id);
-  const bulkUploadMutation = useBulkUploadVendors();
+  const deleteParentMutation = useDeleteParent(state.modal.editData?.id);
+  const assignWards = useAssignWards(userInfo?.id);
+  const { data } = useGetStudentBySchoolId({}, userInfo?.schoolId);
 
   const {
     data: vendorData,
     loading: isVendorLoading,
     refetch: refetchVendors
-  } = useGetVendors({
-    page: state.page,
-    limit: state.rowsPerPage,
-    search: state.filters.searchTerm || state.tableSearchTerm || '',
-    createdAtFrom: convertDateJS(state.filters.dateRange[0]),
-    createdAtTo: convertDateJS(state.filters.dateRange[1])
-  });
+  } = useGetParentBySchoolIdd(
+    {
+      page: state.page,
+      limit: state.rowsPerPage,
+      search: state.filters.searchTerm || state.tableSearchTerm || '',
+      createdAtFrom: convertDateJS(state.filters.dateRange[0]),
+      createdAtTo: convertDateJS(state.filters.dateRange[1])
+    },
+    userInfo?.schoolId
+  );
   // State update helpers
   const updateState = (updates) => {
     setState((prev) => ({ ...prev, ...updates }));
@@ -192,20 +206,21 @@ export default function VendorManagement() {
     });
   };
 
-  const handleAddVendor = async (data) => {
-    const vendorData = {
-      name: data.name.trim(),
-      phone: data.contact.trim(),
-      email: data.email.trim(),
-      address: data.address.trim()
-    };
+  const handleAddParent = async (data) => {
+    console.log('🚀 ~ handleAddVendor ~ data:', data);
+    // const vendorData = {
+    //   name: data.name.trim(),
+    //   phone: data.contact.trim(),
+    //   email: data.email.trim(),
+    //   address: data.address.trim()
+    // };
 
-    createVendorMutation.mutate(vendorData, {
+    createParent.mutate(data, {
       onSuccess: () => {
         dispatch(
           openSnackbar({
             open: true,
-            message: 'Vendor registered successfully',
+            message: 'Parent registered successfully',
             variant: 'alert',
             alert: {
               color: 'success'
@@ -219,7 +234,7 @@ export default function VendorManagement() {
         dispatch(
           openSnackbar({
             open: true,
-            message: err?.response?.data?.message || err?.message || 'Failed to register vendor. Please try again.',
+            message: err?.response?.data?.message || err?.message || 'Failed to register Parent. Please try again.',
             variant: 'alert',
             alert: {
               color: 'error'
@@ -230,14 +245,16 @@ export default function VendorManagement() {
       }
     });
   };
-  const handleAssignVendor = async (data) => {
-    const vendorData = [data];
-    assignVendor.mutate(vendorData, {
+  const handleAssignWards = async (data) => {
+    const assignData = {
+      studentIds: [data]
+    };
+    assignWards.mutate(assignData, {
       onSuccess: () => {
         dispatch(
           openSnackbar({
             open: true,
-            message: 'Vendor assigned successfully',
+            message: 'Wards assigned successfully',
             variant: 'alert',
             alert: {
               color: 'success'
@@ -251,7 +268,7 @@ export default function VendorManagement() {
         dispatch(
           openSnackbar({
             open: true,
-            message: err?.response?.data?.message || err?.message || 'Failed to assign vendor. Please try again.',
+            message: err?.response?.data?.message || err?.message || 'Failed to assign wards. Please try again.',
             variant: 'alert',
             alert: {
               color: 'error'
@@ -305,7 +322,7 @@ export default function VendorManagement() {
   };
 
   const handleDeleteVendor = async () => {
-    deleteVendorMutation.mutate(null, {
+    deleteParentMutation.mutate(null, {
       onSuccess: () => {
         dispatch(
           openSnackbar({
@@ -345,10 +362,10 @@ export default function VendorManagement() {
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Handle different modal actions
       switch (state.modal.type) {
         case 'assign':
-          handleAssignVendor(data);
+          handleAssignWards(data);
           break;
         case 'add':
-          handleAddVendor(data);
+          handleAddParent(data);
           break;
         case 'edit':
           handleEditVendor(data);
@@ -380,10 +397,6 @@ export default function VendorManagement() {
     });
   };
 
-  // Count vendors with and without POS
-  const withPOS = vendors.filter((vendor) => vendor.status === 'Assigned').length;
-  const withoutPOS = vendors.filter((vendor) => vendor.status === 'Unassigned').length;
-
   // Filter vendors based on selected filters
   //   const filteredVendors = vendors.filter((vendor) => {
   //     const matchesStatus = state.filters.selectedStatus === 'All' || vendor.status === state.filters.selectedStatus;
@@ -402,20 +415,20 @@ export default function VendorManagement() {
   //     return matchesStatus && matchesBusinessType && matchesGlobalSearch && matchesTableSearch;
   //   });
 
-  const vendorFilters = vendorData?.data?.content || [];
+  const vendorFilters = vendorData?.content || [];
 
   return (
     <ThemeProvider>
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box mb={4}>
           <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-            Manage Vendors
+            Manage Parents
           </Typography>
           <Typography variant="subtitle1" color="text.secondary">
-            Perform actions for vendors in the TEMVO ecosystem
+            Perform actions for parents in the TEMVO ecosystem
           </Typography>
         </Box>
-        <VendorFilters filters={state.filters} onFiltersChange={updateFilters} withPOS={withPOS} withoutPOS={withoutPOS} />
+        <ParentFilters filters={state.filters} onFiltersChange={updateFilters} />
         <Card elevation={0} sx={{ border: `1px solid ${theme.palette.divider}` }}>
           <Box
             display="flex"
@@ -426,7 +439,7 @@ export default function VendorManagement() {
             borderBottom={`1px solid ${theme.palette.divider}`}
           >
             <Typography variant="h6" component="h2">
-              Vendors List
+              Parents List
             </Typography>
             <Box>
               <Button
@@ -435,13 +448,10 @@ export default function VendorManagement() {
                 sx={{ mr: 1 }}
                 onClick={() => handleOpenModal('assign')}
               >
-                Assign POS
+                Assign Wards
               </Button>
               <Button variant="outlined" startIcon={<Add size={18} />} sx={{ mr: 1 }} onClick={() => handleOpenModal('add')}>
-                Add Vendor
-              </Button>
-              <Button variant="contained" startIcon={<DocumentUpload size={18} />} onClick={() => handleOpenModal('bulk')}>
-                Add Bulk Vendors
+                Add Parent
               </Button>
             </Box>
           </Box>
@@ -479,16 +489,16 @@ export default function VendorManagement() {
             <Table sx={{ minWidth: 650 }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: theme.palette.action.hover }}>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  {/* <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     #
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>NAME</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>EMAIL</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ADDRESS</TableCell>
-                  {/* <TableCell sx={{ fontWeight: 'bold' }}>STATUS</TableCell> */}
-                  <TableCell sx={{ fontWeight: 'bold' }}>ASSIGNED POS</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ASSIGNED SCHOOL</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>CREATED AT</TableCell>
+                  </TableCell> */}
+                  <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Contact</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Address</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Occupation</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Assigned School</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     ACTIONS
                   </TableCell>
@@ -497,37 +507,38 @@ export default function VendorManagement() {
               <TableBody>
                 {vendorFilters?.slice(state.page * state.rowsPerPage, state.page * state.rowsPerPage + state.rowsPerPage).map((vendor) => (
                   <TableRow key={vendor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell align="center">{vendor.id}</TableCell>
+                    {/* <TableCell align="center">{vendor.id}</TableCell> */}
                     <TableCell>{vendor.name}</TableCell>
                     <TableCell>{vendor.email}</TableCell>
+                    <TableCell>{vendor.phone}</TableCell>
                     <TableCell>{vendor.address}</TableCell>
+                    <TableCell>{vendor.occupation}</TableCell>
                     {/* <TableCell>
-                      <Chip
-                        label={vendor.status}
-                        size="small"
-                        color={vendor.status === 'Assigned' ? 'success' : 'error'}
-                        variant="outlined"
-                      />
-                    </TableCell> */}
-                    <TableCell>
                       <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <SchoolName schoolId={vendor.schoolId} />
                     </TableCell>
                     <TableCell>{formatDate(vendor.createdAt)}</TableCell>
                     {/* <TableCell>{vendor.assignmentDate}</TableCell> */}{' '}
                     <TableCell align="center">
-                      <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
+                      {/* <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
                         <Edit2 size={18} />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
-                      >
-                        <Trash size={18} />
-                      </IconButton>
+                      </IconButton> */}
+                      <Tooltip title="Assign Wards">
+                        <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
+                          <Additem size={18} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete Parent">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
+                        >
+                          <Trash size={18} />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -553,7 +564,7 @@ export default function VendorManagement() {
           onClose={handleCloseModal}
           onAction={handleModalAction}
           vendors={vendors}
-          onVendorLoading={createVendorMutation.isPending}
+          onVendorLoading={createParent.isPending}
           editData={state.modal.editData}
         />
       </Container>

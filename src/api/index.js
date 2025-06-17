@@ -145,14 +145,15 @@ const Student = {
   default: '/students'
 };
 // Get Parents
-const getParents = async (filters, parentId) => {
-  const url = `${Parents.Parents}/${parentId}`;
+const getParents = async (filters) => {
+  const url = `${Parents.Parents}`;
   const params = new URLSearchParams();
 
   if (filters) {
-    const { page, size } = filters;
+    const { page, size, search } = filters;
     if (page !== undefined) params.append('page', String(page));
     if (size !== undefined) params.append('size', String(size));
+    if (search !== undefined) params.append('search', search);
   }
 
   return apiClient.get({ url: `${url}?${params.toString()}` });
@@ -189,11 +190,13 @@ const getParentBySchoolId = async (filters, schoolId) => {
   const params = new URLSearchParams();
 
   if (filters) {
-    const { page, size, search, sort } = filters;
+    const { page, size, search, sort, createdAtFrom, createdAtTo } = filters;
 
     if (page !== undefined) params.append('page', String(page));
     if (size !== undefined) params.append('size', String(size));
     if (search !== undefined) params.append('search', search);
+    if (createdAtFrom !== undefined) params.append('createdAtFrom', createdAtFrom);
+    if (createdAtTo !== undefined) params.append('createdAtTo', createdAtTo);
 
     // if (Array.isArray(sort)) {
     //   sort.forEach((sortField) => {

@@ -1,16 +1,18 @@
-
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { Box, Typography, TextField, Grid, Button, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const classes = ['Form 1', 'Form 2', 'Form 3', 'Form 4'];
 
-export function AddStudentContent({ onAction, loading }) {
+export function AddStudentContent({ onAction, loading, onClose, onAdd }) {
   const [formData, setFormData] = useState({
     name: '',
-    studentId: '',
-    class: '',
-    email: '',
-    phone: ''
+    studentCode: '',
+    className: ''
+    // wristbandId: '',
+    // parentId: ''
+    // email: '',
+    // phone: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -35,14 +37,11 @@ export function AddStudentContent({ onAction, loading }) {
     if (!formData.name.trim()) {
       newErrors.name = 'Student name is required';
     }
-    if (!formData.studentId.trim()) {
-      newErrors.studentId = 'Student ID is required';
+    if (!formData.studentCode.trim()) {
+      newErrors.studentCode = 'Student ID is required';
     }
-    if (!formData.class) {
-      newErrors.class = 'Class is required';
-    }
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+    if (!formData.className) {
+      newErrors.className = 'class is required';
     }
 
     setErrors(newErrors);
@@ -55,7 +54,7 @@ export function AddStudentContent({ onAction, loading }) {
     }
   };
 
-  const isFormValid = formData.name && formData.studentId && formData.class;
+  const isFormValid = formData.name && formData.studentCode && formData.className;
 
   return (
     <Box>
@@ -81,35 +80,45 @@ export function AddStudentContent({ onAction, loading }) {
             fullWidth
             label="Student ID"
             placeholder="Enter Student ID"
-            value={formData.studentId}
-            onChange={handleChange('studentId')}
-            error={!!errors.studentId}
-            helperText={errors.studentId}
+            value={formData.studentCode}
+            onChange={handleChange('studentCode')}
+            error={!!errors.studentCode}
+            helperText={errors.studentCode}
             required
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth required error={!!errors.class}>
-            <InputLabel>Class</InputLabel>
+        <Grid item xs={12} sm={12}>
+          {/* <FormControl fullWidth required error={!!errors.className}>
+            <InputLabel>className</InputLabel>
             <Select
-              value={formData.class}
-              label="Class"
+              value={formData.className}
+              label="className"
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  class: e.target.value
+                  className: e.target.value
                 }))
               }
             >
-              {classes.map((className) => (
-                <MenuItem key={className} value={className}>
-                  {className}
+              {classNamees.map((classNameName) => (
+                <MenuItem key={classNameName} value={classNameName}>
+                  {classNameName}
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
+          <TextField
+            fullWidth
+            label="Class"
+            placeholder="Enter class name"
+            value={formData.className}
+            onChange={handleChange('className')}
+            error={!!errors.className}
+            helperText={errors.className}
+            required
+          />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             label="Email (Optional)"
@@ -131,15 +140,15 @@ export function AddStudentContent({ onAction, loading }) {
             error={!!errors.phone}
             helperText={errors.phone}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <DialogActions sx={{ px: 0, pt: 3 }}>
-        <Button variant="outlined" disabled={loading}>
+        <Button variant="outlined" disabled={onAdd} onClick={onClose} sx={{ minWidth: 120 }}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={!isFormValid || loading} sx={{ minWidth: 120 }}>
-          {loading ? 'Registering...' : 'Register Student'}
+        <Button variant="contained" onClick={handleSubmit} disabled={!isFormValid || onAdd} sx={{ minWidth: 120 }}>
+          {onAdd ? 'Registering...' : 'Register Student'}
         </Button>
       </DialogActions>
     </Box>

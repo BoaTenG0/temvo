@@ -18,7 +18,6 @@ const WristbandFilters = ({
   onStatusChange,
   userInfo
 }) => {
-  console.log('🚀 ~ userInfo:', userInfo);
   return (
     <Card sx={{ mb: 4, borderRadius: 2 }}>
       <CardContent sx={{ p: 0 }}>

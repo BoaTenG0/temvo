@@ -19,6 +19,7 @@ const POS = Loadable(lazy(() => import('pages/pos-management')));
 const SCH = Loadable(lazy(() => import('pages/schools')));
 const Students = Loadable(lazy(() => import('pages/students')));
 const Vendors = Loadable(lazy(() => import('pages/vendors')));
+const Parents = Loadable(lazy(() => import('pages/parents')));
 const SCHVIEW = Loadable(lazy(() => import('pages/schools/view-school')));
 const Transactions = Loadable(lazy(() => import('pages/transactions')));
 const Reports = Loadable(lazy(() => import('pages/reports')));
@@ -520,6 +521,10 @@ const MainRoutes = {
         {
           path: 'vendors',
           element: <Vendors />
+        },
+        {
+          path: 'parents',
+          element: <Parents />
         },
         {
           path: 'schools/ViewSchool/:id',

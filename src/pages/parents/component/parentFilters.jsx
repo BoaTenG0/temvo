@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Box,
   Typography,
@@ -13,16 +14,16 @@ import {
   useTheme
 } from '@mui/material';
 import { SearchNormal1, FilterSearch, TickCircle, CloseCircle } from 'iconsax-react';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { predefinedRanges } from 'pages/nfc-wristbands/util';
 import { DateRangePicker } from 'rsuite';
+import { predefinedRanges } from 'pages/nfc-wristbands/util';
 
-const classes = ['All', 'Form 1', 'Form 2', 'Form 3', 'Form 4'];
 const statuses = ['All', 'Assigned', 'Unassigned'];
+const businessTypes = ['All', 'Food & Beverage', 'Retail', 'Services', 'Technology', 'Healthcare'];
 
-export function StudentFilters({ filters, onFiltersChange, withWristbands, withoutWristbands }) {
+export function ParentFilters({ filters, onFiltersChange }) {
   const theme = useTheme();
 
   const handleFilterChange = (field, value) => {
@@ -44,21 +45,6 @@ export function StudentFilters({ filters, onFiltersChange, withWristbands, witho
             <IconButton size="small" onClick={toggleFiltersVisibility} sx={{ ml: 1 }}>
               <FilterSearch size={18} />
             </IconButton>
-          </Box>
-          <Box>
-            <Chip
-              icon={<TickCircle size={16} variant="Bold" />}
-              label={`With Wristbands: ${withWristbands}`}
-              color="primary"
-              variant="outlined"
-              sx={{ mr: 1 }}
-            />
-            <Chip
-              icon={<CloseCircle size={16} variant="Bold" />}
-              label={`Without Wristbands: ${withoutWristbands}`}
-              color="error"
-              variant="outlined"
-            />
           </Box>
         </Box>
 
@@ -97,24 +83,6 @@ export function StudentFilters({ filters, onFiltersChange, withWristbands, witho
             </Grid>
             <Grid item xs={12} md={3}>
               <Typography variant="body2" fontWeight="medium" gutterBottom>
-                Class
-              </Typography>
-              <TextField
-                select
-                fullWidth
-                size="small"
-                value={filters.selectedClass}
-                onChange={(e) => handleFilterChange('selectedClass', e.target.value)}
-              >
-                {classes.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Typography variant="body2" fontWeight="medium" gutterBottom>
                 Status
               </Typography>
               <TextField
@@ -125,6 +93,24 @@ export function StudentFilters({ filters, onFiltersChange, withWristbands, witho
                 onChange={(e) => handleFilterChange('selectedStatus', e.target.value)}
               >
                 {statuses.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Typography variant="body2" fontWeight="medium" gutterBottom>
+                Business Type
+              </Typography>
+              <TextField
+                select
+                fullWidth
+                size="small"
+                value={filters.selectedBusinessType}
+                onChange={(e) => handleFilterChange('selectedBusinessType', e.target.value)}
+              >
+                {businessTypes.map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
                   </MenuItem>

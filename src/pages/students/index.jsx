@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import '../../assets/datestyle.css';
 
 import { useState } from 'react';
 import {
@@ -27,7 +28,11 @@ import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, TicketStar, Additem }
 import { ThemeProvider } from './components/theme-provider';
 import { StudentActionModal } from './components/modals/studentActionModal';
 import { StudentFilters } from './components/showFilters';
-import { useGetStudents } from 'api/requests';
+import { useBulkUploadStudents, useCreateStudent, useGetStudentBySchoolId } from 'api/requests';
+import { useSelector } from 'store';
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+import dayjs from 'dayjs';
 
 // Mock data
 const students = [
@@ -80,7 +85,9 @@ const students = [
 
 export default function StudentManagement() {
   const theme = useTheme();
-
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const initialStartDate = dayjs().subtract(7, 'days');
+  const initialEndDate = dayjs();
   // Consolidated state management
   const [state, setState] = useState({
     // Table pagination state
@@ -91,8 +98,7 @@ export default function StudentManagement() {
     filters: {
       selectedClass: 'All',
       selectedStatus: 'All',
-      startDate: null,
-      endDate: null,
+      dateRange: [initialStartDate.toDate(), initialEndDate.toDate()],
       searchTerm: '',
       showFilters: true
     },
@@ -109,8 +115,82 @@ export default function StudentManagement() {
     tableSearchTerm: ''
   });
 
-  const { data } = useGetStudents();
-  console.log('🚀 ~ StudentManagement ~ data:', data);
+  const { data, refetch: refetchStudents } = useGetStudentBySchoolId({}, userInfo?.schoolId);
+  const createStudent = useCreateStudent();
+  const bulkCreateStudent = useBulkUploadStudents();
+
+  const handleBulkUpload = async (file) => {
+    if (!file) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    bulkCreateStudent.mutate(formData, {
+      onSuccess: (response) => {
+        console.log('🚀 ~ handleBulkUpload ~ response:', response);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: response.message || 'Students registered successfully',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: true
+          })
+        );
+        handleCloseModal();
+        refetchStudents();
+      },
+      onError: (error) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Error uploading students: ' + error.message,
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+      }
+    });
+  };
+
+  const handleAddStudent = async (studentData) => {
+    createStudent.mutate(studentData, {
+      onSuccess: (response) => {
+        console.log('🚀 ~ handleAddStudent ~ response:', response);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: response.message || 'Student registered successfully',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: true
+          })
+        );
+        handleCloseModal();
+        refetchStudents();
+      },
+      onError: (error) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Error creating student: ' + error.message,
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+      }
+    });
+  };
 
   // State update helpers
   const updateState = (updates) => {
@@ -154,7 +234,7 @@ export default function StudentManagement() {
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      //   await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Handle different modal actions
       switch (state.modal.type) {
@@ -162,14 +242,13 @@ export default function StudentManagement() {
           console.log('Assigning wristbands to students:', data);
           break;
         case 'add':
-          console.log('Adding new student:', data);
+          handleAddStudent(data);
           break;
         case 'bulk':
+          handleBulkUpload(data.file);
           console.log('Bulk enrolling students:', data);
           break;
       }
-
-      handleCloseModal();
     } catch (error) {
       console.error('Error:', error);
       updateModal({ loading: false });
@@ -365,6 +444,7 @@ export default function StudentManagement() {
           onClose={handleCloseModal}
           onAction={handleModalAction}
           students={students}
+          onAdd={createStudent.isPending}
         />
       </Grid>
     </ThemeProvider>

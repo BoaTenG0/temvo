@@ -13,9 +13,10 @@ import {
   useTheme
 } from '@mui/material';
 import { SearchNormal1, FilterSearch, TickCircle, CloseCircle } from 'iconsax-react';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DateRangePicker } from 'rsuite';
+import { predefinedRanges } from 'pages/nfc-wristbands/util';
 
 const statuses = ['All', 'Assigned', 'Unassigned'];
 const businessTypes = ['All', 'Food & Beverage', 'Retail', 'Services', 'Technology', 'Healthcare'];
@@ -62,7 +63,7 @@ export function VendorFilters({ filters, onFiltersChange, withPOS, withoutPOS })
                 Date Range
               </Typography>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                {/* <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <DatePicker
                     label="Start Date"
                     value={filters.startDate}
@@ -74,6 +75,16 @@ export function VendorFilters({ filters, onFiltersChange, withPOS, withoutPOS })
                     value={filters.endDate}
                     onChange={(date) => handleFilterChange('endDate', date)}
                     slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                  />
+                </Stack> */}
+                <Stack spacing={2}>
+                  <DateRangePicker
+                    ranges={predefinedRanges}
+                    value={filters.dateRange}
+                    // onChange={onDateRangeChange}
+                    onChange={(date) => handleFilterChange('dateRange', date)}
+                    size="lg"
+                    placement="auto"
                   />
                 </Stack>
               </LocalizationProvider>

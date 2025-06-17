@@ -1,16 +1,19 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { userService } from './index';
 
-export const useGetParents = (filters, parentId) => {
+export const useGetParents = (filters) => {
   return useQuery({
-    queryKey: ['parents', filters, parentId],
-    queryFn: () => userService.getParents(filters, parentId)
+    queryKey: ['parents', filters],
+    queryFn: () => userService.getParents(filters)
   });
 };
 
 export const useAddParent = () => {
-  return useMutation((data) => userService.addParent(data));
+  return useMutation({ mutationFn: (data) => userService.addParent(data) });
 };
+
+
+
 
 export const useGetParentById = (parentId) => {
   return useQuery({
@@ -38,11 +41,11 @@ export const useGetStudentsBySchool = (filters, schoolId) => {
 };
 
 export const useDeleteParent = () => {
-  return useMutation((parentId) => userService.deleteParent(parentId));
+  return useMutation({ mutationFn: (parentId) => userService.deleteParent(parentId) });
 };
 
 export const useAssignWards = (parentId) => {
-  return useMutation((data) => userService.assignWards(data, parentId));
+  return useMutation({ mutationFn: (data) => userService.assignWards(data, parentId) });
 };
 
 export const useGetWards = (parentId) => {

@@ -20,7 +20,7 @@ const modalConfig = {
   }
 };
 
-export function StudentActionModal({ open, type, loading, selectedStudents, onClose, onAction, students }) {
+export function StudentActionModal({ open, type, loading, selectedStudents, onClose, onAction, students, onAdd }) {
   if (!type) return null;
 
   const config = modalConfig[type];
@@ -30,9 +30,9 @@ export function StudentActionModal({ open, type, loading, selectedStudents, onCl
       case 'assign':
         return <AssignWristbandsContent students={students} selectedStudents={selectedStudents} onAction={onAction} loading={loading} />;
       case 'add':
-        return <AddStudentContent onAction={onAction} loading={loading} />;
+        return <AddStudentContent onAction={onAction} loading={loading} onClose={onClose} onAdd={onAdd} />;
       case 'bulk':
-        return <BulkStudentsContent onAction={onAction} loading={loading} />;
+        return <BulkStudentsContent onAction={onAction} loading={loading} onClose={onClose} />;
       default:
         return null;
     }

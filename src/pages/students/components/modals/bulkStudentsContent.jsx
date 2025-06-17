@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { TickCircle, InfoCircle, DocumentUpload } from 'iconsax-react';
 
-export function BulkStudentsContent({ onAction, loading }) {
+export function BulkStudentsContent({ onAction, loading, onClose }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [parsedStudents, setParsedStudents] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -49,8 +49,8 @@ export function BulkStudentsContent({ onAction, loading }) {
         const values = line.split(',').map((v) => v.trim());
         const student = {
           name: '',
-          studentId: '',
-          class: '',
+          studentCode: '',
+          className: '',
           status: 'valid'
         };
 
@@ -62,27 +62,28 @@ export function BulkStudentsContent({ onAction, loading }) {
             case 'student name':
               student.name = value;
               break;
+            case 'studentcode':
+            case 'student code':
             case 'id':
-            case 'student id':
-            case 'studentid':
-              student.studentId = value;
+              student.studentCode = value;
               break;
+            case 'classname':
             case 'class':
-              student.class = value;
-              break;
-            case 'email':
-              student.email = value;
-              break;
-            case 'phone':
-              student.phone = value;
+              student.className = value;
               break;
           }
         });
 
         // Validate required fields
-        if (!student.name || !student.studentId || !student.class) {
+        if (!student.name) {
           student.status = 'error';
-          student.error = 'Missing required fields (name, student ID, or class)';
+          student.error = 'Missing required field name';
+        } else if (!student.studentCode) {
+          student.status = 'error';
+          student.error = 'Missing required field studentCode';
+        } else if (!student.className) {
+          student.status = 'error';
+          student.error = 'Missing required field className';
         }
 
         students.push(student);
@@ -106,9 +107,10 @@ export function BulkStudentsContent({ onAction, loading }) {
   };
 
   const downloadSampleFile = () => {
-    const sampleCSV = `name,student id,class,email,phone
-John Doe,220GA201001,Form 1,john.doe@example.com,+233123456789
-Jane Smith,220GA201002,Form 2,jane.smith@example.com,+233987654321`;
+    const sampleCSV = `name,studentCode,className
+John Doe,220GA201001,Form 1
+Jane Smith,220GA201002,Form 2
+Bob Johnson,220GA201003,Form 1`;
 
     const blob = new Blob([sampleCSV], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -201,8 +203,8 @@ Jane Smith,220GA201002,Form 2,jane.smith@example.com,+233987654321`;
                 <TableRow>
                   <TableCell>Status</TableCell>
                   <TableCell>Name</TableCell>
-                  <TableCell>Student ID</TableCell>
-                  <TableCell>Class</TableCell>
+                  <TableCell>studentCode</TableCell>
+                  <TableCell>className</TableCell>
                   <TableCell>Error</TableCell>
                 </TableRow>
               </TableHead>
@@ -218,8 +220,8 @@ Jane Smith,220GA201002,Form 2,jane.smith@example.com,+233987654321`;
                       />
                     </TableCell>
                     <TableCell>{student.name}</TableCell>
-                    <TableCell>{student.studentId}</TableCell>
-                    <TableCell>{student.class}</TableCell>
+                    <TableCell>{student.studentCode}</TableCell>
+                    <TableCell>{student.className}</TableCell>
                     <TableCell>
                       {student.error && (
                         <Typography variant="caption" color="error">
@@ -236,7 +238,7 @@ Jane Smith,220GA201002,Form 2,jane.smith@example.com,+233987654321`;
       )}
 
       <DialogActions sx={{ px: 0, pt: 2 }}>
-        <Button variant="outlined" disabled={loading}>
+        <Button variant="outlined" disabled={loading} onClick={onClose}>
           Cancel
         </Button>
         <Button

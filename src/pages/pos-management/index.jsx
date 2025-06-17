@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import '../../assets/datestyle.css';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Container } from '@mui/material';
 
@@ -13,13 +13,41 @@ import PosStats from './components/PosStats';
 import PosFilters from './components/PosFilters';
 import PosTable from './components/PosTable';
 import PosModals from './components/PosModals';
+import { useGetPOS, useGetGeneralSchool } from 'api/requests';
 
 export default function PosManagement() {
   // Use consolidated state management
-  const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm, assignedCount, unassignedCount } = usePosState();
+  const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = usePosState();
+
+  // Get wristbands with pagination and filters
+  const {
+    data: pos,
+    isLoading: posLoading,
+    refetch: refetchPos
+  } = useGetPOS({
+    page: state.page,
+    size: state.rowsPerPage,
+    search: state.searchTerm || state.tableSearchTerm || '',
+    sort: ['desc']
+  });
+
+  // Get all schools for filters
+  const { data: schoolsData } = useGetGeneralSchool();
+
+  const posData = pos?.data.content;
+
+  // Calculate stats from real data
+  const { assignedCount, unassignedCount } = useMemo(() => {
+    if (!posData) return { assignedCount: 0, unassignedCount: 0 };
+
+    const assigned = posData.filter((p) => p.status === 'active' && p.schoolId).length;
+    const unassigned = posData.filter((p) => p.status === 'active' && !p.schoolId).length;
+
+    return { assignedCount: assigned, unassignedCount: unassigned };
+  }, [posData]);
 
   // Use actions hook
-  const actions = usePosActions(state, updateState, toggleModal, resetForm);
+  const actions = usePosActions(state, updateState, toggleModal, resetForm, posData);
 
   // Form change handler
   const handleFormChange = (formName, updates) => {
@@ -50,7 +78,10 @@ export default function PosManagement() {
           {/* Table Component */}
           <PosTable
             state={state}
+            posData={pos?.data}
+            isLoading={posLoading}
             onTabChange={actions.handleTabChange}
+            onPageChange={actions.handleChangePage}
             onRowsPerPageChange={actions.handleChangeRowsPerPage}
             onTableSearchChange={actions.handleTableSearchChange}
             onOpenNewPos={actions.handleOpenNewPos}
@@ -60,7 +91,13 @@ export default function PosManagement() {
           />
 
           {/* Modals Component */}
-          <PosModals state={state} actions={actions} onFormChange={handleFormChange} />
+          <PosModals
+            state={state}
+            actions={actions}
+            onFormChange={handleFormChange}
+            refetchPos={refetchPos}
+            schools={schoolsData?.data.content}
+          />
         </Container>
       </Box>
     </ThemeProvider>

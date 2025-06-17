@@ -4,11 +4,7 @@ import BulkPosModal from './modals/BulkPosModal';
 import AssignPosModal from './modals/AssignPosModal';
 import DeletePosModal from './modals/DeletePosModal';
 
-const PosModals = ({
-  state,
-  actions,
-  onFormChange
-}) => {
+const PosModals = ({ state, actions, onFormChange, refetchPos }) => {
   const handleNewPosFormChange = (updates) => {
     onFormChange('newPos', updates);
   };
@@ -30,6 +26,8 @@ const PosModals = ({
         formData={state.forms.newPos}
         onFormChange={handleNewPosFormChange}
         onSubmit={actions.handleRegisterPos}
+        // onSubmit={actions.handleRegisterPos}
+        refetchPos={refetchPos}
       />
 
       {/* Register Bulk POS Modal */}
@@ -48,13 +46,16 @@ const PosModals = ({
         formData={state.forms.assignData}
         onFormChange={handleAssignFormChange}
         onSubmit={actions.handleAssignPosDevices}
+        state={state}
+        refetchPos={refetchPos}
       />
 
       {/* Delete POS Modal */}
       <DeletePosModal
         open={state.modals.delete}
         onClose={actions.handleCloseDelete}
-        onConfirm={actions.handleDeletePos}
+        // onConfirm={actions.handleDeletePos}
+        refetchPos={refetchPos}
       />
     </>
   );

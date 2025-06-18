@@ -31,7 +31,8 @@ const widget = {
       title: <FormattedMessage id="Dashboard" />,
       type: 'item',
       url: '/dashboard/default',
-      icon: icons.home
+      icon: icons.home,
+      breadcrumbs: false
     },
     // {
     //   id: 'nfc',
@@ -45,7 +46,8 @@ const widget = {
       title: <FormattedMessage id="POS Management" />,
       type: 'item',
       url: '/pos-management',
-      icon: icons.pos
+      icon: icons.pos,
+      breadcrumbs: false
     },
     {
       id: 'students',
@@ -53,7 +55,7 @@ const widget = {
       type: 'item',
       url: '/students',
       icon: icons.people,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'vendors',

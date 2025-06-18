@@ -29,7 +29,8 @@ const formsTables = {
       title: <FormattedMessage id="User Management" />,
       type: 'item',
       url: '/user-management',
-      icon: icons.user
+      icon: icons.user,
+      breadcrumbs: false
     }
 
     // {

@@ -28,28 +28,32 @@ const widget = {
       title: <FormattedMessage id="Dashboard" />,
       type: 'item',
       url: '/dashboard/default',
-      icon: icons.home
+      icon: icons.home,
+      breadcrumbs: false
     },
     {
       id: 'nfc',
       title: <FormattedMessage id="NFC Wristbands" />,
       type: 'item',
       url: '/nfc-wristbands',
-      icon: icons.cpu
+      icon: icons.cpu,
+      breadcrumbs: false
     },
     {
       id: 'pos',
       title: <FormattedMessage id="POS Management" />,
       type: 'item',
       url: '/pos-management',
-      icon: icons.pos
+      icon: icons.pos,
+      breadcrumbs: false
     },
     {
       id: 'schools',
       title: <FormattedMessage id="Schools" />,
       type: 'item',
       url: '/schools',
-      icon: icons.data
+      icon: icons.data,
+      breadcrumbs: false
     }
   ]
 };

@@ -48,16 +48,16 @@ export function VendorActionModal({ open, type, loading, selectedVendors, editDa
         );
       case 'delete':
         return (
-          <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Box sx={{ p: 2, textAlign: 'center', height: '10%' }}>
             <Typography variant="body1" sx={{ mb: 3 }}>
-              Are you sure you want to delete vendor &ldquo;{editData?.name}&rdquo;? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{editData?.name}&rdquo;? This action cannot be undone.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
               <Button variant="outlined" color="error" onClick={onClose} disabled={loading}>
                 Cancel
               </Button>
               <Button variant="contained" color="error" onClick={() => onAction()} disabled={loading}>
-                {loading ? 'Deleting...' : 'Delete Vendor'}
+                {loading ? 'Deleting...' : 'Delete'}
               </Button>
             </Box>
           </Box>

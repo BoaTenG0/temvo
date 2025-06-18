@@ -22,11 +22,11 @@ import {
   MenuItem,
   Chip,
   useTheme,
-  Tooltip
+  Tooltip,
+  CircularProgress
 } from '@mui/material';
 import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem } from 'iconsax-react';
 import { ThemeProvider } from '../students/components/theme-provider';
-// import { VendorActionModal } from '@/components/modals/VendorActionModal';
 import { ParentFilters } from './component/parentFilters';
 import { VendorActionModal } from './component/modals/vendorActionModal';
 import {
@@ -41,7 +41,6 @@ import {
 import { dispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
-import { POSName } from 'pages/nfc-wristbands/components/getPOSName';
 import dayjs from 'dayjs';
 import { convertDateJS } from 'utils/hooks';
 // import { useSelector } from 'store';
@@ -54,65 +53,6 @@ const formatDate = (dateString) => {
     return 'N/A';
   }
 };
-
-// Mock data
-const vendors = [
-  {
-    id: '001',
-    name: 'Kweku Sampson',
-    vendorId: '220GA201004',
-    contact: '0244651111',
-    status: 'Assigned',
-    posId: 'WB-3452199',
-    assignmentDate: '17/02/2025',
-    email: 'kweku@example.com',
-    businessType: 'Food & Beverage'
-  },
-  {
-    id: '002',
-    name: 'Kojo Sampson',
-    vendorId: '220GA201004',
-    contact: '0244651111',
-    status: 'Unassigned',
-    posId: 'N/A',
-    assignmentDate: 'N/A',
-    email: 'kojo@example.com',
-    businessType: 'Retail'
-  },
-  {
-    id: '003',
-    name: 'Ama Johnson',
-    vendorId: '220GA201005',
-    contact: '0244651112',
-    status: 'Assigned',
-    posId: 'WB-3452200',
-    assignmentDate: '18/02/2025',
-    email: 'ama@example.com',
-    businessType: 'Food & Beverage'
-  },
-  {
-    id: '004',
-    name: 'Kofi Mensah',
-    vendorId: '220GA201006',
-    contact: '0244651113',
-    status: 'Assigned',
-    posId: 'WB-3452201',
-    assignmentDate: '18/02/2025',
-    email: 'kofi@example.com',
-    businessType: 'Services'
-  },
-  {
-    id: '005',
-    name: 'Abena Owusu',
-    vendorId: '220GA201007',
-    contact: '0244651114',
-    status: 'Unassigned',
-    posId: '',
-    assignmentDate: '',
-    email: 'abena@example.com',
-    businessType: 'Retail'
-  }
-];
 
 export default function VendorManagement() {
   const theme = useTheme();
@@ -152,7 +92,7 @@ export default function VendorManagement() {
   const createParent = useAddParent();
   const editVendorMutation = useEditVendor(state.modal.editData?.id);
   const deleteParentMutation = useDeleteParent(state.modal.editData?.id);
-  const assignWards = useAssignWards(userInfo?.id);
+  const assignWards = useAssignWards(state.modal.selectedParentId);
   const { data } = useGetStudentBySchoolId({}, userInfo?.schoolId);
 
   const {
@@ -193,7 +133,8 @@ export default function VendorManagement() {
       isOpen: true,
       type,
       selectedVendors: type === 'assign' ? [] : state.modal.selectedVendors,
-      editData: type === 'edit' || type === 'delete' ? vendorData : null
+      editData: type === 'edit' || type === 'delete' ? vendorData : null,
+      selectedParentId: type === 'assign' ? vendorData?.id : null
     });
   };
 
@@ -228,7 +169,7 @@ export default function VendorManagement() {
             close: true
           })
         );
-        // refetchVendors();
+        refetchVendors();
       },
       onError: (err) => {
         dispatch(
@@ -247,9 +188,10 @@ export default function VendorManagement() {
   };
   const handleAssignWards = async (data) => {
     const assignData = {
-      studentIds: [data]
+      studentIds: data
+      //   parentId: state.modal.selectedParentId
     };
-    assignWards.mutate(assignData, {
+    assignWards.mutate(data, {
       onSuccess: () => {
         dispatch(
           openSnackbar({
@@ -262,7 +204,7 @@ export default function VendorManagement() {
             close: true
           })
         );
-        // refetchVendors();
+        refetchVendors();
       },
       onError: (err) => {
         dispatch(
@@ -359,7 +301,7 @@ export default function VendorManagement() {
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Handle different modal actions
+      //   await new Promise((resolve) => setTimeout(resolve, 1500)); // Handle different modal actions
       switch (state.modal.type) {
         case 'assign':
           handleAssignWards(data);
@@ -397,24 +339,6 @@ export default function VendorManagement() {
     });
   };
 
-  // Filter vendors based on selected filters
-  //   const filteredVendors = vendors.filter((vendor) => {
-  //     const matchesStatus = state.filters.selectedStatus === 'All' || vendor.status === state.filters.selectedStatus;
-  //     const matchesBusinessType = state.filters.selectedBusinessType === 'All' || vendor.businessType === state.filters.selectedBusinessType;
-  //     const matchesGlobalSearch =
-  //       vendor.name.toLowerCase().includes(state.filters.searchTerm.toLowerCase()) ||
-  //       vendor.vendorId.toLowerCase().includes(state.filters.searchTerm.toLowerCase()) ||
-  //       vendor.contact.toLowerCase().includes(state.filters.searchTerm.toLowerCase()) ||
-  //       vendor.posId.toLowerCase().includes(state.filters.searchTerm.toLowerCase());
-  //     const matchesTableSearch =
-  //       vendor.name.toLowerCase().includes(state.tableSearchTerm.toLowerCase()) ||
-  //       vendor.vendorId.toLowerCase().includes(state.tableSearchTerm.toLowerCase()) ||
-  //       vendor.contact.toLowerCase().includes(state.tableSearchTerm.toLowerCase()) ||
-  //       vendor.posId.toLowerCase().includes(state.tableSearchTerm.toLowerCase());
-
-  //     return matchesStatus && matchesBusinessType && matchesGlobalSearch && matchesTableSearch;
-  //   });
-
   const vendorFilters = vendorData?.content || [];
 
   return (
@@ -446,7 +370,8 @@ export default function VendorManagement() {
                 variant="outlined"
                 startIcon={<MonitorMobbile size={18} variant="Bold" />}
                 sx={{ mr: 1 }}
-                onClick={() => handleOpenModal('assign')}
+                disabled
+                title="Please use the assign button in the table row to assign wards to a specific parent"
               >
                 Assign Wards
               </Button>
@@ -505,43 +430,62 @@ export default function VendorManagement() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {vendorFilters?.slice(state.page * state.rowsPerPage, state.page * state.rowsPerPage + state.rowsPerPage).map((vendor) => (
-                  <TableRow key={vendor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    {/* <TableCell align="center">{vendor.id}</TableCell> */}
-                    <TableCell>{vendor.name}</TableCell>
-                    <TableCell>{vendor.email}</TableCell>
-                    <TableCell>{vendor.phone}</TableCell>
-                    <TableCell>{vendor.address}</TableCell>
-                    <TableCell>{vendor.occupation}</TableCell>
-                    {/* <TableCell>
-                      <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
-                    </TableCell> */}
-                    <TableCell>
-                      <SchoolName schoolId={vendor.schoolId} />
-                    </TableCell>
-                    <TableCell>{formatDate(vendor.createdAt)}</TableCell>
-                    {/* <TableCell>{vendor.assignmentDate}</TableCell> */}{' '}
-                    <TableCell align="center">
-                      {/* <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
-                        <Edit2 size={18} />
-                      </IconButton> */}
-                      <Tooltip title="Assign Wards">
-                        <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
-                          <Additem size={18} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Parent">
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
-                        >
-                          <Trash size={18} />
-                        </IconButton>
-                      </Tooltip>
+                {isVendorLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                      <CircularProgress size={24} />
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Loading parents...
+                      </Typography>
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : vendorFilters.length > 0 ? (
+                  vendorFilters?.slice(state.page * state.rowsPerPage, state.page * state.rowsPerPage + state.rowsPerPage).map((vendor) => (
+                    <TableRow key={vendor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      {/* <TableCell align="center">{vendor.id}</TableCell> */}
+                      <TableCell>{vendor.name}</TableCell>
+                      <TableCell>{vendor.email}</TableCell>
+                      <TableCell>{vendor.phone}</TableCell>
+                      <TableCell>{vendor.address}</TableCell>
+                      <TableCell>{vendor.occupation}</TableCell>
+                      {/* <TableCell>
+                      <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
+                    </TableCell> */}
+                      <TableCell>
+                        <SchoolName schoolId={vendor.schoolId} />
+                      </TableCell>
+                      <TableCell>{formatDate(vendor.createdAt)}</TableCell>
+                      {/* <TableCell>{vendor.assignmentDate}</TableCell> */}{' '}
+                      <TableCell align="center">
+                        {/* <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
+                        <Edit2 size={18} />
+                      </IconButton> */}
+                        <Tooltip title="Assign Wards">
+                          <IconButton size="small" color="primary" onClick={() => handleOpenModal('assign', vendor)}>
+                            <Additem size={18} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Parent">
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
+                          >
+                            <Trash size={18} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        No parents found matching current filters
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -549,7 +493,7 @@ export default function VendorManagement() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
-            count={vendorData?.data?.totalElements || 0}
+            count={vendorData?.totalElements || 0}
             rowsPerPage={state.rowsPerPage}
             page={state.page}
             onPageChange={handleChangePage}
@@ -563,7 +507,7 @@ export default function VendorManagement() {
           selectedVendors={state.modal.selectedVendors}
           onClose={handleCloseModal}
           onAction={handleModalAction}
-          vendors={vendors}
+          vendors={data?.content || []}
           onVendorLoading={createParent.isPending}
           editData={state.modal.editData}
         />

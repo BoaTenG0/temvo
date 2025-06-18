@@ -33,8 +33,8 @@ import { dispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import { POSName } from 'pages/nfc-wristbands/components/getPOSName';
-import dayjs from "dayjs";
-import { convertDateJS } from "utils/hooks";
+import dayjs from 'dayjs';
+import { convertDateJS } from 'utils/hooks';
 // import { useSelector } from 'store';
 
 const formatDate = (dateString) => {
@@ -213,7 +213,7 @@ export default function VendorManagement() {
             close: true
           })
         );
-        // refetchVendors();
+        refetchVendors();
       },
       onError: (err) => {
         dispatch(
@@ -337,6 +337,45 @@ export default function VendorManagement() {
     });
   };
 
+  const handleBulkUpload = async (file) => {
+    if (!file) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    bulkUploadMutation.mutate(formData, {
+      onSuccess: (response) => {
+        console.log('🚀 ~ handleBulkUpload ~ response:', response);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: response.message || 'Vendor registered successfully',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: true
+          })
+        );
+        handleCloseModal();
+        refetchVendors();
+      },
+      onError: (error) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Error uploading vendors: ' + error.message,
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+      }
+    });
+  };
+
   const handleModalAction = async (data) => {
     updateModal({ loading: true });
 
@@ -354,6 +393,7 @@ export default function VendorManagement() {
           handleEditVendor(data);
           break;
         case 'bulk':
+          handleBulkUpload(data.file);
           console.log('Bulk enrolling vendors:', data);
           break;
         case 'delete':

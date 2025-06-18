@@ -1,4 +1,3 @@
-
 import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import { CloseCircle } from 'iconsax-react';
 import { AssignWristbandsContent } from './assignWristbandsContent';
@@ -14,13 +13,31 @@ const modalConfig = {
     title: 'Register New Student',
     maxWidth: 'sm'
   },
+  edit: {
+    title: 'Edit Student',
+    maxWidth: 'sm'
+  },
   bulk: {
     title: 'Register Bulk Students',
     maxWidth: 'md'
   }
 };
 
-export function StudentActionModal({ open, type, loading, selectedStudents, onClose, onAction, students, onAdd }) {
+export function StudentActionModal({
+  open,
+  type,
+  loading,
+  //   selectedStudents,
+  onClose,
+  onAction,
+  students,
+  onAdd,
+  studentToEdit,
+  //   onStatusUpdate,
+  onEdit,
+  currentSchoolWristband,
+  OnAssign
+}) {
   if (!type) return null;
 
   const config = modalConfig[type];
@@ -28,9 +45,28 @@ export function StudentActionModal({ open, type, loading, selectedStudents, onCl
   const renderContent = () => {
     switch (type) {
       case 'assign':
-        return <AssignWristbandsContent students={students} selectedStudents={selectedStudents} onAction={onAction} loading={loading} />;
+        return (
+          <AssignWristbandsContent
+            students={students}
+            // selectedStudents={selectedStudents}
+            onAction={onAction}
+            loading={OnAssign}
+            currentSchoolWristband={currentSchoolWristband}
+            onClose={onClose}
+          />
+        );
       case 'add':
-        return <AddStudentContent onAction={onAction} loading={loading} onClose={onClose} onAdd={onAdd} />;
+      case 'edit':
+        return (
+          <AddStudentContent
+            onAction={onAction}
+            loading={loading}
+            onClose={onClose}
+            onAdd={onAdd}
+            onEdit={onEdit}
+            initialData={type === 'edit' ? studentToEdit : null}
+          />
+        );
       case 'bulk':
         return <BulkStudentsContent onAction={onAction} loading={loading} onClose={onClose} />;
       default:

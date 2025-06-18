@@ -4,16 +4,16 @@ import { Box, Typography, TextField, Grid, Button, DialogActions, FormControl, I
 
 const classes = ['Form 1', 'Form 2', 'Form 3', 'Form 4'];
 
-export function AddStudentContent({ onAction, loading, onClose, onAdd }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    studentCode: '',
-    className: ''
-    // wristbandId: '',
-    // parentId: ''
-    // email: '',
-    // phone: ''
-  });
+export function AddStudentContent({ onAction, loading, onClose, onAdd, initialData }) {
+  console.log('🚀 ~ AddStudentContent ~ initialData:', initialData);
+  const [formData, setFormData] = useState(
+    initialData || {
+      name: '',
+      studentCode: '',
+      className: '',
+      status: 'ACTIVE'
+    }
+  );
 
   const [errors, setErrors] = useState({});
 
@@ -58,10 +58,10 @@ export function AddStudentContent({ onAction, loading, onClose, onAdd }) {
 
   return (
     <Box>
+      {' '}
       <Typography variant="body2" color="text.secondary" gutterBottom>
-        Register a new student in the TEMVO POS system.
+        {initialData ? 'Edit student information in the TEMVO POS system.' : 'Register a new student in the TEMVO POS system.'}
       </Typography>
-
       <Grid container spacing={3} sx={{ mt: 1 }}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -86,13 +86,13 @@ export function AddStudentContent({ onAction, loading, onClose, onAdd }) {
             helperText={errors.studentCode}
             required
           />
-        </Grid>
-        <Grid item xs={12} sm={12}>
-          {/* <FormControl fullWidth required error={!!errors.className}>
-            <InputLabel>className</InputLabel>
+        </Grid>{' '}
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth required error={!!errors.className}>
+            <InputLabel>Class</InputLabel>
             <Select
               value={formData.className}
-              label="className"
+              label="Class"
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
@@ -100,23 +100,34 @@ export function AddStudentContent({ onAction, loading, onClose, onAdd }) {
                 }))
               }
             >
-              {classNamees.map((classNameName) => (
-                <MenuItem key={classNameName} value={classNameName}>
-                  {classNameName}
+              {classes.map((className) => (
+                <MenuItem key={className} value={className}>
+                  {className}
                 </MenuItem>
               ))}
             </Select>
-          </FormControl> */}
-          <TextField
-            fullWidth
-            label="Class"
-            placeholder="Enter class name"
-            value={formData.className}
-            onChange={handleChange('className')}
-            error={!!errors.className}
-            helperText={errors.className}
-            required
-          />
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth required>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={formData.status}
+              label="Status"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  status: e.target.value
+                }))
+              }
+            >
+              {['ACTIVE', 'INACTIVE', 'SUSPENDED', 'GRADUATED', 'TRANSFERRED', 'WITHDRAWN'].map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
         {/* <Grid item xs={12} sm={6}>
           <TextField
@@ -142,13 +153,12 @@ export function AddStudentContent({ onAction, loading, onClose, onAdd }) {
           />
         </Grid> */}
       </Grid>
-
       <DialogActions sx={{ px: 0, pt: 3 }}>
         <Button variant="outlined" disabled={onAdd} onClick={onClose} sx={{ minWidth: 120 }}>
           Cancel
-        </Button>
+        </Button>{' '}
         <Button variant="contained" onClick={handleSubmit} disabled={!isFormValid || onAdd} sx={{ minWidth: 120 }}>
-          {onAdd ? 'Registering...' : 'Register Student'}
+          {onAdd ? 'Saving...' : initialData ? 'Update Student' : 'Register Student'}
         </Button>
       </DialogActions>
     </Box>

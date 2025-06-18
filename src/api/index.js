@@ -380,8 +380,8 @@ const getWristbandById = async (wristbandId) => {
 };
 
 //Assign wristband to student
-const assignWristbandToStudent = async (data, wristbandId) => {
-  return apiClient.post({ url: `${Wristbands.default}/${wristbandId}/assign-student`, data });
+const assignWristbandToStudent = async (data) => {
+  return apiClient.post({ url: `${Wristbands.default}/${data?.wristbandId}/assign-student`, data: { studentId: data?.studentId } });
 };
 
 // Assign wristband to school
@@ -582,6 +582,10 @@ const getPOSDeviceByVendorId = async (vendorId) => {
   return apiClient.get({ url: `${Vendors.default}/${vendorId}/pos-devices` });
 };
 
+const bulkUploadVendors = async (data) => {
+  return apiClient.postFormData({ url: `${Vendors.default}/bulk-upload`, data });
+};
+
 // users
 const getUsers = async (filters) => {
   const url = Users.default;
@@ -771,7 +775,8 @@ const getStudentById = async (studentId) => {
 };
 
 const createStudent = async (data) => {
-  return apiClient.post({ url: Student.default, data });
+  const { status, ...rest } = data;
+  return apiClient.post({ url: Student.default, data: rest });
 };
 
 const bulkUploadStudents = async (data) => {
@@ -785,13 +790,22 @@ const deleteStudent = async (studentId) => {
 };
 
 // update student
-const updateStudent = async (data, studentId) => {
-  return apiClient.patch({ url: `${Student.default}/${studentId}`, data });
+const updateStudent = async (data) => {
+  const { studentId, id, studentCode, userId, schoolId, wristbandId, walletBalance, createdAt, updatedBy, updatedAt, createdBy, ...rest } =
+    data;
+
+  return apiClient.patch({
+    url: `${Student.default}/${studentId}`,
+    data: rest
+  });
 };
 
 // update student status
-const updateStudentStatus = async (data, studentId) => {
-  return apiClient.patch({ url: `${Student.default}/${studentId}/status`, data });
+const updateStudentStatus = async (data) => {
+  return apiClient.patch({
+    url: `${Student.default}/${data?.studentId}/status`,
+    params: { status: data?.status } // Send as query parameter
+  });
 };
 
 //reassign student to another school
@@ -874,6 +888,7 @@ export const userService = {
   deletePermission,
   getBulkUploadJobStatus,
   getAllVendorsBySchool,
+  bulkUploadVendors,
   getStudentsBySchool,
   getStudents,
   getStudentById,

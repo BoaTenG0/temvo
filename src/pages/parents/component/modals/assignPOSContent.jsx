@@ -19,23 +19,22 @@ import {
   DialogActions
 } from '@mui/material';
 import { SearchNormal1 } from 'iconsax-react';
+import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
+import { WristbandName } from 'pages/nfc-wristbands/components/getWristbandName';
 
 export function AssignPOSContent({ vendors, selectedVendors: initialSelected, onAction, loading, onClose }) {
+  console.log('🚀 ~ AssignPOSContent ~ vendors:', vendors);
   const [selectedVendors, setSelectedVendors] = useState(initialSelected);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Filter unassigned vendors
-  const unassignedVendors = vendors.filter(
-    (vendor) =>
-      vendor.status === 'Unassigned' &&
-      (vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.contact.toLowerCase().includes(searchTerm.toLowerCase()))
+  const unassignedWards = vendors.filter(
+    (vendor) => vendor.status === 'ACTIVE' && (vendor.parentId === null || !selectedVendors.includes(vendor.parentId))
   );
 
   const handleSelectAll = (checked) => {
     if (checked) {
-      setSelectedVendors(unassignedVendors.map((vendor) => vendor.id));
+      setSelectedVendors(unassignedWards.map((vendor) => vendor.id));
     } else {
       setSelectedVendors([]);
     }
@@ -56,18 +55,18 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
     onAction(assignmentData);
   };
 
-  const isAllSelected = selectedVendors.length === unassignedVendors.length && unassignedVendors.length > 0;
+  const isAllSelected = selectedVendors.length === unassignedWards.length && unassignedWards.length > 0;
 
   return (
     <Box>
       <Typography variant="body2" color="text.secondary" gutterBottom>
-        Select wards to assign parents to. Only unassigned wards are shown.
+        Select wards to assign parents to. Only unassigned wards are shown. You can only Perform one operation at a time
       </Typography>
 
       <Box sx={{ mb: 3 }}>
         <TextField
           fullWidth
-          placeholder="Search vendors..."
+          placeholder="Search wards..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -84,11 +83,11 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
         <Box>
           <Checkbox
             checked={isAllSelected}
-            indeterminate={selectedVendors.length > 0 && selectedVendors.length < unassignedVendors.length}
+            indeterminate={selectedVendors.length > 0 && selectedVendors.length < unassignedWards.length}
             onChange={(e) => handleSelectAll(e.target.checked)}
           />
           <Typography component="span" variant="body2">
-            Select All ({unassignedVendors.length} vendors)
+            Select All ({unassignedWards.length} vendors)
           </Typography>
         </Box>
         <Chip label={`${selectedVendors.length} selected`} color="primary" variant="outlined" />
@@ -99,14 +98,15 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">Select</TableCell>
-              <TableCell>Vendor Name</TableCell>
-              <TableCell>Vendor ID</TableCell>
-              <TableCell>Contact</TableCell>
-              <TableCell>Business Type</TableCell>
+              <TableCell>Ward Name</TableCell>
+              <TableCell>Ward Code</TableCell>
+              <TableCell>School</TableCell>
+              <TableCell>Wristband</TableCell>
+              <TableCell>Wallet Balance</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {unassignedVendors.map((vendor) => (
+            {unassignedWards.map((vendor) => (
               <TableRow key={vendor.id} hover>
                 <TableCell padding="checkbox">
                   <Checkbox
@@ -115,19 +115,24 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
                   />
                 </TableCell>
                 <TableCell>{vendor.name}</TableCell>
-                <TableCell>{vendor.vendorId}</TableCell>
-                <TableCell>{vendor.contact}</TableCell>
-                <TableCell>{vendor.businessType}</TableCell>
+                <TableCell>{vendor.studentCode}</TableCell>
+                <TableCell>
+                  <SchoolName schoolId={vendor.schoolId} />
+                </TableCell>
+                <TableCell>
+                  <WristbandName wristband={vendor.wristband} />
+                </TableCell>
+                <TableCell>{vendor.walletBalance || 'N/A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {unassignedVendors.length === 0 && (
+      {unassignedWards.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography color="text.secondary">
-            {searchTerm ? 'No vendors found matching your search.' : 'All vendors have been assigned POS systems.'}
+            {searchTerm ? 'No wards found matching your search.' : 'All wards have been assigned POS systems.'}
           </Typography>
         </Box>
       )}
@@ -137,7 +142,7 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
           Cancel
         </Button>
         <Button variant="contained" onClick={handleAssign} disabled={selectedVendors.length === 0 || loading} sx={{ minWidth: 120 }}>
-          {loading ? 'Assigning...' : `Assign POS (${selectedVendors.length})`}
+          {loading ? 'Assigning...' : `Assign Ward (${selectedVendors.length})`}
         </Button>
       </DialogActions>
     </Box>

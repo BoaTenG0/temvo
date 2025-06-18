@@ -12,9 +12,6 @@ export const useAddParent = () => {
   return useMutation({ mutationFn: (data) => userService.addParent(data) });
 };
 
-
-
-
 export const useGetParentById = (parentId) => {
   return useQuery({
     queryKey: ['parent', parentId],
@@ -140,8 +137,8 @@ export const useGetWristbandById = (wristbandId) => {
   });
 };
 
-export const useAssignWristbandToStudent = (wristbandId) => {
-  return useMutation({ mutationFn: (data) => userService.assignWristbandToStudent(data, wristbandId) });
+export const useAssignWristbandToStudent = () => {
+  return useMutation({ mutationFn: (data) => userService.assignWristbandToStudent(data) });
 };
 
 export const useAssignWristbandToSchool = (wristbandId) => {
@@ -363,9 +360,10 @@ export const useCreateStudent = () => {
 export const useBulkUploadStudents = () => {
   return useMutation({ mutationFn: (data) => userService.bulkUploadStudents(data) });
 };
-export const useEditStudent = (studentId) => {
-  return useMutation({ mutationFn: (data) => userService.updateStudent(data, studentId) });
+export const useEditStudent = () => {
+  return useMutation({ mutationFn: (data) => userService.updateStudent(data) });
 };
+
 export const useDeleteStudent = (studentId) => {
   return useMutation({ mutationFn: () => userService.deleteStudent(studentId) });
 };
@@ -381,8 +379,8 @@ export const useGetStudentBySchoolId = (filters, schoolId) => {
   });
 };
 
-export const useUpdateStudentStatus = (studentId) => {
-  return useMutation({ mutationFn: (data) => userService.updateStudentStatus(data, studentId) });
+export const useUpdateStudentStatus = () => {
+  return useMutation({ mutationFn: (data) => userService.updateStudentStatus(data) });
 };
 
 export const useReassignStudent = (studentId) => {

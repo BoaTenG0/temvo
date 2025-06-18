@@ -33,13 +33,13 @@ const widget = {
       url: '/dashboard/default',
       icon: icons.home
     },
-    {
-      id: 'nfc',
-      title: <FormattedMessage id="NFC Wristbands" />,
-      type: 'item',
-      url: '/nfc-wristbands',
-      icon: icons.cpu
-    },
+    // {
+    //   id: 'nfc',
+    //   title: <FormattedMessage id="NFC Wristbands" />,
+    //   type: 'item',
+    //   url: '/nfc-wristbands',
+    //   icon: icons.cpu
+    // },
     {
       id: 'pos',
       title: <FormattedMessage id="POS Management" />,

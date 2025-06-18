@@ -39,6 +39,7 @@ export default function WristbandManagement() {
     createdAtFrom: convertDateJS(state.dateRange[0]),
     createdAtTo: convertDateJS(state.dateRange[1])
   });
+    
 
   // Get all schools for filters
   const { data: schoolsData } = useGetGeneralSchool();

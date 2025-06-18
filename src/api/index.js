@@ -97,6 +97,9 @@ export const forgotPasswordReset = async (formData) => {
 const Parents = {
   Parents: '/parents'
 };
+const Dashboard = {
+  default: '/dashboard/overview'
+};
 const Schools = {
   default: '/schools'
 };
@@ -167,6 +170,10 @@ const addParent = async (data) => {
 // Get Parent by Id
 const getParentById = async (parentId) => {
   return apiClient.get({ url: `${Parents.Parents}/${parentId}` });
+};
+
+const getDashboardOverview = async () => {
+  return apiClient.get({ url: `${Dashboard.default}` });
 };
 
 // Delete parent
@@ -906,5 +913,6 @@ export const userService = {
   deleteVendor,
   assignPOStoVendor,
   getPOSDeviceByVendorId,
-  createBulkVendors
+  createBulkVendors,
+  getDashboardOverview
 };

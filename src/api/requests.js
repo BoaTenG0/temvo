@@ -427,3 +427,10 @@ export const useGetVendors = (filters) => {
     queryFn: () => userService.getVenders(filters)
   });
 };
+
+export const useGetDashboardOverview = () => {
+  return useQuery({
+    queryKey: ['dashboard-overview'],
+    queryFn: () => userService.getDashboardOverview()
+  });
+};

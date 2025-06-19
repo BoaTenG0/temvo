@@ -142,13 +142,13 @@ const PosTable = ({
       >
         <Typography variant="h6">POS List</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <Button variant="outlined" color="primary" startIcon={<Add />} size="small" onClick={onOpenNewPos}>
+          <Button variant="outlined" color="primary" startIcon={<Add />} size="small" onClick={() => onOpenNewPos()}>
             Register New POS
           </Button>
-          <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={onOpenBulkPos}>
+          <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={() => onOpenBulkPos()}>
             Register Bulk POS
           </Button>
-          <Button variant="contained" color="secondary" startIcon={<Additem />} size="small" onClick={onOpenAssignPos}>
+          <Button variant="contained" color="secondary" startIcon={<Additem />} size="small" onClick={() => onOpenAssignPos()}>
             Assign POS
           </Button>
         </Stack>
@@ -228,7 +228,7 @@ const PosTable = ({
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title="Assign POS">
-                      <IconButton size="small" color="primary" onClick={() => onOpenAssignPos(row)}>
+                      <IconButton size="small" color="primary" onClick={() => onOpenAssignPos(row.id)}>
                         <Additem size={15} />
                       </IconButton>
                     </Tooltip>

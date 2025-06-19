@@ -4,7 +4,7 @@ import BulkPosModal from './modals/BulkPosModal';
 import AssignPosModal from './modals/AssignPosModal';
 import DeletePosModal from './modals/DeletePosModal';
 import DeactivatePOSModal from './modals/DeactivatePosModal';
-import ActivatePOSModal from "./modals/ActivatePosModal";
+import ActivatePOSModal from './modals/ActivatePosModal';
 
 const PosModals = ({ state, actions, onFormChange, refetchPos, schools, availablePosDevices }) => {
   const handleNewPosFormChange = (updates) => {
@@ -53,6 +53,7 @@ const PosModals = ({ state, actions, onFormChange, refetchPos, schools, availabl
         refetchPos={refetchPos}
         schools={schools}
         availablePosDevices={availablePosDevices}
+        selectedAssignPosId={state.selectedAssignPosId}
       />
 
       {/* Delete POS Modal */}

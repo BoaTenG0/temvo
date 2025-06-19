@@ -41,14 +41,14 @@ const widget = {
     //   url: '/nfc-wristbands',
     //   icon: icons.cpu
     // },
-    {
-      id: 'pos',
-      title: <FormattedMessage id="POS Management" />,
-      type: 'item',
-      url: '/pos-management',
-      icon: icons.pos,
-      breadcrumbs: false
-    },
+    // {
+    //   id: 'pos',
+    //   title: <FormattedMessage id="POS Management" />,
+    //   type: 'item',
+    //   url: '/pos-management',
+    //   icon: icons.pos,
+    //   breadcrumbs: false
+    // },
     {
       id: 'students',
       title: <FormattedMessage id="Students" />,

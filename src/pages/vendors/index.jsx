@@ -270,11 +270,11 @@ export default function VendorManagement() {
         posId
       },
       {
-        onSuccess: (response) => {
+        onSuccess: () => {
           dispatch(
             openSnackbar({
               open: true,
-              message: response.message || 'Vendor assigned successfully',
+              message: 'POS devices assigned successfully',
               variant: 'alert',
               alert: {
                 color: 'success'
@@ -282,7 +282,7 @@ export default function VendorManagement() {
               close: true
             })
           );
-          // refetchVendors();
+          refetchVendors();
         },
         onError: (err) => {
           dispatch(
@@ -518,7 +518,7 @@ export default function VendorManagement() {
                   //     backgroundColor: lightBlue[300]
                   //   }
                 }}
-                onClick={refetchVendors()}
+                onClick={() => refetchVendors()}
               >
                 Refresh
               </Button>
@@ -596,16 +596,14 @@ export default function VendorManagement() {
                   {/* <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     #
                   </TableCell> */}
-                  <TableCell >Name</TableCell>
-                  <TableCell >Email</TableCell>
-                  <TableCell >Address</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Address</TableCell>
                   {/* <TableCell >STATUS</TableCell> */}
-                  <TableCell >POS</TableCell>
-                  <TableCell >Assigned School</TableCell>
-                  <TableCell >Created At</TableCell>
-                  <TableCell align="center" >
-                    ACTIONS
-                  </TableCell>
+                  <TableCell>POS</TableCell>
+                  <TableCell>Assigned School</TableCell>
+                  <TableCell>Created At</TableCell>
+                  <TableCell align="center">ACTIONS</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -633,9 +631,7 @@ export default function VendorManagement() {
                         variant="outlined"
                       />
                     </TableCell> */}
-                      <TableCell>
-                        <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
-                      </TableCell>
+                      <TableCell>{vendor.assignedPOSDevices?.[0]?.model || 'N/A'}</TableCell>
                       <TableCell>
                         <SchoolName schoolId={vendor.schoolId} />
                       </TableCell>

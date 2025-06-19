@@ -32,6 +32,9 @@ export const usePosState = () => {
       delete: false
     },
 
+    // Track selected POS for assignment modal
+    selectedAssignPosId: null,
+
     // Form data
     forms: {
       newPos: initialNewPos,

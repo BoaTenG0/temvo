@@ -772,8 +772,15 @@ const editVendor = async (data, userId) => {
 };
 
 // assign pos to vendor
+// const assignPOStoVendor = (data) => {
+//   return apiClient.post({ url: `${Vendors.default}/${data?.vendorId}/assign-pos`, data: { posId: data?.posId } });
+// };
+
 const assignPOStoVendor = (data) => {
-  return apiClient.post({ url: `${Vendors.default}/${data?.vendorId}/assign-pos`, data: { posId: data?.posId } });
+  return apiClient.post({
+    url: `${Vendors.default}/${data?.vendorId}/assign-pos`,
+    data: [data?.posId] // send as array
+  });
 };
 
 // get vendor by id

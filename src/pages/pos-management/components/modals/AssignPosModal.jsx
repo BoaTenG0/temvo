@@ -31,7 +31,18 @@ import { useAssignToSchool } from 'api/requests';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 
-const AssignPosModal = ({ open, onClose, formData, onFormChange, onSubmit, state, refetchPos, availablePosDevices = [], schools = [] }) => {
+const AssignPosModal = ({
+  open,
+  onClose,
+  formData,
+  onFormChange,
+  onSubmit,
+  state,
+  refetchPos,
+  availablePosDevices = [],
+  schools = [],
+  selectedAssignPosId
+}) => {
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
   const [selectedPosDevices, setSelectedPosDevices] = useState([]);
@@ -70,6 +81,15 @@ const AssignPosModal = ({ open, onClose, formData, onFormChange, onSubmit, state
   React.useEffect(() => {
     setPage(0);
   }, [searchQuery]);
+
+  // Pre-select POS if selectedAssignPosId is provided
+  React.useEffect(() => {
+    if (selectedAssignPosId) {
+      setSelectedPosDevices([selectedAssignPosId]);
+    } else {
+      setSelectedPosDevices([]);
+    }
+  }, [selectedAssignPosId, open]);
 
   const validateField = useCallback(
     (name, value) => {
@@ -229,11 +249,11 @@ const AssignPosModal = ({ open, onClose, formData, onFormChange, onSubmit, state
   }, [formData, schools, selectedPosDevices, validateField, assignPos, onClose, refetchPos]);
 
   const isLoading = assignPos.isPending;
-  const isFormValid = formData.school && selectedPosDevices.length > 0;
 
   // Get selected school object for autocomplete
   const selectedSchool = schools?.find((school) => school.id === formData.school) || null;
 
+  const isFormValid = selectedSchool != null && selectedPosDevices.length > 0;
   // Check if all current page items are selected
   const isCurrentPageSelected = paginatedPosDevices.length > 0 && paginatedPosDevices.every((pos) => selectedPosDevices.includes(pos.id));
 
@@ -291,99 +311,119 @@ const AssignPosModal = ({ open, onClose, formData, onFormChange, onSubmit, state
           </Grid>
 
           <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="subtitle2">Available POS Devices * ({selectedPosDevices.length} selected)</Typography>
-              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedPosDevices.length === filteredPosDevices.length && filteredPosDevices.length > 0}
-                      indeterminate={selectedPosDevices.length > 0 && selectedPosDevices.length < filteredPosDevices.length}
-                      onChange={(e) => handleSelectAllPos(e.target.checked)}
-                      disabled={isLoading || filteredPosDevices.length === 0}
-                    />
-                  }
-                  label="Select All Filtered"
-                />
-              </Box>
-            </Box>
-
-            {/* Search Field */}
-            <TextField
-              fullWidth
-              placeholder="Search by Device ID, Model, or Status"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              disabled={isLoading}
-              sx={{ mb: 2 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchNormal1 size="20" />
-                  </InputAdornment>
-                )
-              }}
-            />
-
-            {availablePosDevices.length === 0 ? (
-              <Alert severity="info">No POS devices available for assignment.</Alert>
-            ) : filteredPosDevices.length === 0 ? (
-              <Alert severity="info">No POS devices match your search criteria.</Alert>
+            {selectedAssignPosId ? (
+              <>
+                <Typography variant="subtitle2" gutterBottom>
+                  POS Device Selected
+                </Typography>
+                <Alert severity="info">
+                  POS ID: <b>{selectedAssignPosId}</b>
+                  {(() => {
+                    const pos = availablePosDevices.find((p) => p.id === selectedAssignPosId);
+                    if (pos) {
+                      return <>{` | Model: ${pos.model || ''} | Serial: ${pos.serialNumber || ''}`}</>;
+                    }
+                    return null;
+                  })()}
+                </Alert>
+              </>
             ) : (
               <>
-                <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
-                  <Table stickyHeader size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            checked={isCurrentPageSelected}
-                            indeterminate={isCurrentPageIndeterminate}
-                            onChange={(e) => handleSelectAllCurrentPage(e.target.checked)}
-                            disabled={isLoading || paginatedPosDevices.length === 0}
-                          />
-                        </TableCell>
-                        <TableCell>Device ID</TableCell>
-                        <TableCell>Device Model</TableCell>
-                        <TableCell>Status</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {paginatedPosDevices.map((pos) => (
-                        <TableRow key={pos.id} hover>
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={selectedPosDevices.includes(pos.id)}
-                              onChange={() => handlePosSelection(pos.id)}
-                              disabled={isLoading}
-                            />
-                          </TableCell>
-                          <TableCell>{pos.id}</TableCell>
-                          <TableCell>{pos.model || `POS-${pos.id}`}</TableCell>
-                          <TableCell>
-                            <Chip
-                              label={pos.status || 'Available'}
-                              color={pos.status === 'Available' ? 'success' : 'default'}
-                              size="small"
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="subtitle2">Available POS Devices * ({selectedPosDevices.length} selected)</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedPosDevices.length === filteredPosDevices.length && filteredPosDevices.length > 0}
+                          indeterminate={selectedPosDevices.length > 0 && selectedPosDevices.length < filteredPosDevices.length}
+                          onChange={(e) => handleSelectAllPos(e.target.checked)}
+                          disabled={isLoading || filteredPosDevices.length === 0}
+                        />
+                      }
+                      label="Select All Filtered"
+                    />
+                  </Box>
+                </Box>
 
-                <TablePagination
-                  component="div"
-                  count={filteredPosDevices.length}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={rowsPerPage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  showFirstButton
-                  showLastButton
+                {/* Search Field */}
+                <TextField
+                  fullWidth
+                  placeholder="Search by Device ID, Model, or Status"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  disabled={isLoading}
+                  sx={{ mb: 2 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchNormal1 size="20" />
+                      </InputAdornment>
+                    )
+                  }}
                 />
+
+                {availablePosDevices.length === 0 ? (
+                  <Alert severity="info">No POS devices available for assignment.</Alert>
+                ) : filteredPosDevices.length === 0 ? (
+                  <Alert severity="info">No POS devices match your search criteria.</Alert>
+                ) : (
+                  <>
+                    <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
+                      <Table stickyHeader size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={isCurrentPageSelected}
+                                indeterminate={isCurrentPageIndeterminate}
+                                onChange={(e) => handleSelectAllCurrentPage(e.target.checked)}
+                                disabled={isLoading || paginatedPosDevices.length === 0}
+                              />
+                            </TableCell>
+                            <TableCell>Device ID</TableCell>
+                            <TableCell>Device Model</TableCell>
+                            <TableCell>Status</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {paginatedPosDevices.map((pos) => (
+                            <TableRow key={pos.id} hover>
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  checked={selectedPosDevices.includes(pos.id)}
+                                  onChange={() => handlePosSelection(pos.id)}
+                                  disabled={isLoading}
+                                />
+                              </TableCell>
+                              <TableCell>{pos.id}</TableCell>
+                              <TableCell>{pos.model || `POS-${pos.id}`}</TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={pos.status || 'Available'}
+                                  color={pos.status === 'Available' ? 'success' : 'default'}
+                                  size="small"
+                                />
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+
+                    <TablePagination
+                      component="div"
+                      count={filteredPosDevices.length}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      rowsPerPage={rowsPerPage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      rowsPerPageOptions={[5, 10, 25, 50]}
+                      showFirstButton
+                      showLastButton
+                    />
+                  </>
+                )}
               </>
             )}
           </Grid>

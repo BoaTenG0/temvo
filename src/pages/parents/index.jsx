@@ -25,7 +25,7 @@ import {
   Tooltip,
   CircularProgress
 } from '@mui/material';
-import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem, Refresh } from 'iconsax-react';
+import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem, Refresh, Eye } from 'iconsax-react';
 import { ThemeProvider } from '../students/components/theme-provider';
 import { ParentFilters } from './component/parentFilters';
 import { VendorActionModal } from './component/modals/vendorActionModal';
@@ -44,6 +44,7 @@ import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import dayjs from 'dayjs';
 import { convertDateJS } from 'utils/hooks';
 import { lightBlue } from '@mui/material/colors';
+import { useNavigate } from 'react-router';
 // import { useSelector } from 'store';
 
 const formatDate = (dateString) => {
@@ -57,6 +58,7 @@ const formatDate = (dateString) => {
 
 export default function VendorManagement() {
   const theme = useTheme();
+  const navigate = useNavigate();
   // user data
   const userInfo = useSelector((state) => state.user.userInfo);
   const initialStartDate = dayjs().subtract(7, 'days');
@@ -484,6 +486,11 @@ export default function VendorManagement() {
                         {/* <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
                         <Edit2 size={18} />
                       </IconButton> */}
+                        <Tooltip title="View Parent">
+                          <IconButton size="small" color="primary" onClick={() => navigate(`/parents/${vendor.id}`, { state: { vendor } })}>
+                            <Eye size={15} />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip title="Assign Wards">
                           <IconButton size="small" color="primary" onClick={() => handleOpenModal('assign', vendor)}>
                             <Additem size={15} />

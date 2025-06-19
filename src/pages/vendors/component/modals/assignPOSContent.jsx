@@ -27,10 +27,9 @@ export function AssignPOSContent({ onAction, loading, onClose, posData }) {
   // Filter unassigned vendors
   const unassignedVendors = posData.filter(
     (vendor) =>
-      vendor.status === 'active' &&
-      (vendor.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.modelNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.serialNumber.toLowerCase().includes(searchTerm.toLowerCase()))
+      vendor.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.modelNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.serialNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSelectVendor = (vendorId, checked) => {
@@ -115,9 +114,9 @@ export function AssignPOSContent({ onAction, loading, onClose, posData }) {
                     onChange={(e) => handleSelectVendor(vendor.id, e.target.checked)}
                   />
                 </TableCell>
-                <TableCell>{student.model}</TableCell>
-                <TableCell>{student.modelNumber}</TableCell>
-                <TableCell>{student.serialNumber}</TableCell>
+                <TableCell>{vendor.model}</TableCell>
+                <TableCell>{vendor.modelNumber}</TableCell>
+                <TableCell>{vendor.serialNumber}</TableCell>
               </TableRow>
             ))}
           </TableBody>

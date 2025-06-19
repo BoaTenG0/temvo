@@ -182,7 +182,6 @@ export default function StudentManagement() {
     formData.append('file', file);
     bulkCreateStudent.mutate(formData, {
       onSuccess: (response) => {
-        console.log('🚀 ~ handleBulkUpload ~ response:', response);
         dispatch(
           openSnackbar({
             open: true,
@@ -216,7 +215,6 @@ export default function StudentManagement() {
   const handleAddStudent = async (studentData) => {
     createStudent.mutate(studentData, {
       onSuccess: (response) => {
-        console.log('🚀 ~ handleAddStudent ~ response:', response);
         dispatch(
           openSnackbar({
             open: true,
@@ -736,8 +734,8 @@ export default function StudentManagement() {
   };
 
   // Count students with and without wristbands
-  const withWristbands = students.filter((student) => student.status === 'Assigned').length;
-  const withoutWristbands = students.filter((student) => student.status === 'Unassigned').length;
+  const withWristbands = data?.content?.filter((student) => student.wristbandId).length;
+  const withoutWristbands = data?.content?.filter((student) => !student.wristbandId).length;
 
   return (
     <ThemeProvider>

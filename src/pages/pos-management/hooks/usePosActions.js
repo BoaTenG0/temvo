@@ -88,7 +88,8 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
     resetForm('selectedFile');
   };
 
-  const handleOpenAssignPos = () => {
+  const handleOpenAssignPos = (posId) => {
+    updateState({ selectedAssignPosId: posId || null });
     toggleModal('assignPos', true);
   };
 

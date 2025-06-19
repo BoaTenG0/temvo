@@ -21,20 +21,31 @@ import {
   TextField,
   MenuItem,
   Chip,
-  useTheme
+  useTheme,
+  Tooltip,
+  CircularProgress
 } from '@mui/material';
-import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile } from 'iconsax-react';
+import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem, Refresh } from 'iconsax-react';
 import { ThemeProvider } from '../../pages/students/components/theme-provider';
 // import { VendorActionModal } from '@/components/modals/VendorActionModal';
 import { VendorFilters } from './component/vendorFilters';
 import { VendorActionModal } from './component/modals/vendorActionModal';
-import { useAssignPOStoVendor, useBulkUploadVendors, useCreateVendor, useDeleteVendor, useEditVendor, useGetVendors } from 'api/requests';
+import {
+  useAssignPOStoVendor,
+  useBulkUploadVendors,
+  useCreateVendor,
+  useDeleteVendor,
+  useEditVendor,
+  useGetPOSForSchool,
+  useGetVendors
+} from 'api/requests';
 import { dispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import { POSName } from 'pages/nfc-wristbands/components/getPOSName';
 import dayjs from 'dayjs';
 import { convertDateJS } from 'utils/hooks';
+import { lightBlue } from '@mui/material/colors';
 // import { useSelector } from 'store';
 
 const formatDate = (dateString) => {
@@ -141,20 +152,28 @@ export default function VendorManagement() {
   const createVendorMutation = useCreateVendor();
   const editVendorMutation = useEditVendor(state.modal.editData?.id);
   const deleteVendorMutation = useDeleteVendor(state.modal.editData?.id);
-  const assignVendor = useAssignPOStoVendor(userInfo?.id);
+  const assignVendor = useAssignPOStoVendor();
   const bulkUploadMutation = useBulkUploadVendors();
+
+  const { data: pos } = useGetPOSForSchool({}, userInfo?.schoolId);
+
+  const posData = pos?.data?.content || [];
 
   const {
     data: vendorData,
     loading: isVendorLoading,
     refetch: refetchVendors
-  } = useGetVendors({
-    page: state.page,
-    limit: state.rowsPerPage,
-    search: state.filters.searchTerm || state.tableSearchTerm || '',
-    createdAtFrom: convertDateJS(state.filters.dateRange[0]),
-    createdAtTo: convertDateJS(state.filters.dateRange[1])
-  });
+  } = useGetVendors(
+    {
+      page: state.page,
+      size: state.rowsPerPage,
+      search: state.filters.searchTerm || state.tableSearchTerm || '',
+      sortDirection: ['desc'],
+      from: convertDateJS(state.filters.dateRange[0]),
+      to: convertDateJS(state.filters.dateRange[1])
+    },
+    userInfo?.schoolId
+  );
   // State update helpers
   const updateState = (updates) => {
     setState((prev) => ({ ...prev, ...updates }));
@@ -178,7 +197,7 @@ export default function VendorManagement() {
     updateModal({
       isOpen: true,
       type,
-      selectedVendors: type === 'assign' ? [] : state.modal.selectedVendors,
+      selectedVendors: type === 'assign' ? (vendorData ? [vendorData.id] : []) : state.modal.selectedVendors,
       editData: type === 'edit' || type === 'delete' ? vendorData : null
     });
   };
@@ -195,7 +214,7 @@ export default function VendorManagement() {
   const handleAddVendor = async (data) => {
     const vendorData = {
       name: data.name.trim(),
-      phone: data.contact.trim(),
+      phone: data.phone.trim(),
       email: data.email.trim(),
       address: data.address.trim()
     };
@@ -230,37 +249,56 @@ export default function VendorManagement() {
       }
     });
   };
-  const handleAssignVendor = async (data) => {
-    const vendorData = [data];
-    assignVendor.mutate(vendorData, {
-      onSuccess: () => {
-        dispatch(
-          openSnackbar({
-            open: true,
-            message: 'Vendor assigned successfully',
-            variant: 'alert',
-            alert: {
-              color: 'success'
-            },
-            close: true
-          })
-        );
-        // refetchVendors();
+  const handleAssignVendor = async (vendorId, posId) => {
+    if (!vendorId || vendorId.length === 0) {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Please select at a vendor to assign a pos device to.',
+          variant: 'alert',
+          alert: {
+            color: 'warning'
+          },
+          close: true
+        })
+      );
+      return;
+    }
+    assignVendor.mutate(
+      {
+        vendorId,
+        posId
       },
-      onError: (err) => {
-        dispatch(
-          openSnackbar({
-            open: true,
-            message: err?.response?.data?.message || err?.message || 'Failed to assign vendor. Please try again.',
-            variant: 'alert',
-            alert: {
-              color: 'error'
-            },
-            close: true
-          })
-        );
+      {
+        onSuccess: (response) => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: response.message || 'Vendor assigned successfully',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              close: true
+            })
+          );
+          // refetchVendors();
+        },
+        onError: (err) => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: err?.response?.data?.message || err?.message || 'Failed to assign vendor. Please try again.',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+        }
       }
-    });
+    );
   };
 
   const handleEditVendor = async (data) => {
@@ -379,12 +417,13 @@ export default function VendorManagement() {
   const handleModalAction = async (data) => {
     updateModal({ loading: true });
 
+    const vendorId = state.modal.selectedVendors[0];
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Handle different modal actions
       switch (state.modal.type) {
         case 'assign':
-          handleAssignVendor(data);
+          handleAssignVendor(vendorId, data.posId);
           break;
         case 'add':
           handleAddVendor(data);
@@ -471,16 +510,51 @@ export default function VendorManagement() {
             <Box>
               <Button
                 variant="outlined"
+                startIcon={<Refresh size={18} variant="Bold" />}
+                sx={{
+                  mr: 1
+                  //   backgroundColor: 'primary.main',
+                  //   '&:hover': {
+                  //     backgroundColor: lightBlue[300]
+                  //   }
+                }}
+                onClick={refetchVendors()}
+              >
+                Refresh
+              </Button>
+              {/* <Button
+                variant="outlined"
                 startIcon={<MonitorMobbile size={18} variant="Bold" />}
                 sx={{ mr: 1 }}
                 onClick={() => handleOpenModal('assign')}
               >
                 Assign POS
-              </Button>
-              <Button variant="outlined" startIcon={<Add size={18} />} sx={{ mr: 1 }} onClick={() => handleOpenModal('add')}>
+              </Button> */}
+              <Button
+                variant="outlined"
+                startIcon={<Add size={18} />}
+                onClick={() => handleOpenModal('add')}
+                sx={{
+                  mr: 1
+                  //   backgroundColor: 'primary.main',
+                  //   '&:hover': {
+                  //     backgroundColor: lightBlue[300]
+                  //   }
+                }}
+              >
                 Add Vendor
               </Button>
-              <Button variant="contained" startIcon={<DocumentUpload size={18} />} onClick={() => handleOpenModal('bulk')}>
+              <Button
+                variant="contained"
+                startIcon={<DocumentUpload size={18} />}
+                onClick={() => handleOpenModal('bulk')}
+                sx={{
+                  //   backgroundColor: 'primary.main',
+                  '&:hover': {
+                    backgroundColor: lightBlue[300]
+                  }
+                }}
+              >
                 Add Bulk Vendors
               </Button>
             </Box>
@@ -519,29 +593,39 @@ export default function VendorManagement() {
             <Table sx={{ minWidth: 650 }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: theme.palette.action.hover }}>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  {/* <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     #
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>NAME</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>EMAIL</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ADDRESS</TableCell>
-                  {/* <TableCell sx={{ fontWeight: 'bold' }}>STATUS</TableCell> */}
-                  <TableCell sx={{ fontWeight: 'bold' }}>ASSIGNED POS</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ASSIGNED SCHOOL</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>CREATED AT</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  </TableCell> */}
+                  <TableCell >Name</TableCell>
+                  <TableCell >Email</TableCell>
+                  <TableCell >Address</TableCell>
+                  {/* <TableCell >STATUS</TableCell> */}
+                  <TableCell >POS</TableCell>
+                  <TableCell >Assigned School</TableCell>
+                  <TableCell >Created At</TableCell>
+                  <TableCell align="center" >
                     ACTIONS
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {vendorFilters?.slice(state.page * state.rowsPerPage, state.page * state.rowsPerPage + state.rowsPerPage).map((vendor) => (
-                  <TableRow key={vendor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell align="center">{vendor.id}</TableCell>
-                    <TableCell>{vendor.name}</TableCell>
-                    <TableCell>{vendor.email}</TableCell>
-                    <TableCell>{vendor.address}</TableCell>
-                    {/* <TableCell>
+                {isVendorLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                      <CircularProgress size={24} />
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Loading vendors...
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : vendorData?.data?.content?.length > 0 ? (
+                  vendorFilters?.map((vendor) => (
+                    <TableRow key={vendor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      {/* <TableCell align="center">{vendor.id}</TableCell> */}
+                      <TableCell>{vendor.name}</TableCell>
+                      <TableCell>{vendor.email}</TableCell>
+                      <TableCell>{vendor.address}</TableCell>
+                      {/* <TableCell>
                       <Chip
                         label={vendor.status}
                         size="small"
@@ -549,28 +633,52 @@ export default function VendorManagement() {
                         variant="outlined"
                       />
                     </TableCell> */}
-                    <TableCell>
-                      <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
-                    </TableCell>
-                    <TableCell>
-                      <SchoolName schoolId={vendor.schoolId} />
-                    </TableCell>
-                    <TableCell>{formatDate(vendor.createdAt)}</TableCell>
-                    {/* <TableCell>{vendor.assignmentDate}</TableCell> */}{' '}
-                    <TableCell align="center">
-                      <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
-                        <Edit2 size={18} />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
-                      >
-                        <Trash size={18} />
-                      </IconButton>
+                      <TableCell>
+                        <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
+                      </TableCell>
+                      <TableCell>
+                        <SchoolName schoolId={vendor.schoolId} />
+                      </TableCell>
+                      <TableCell>{formatDate(vendor.createdAt)}</TableCell>
+                      {/* <TableCell>{vendor.assignmentDate}</TableCell> */}{' '}
+                      <TableCell align="center">
+                        <Tooltip title="Assign POS">
+                          <IconButton
+                            size="small"
+                            color="info"
+                            onClick={() => handleOpenModal('assign', vendor)}
+                            //   disabled={vendor.assignedPOSDeviceIds}
+                          >
+                            <Additem size={15} />
+                          </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Edit">
+                          <IconButton size="small" color="primary" onClick={() => handleOpenModal('edit', vendor)}>
+                            <Edit2 size={15} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
+                          >
+                            <Trash size={15} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        No vendors found
+                      </Typography>
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -595,6 +703,8 @@ export default function VendorManagement() {
           vendors={vendors}
           onVendorLoading={createVendorMutation.isPending}
           editData={state.modal.editData}
+          posData={posData}
+          onAssign={assignVendor?.isPending}
         />
       </Container>
     </ThemeProvider>

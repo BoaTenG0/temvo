@@ -1,24 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  Box,
-  Typography,
-  Button,
-  Grid,
-  TextField,
-  MenuItem,
-  InputAdornment
-} from '@mui/material';
-import { Filter, SearchFavorite } from 'iconsax-react';
-
-const UserFilters = ({
-  state,
-  onToggleFilters,
-  onSearchChange,
-  onRoleChange,
-  onStatusChange
-}) => {
+import { Card, CardContent, Box, Typography, Button, Grid, TextField, MenuItem, InputAdornment, Stack } from '@mui/material';
+import { Filter, SearchFavorite, SearchNormal } from 'iconsax-react';
+import { DateRangePicker } from 'rsuite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { predefinedRanges } from '../util';
+const UserFilters = ({ state, onToggleFilters, onSearchChange, onRoleChange, onStatusChange, roles, onDateRangeChange }) => {
   return (
     <Card sx={{ mb: 4, borderRadius: 2 }}>
       <CardContent sx={{ p: 0 }}>
@@ -35,38 +23,33 @@ const UserFilters = ({
         {state.filtersExpanded && (
           <Box sx={{ p: 3, pt: 1 }}>
             <Grid container spacing={3}>
+              <Grid item xs={12} md={3}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Date Range
+                </Typography>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <Stack spacing={2}>
+                    <DateRangePicker
+                      ranges={predefinedRanges}
+                      value={state.dateRange}
+                      onChange={onDateRangeChange}
+                      size="lg"
+                      placement="auto"
+                    />
+                  </Stack>
+                </LocalizationProvider>
+              </Grid>
               <Grid item xs={12} md={4}>
                 <Typography variant="subtitle2" gutterBottom>
                   Role
                 </Typography>
-                <TextField 
-                  select 
-                  fullWidth 
-                  size="small" 
-                  value={state.role} 
-                  onChange={onRoleChange}
-                >
+                <TextField select fullWidth size="small" value={state.role} onChange={onRoleChange}>
                   <MenuItem value="All">All</MenuItem>
-                  <MenuItem value="Super Admin">Super Admin</MenuItem>
-                  <MenuItem value="Admin">Admin</MenuItem>
-                  <MenuItem value="Teacher">Teacher</MenuItem>
-                </TextField>
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Status
-                </Typography>
-                <TextField 
-                  select 
-                  fullWidth 
-                  size="small" 
-                  value={state.status} 
-                  onChange={onStatusChange}
-                >
-                  <MenuItem value="All">All</MenuItem>
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Inactive">Inactive</MenuItem>
+                  {roles?.map((role) => (
+                    <MenuItem key={role.id} value={role.name}>
+                      {role.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
 
@@ -83,7 +66,7 @@ const UserFilters = ({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchFavorite fontSize="small" />
+                        <SearchNormal size={15} />
                       </InputAdornment>
                     )
                   }}

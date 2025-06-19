@@ -1,13 +1,14 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box, Card, CardContent, Avatar, Chip } from '@mui/material';
-import { Building4, User, Sms, Call, Location, Calendar, People, MoneyRecive, UserOctagon, Shop, Devices } from 'iconsax-react';
+import { Building4, User, Sms, Call, Location, Calendar, People, MoneyRecive, UserOctagon, Shop, Devices, Clock } from 'iconsax-react';
 import { useTheme } from '@mui/material/styles';
 import {
   useGetStudentsBySchool,
   useGetParentBySchoolIdd,
   useGetAllVendorsBySchool,
   useGetAllTransactionBySchool,
-  useGetPOSForSchool
+  useGetPOSForSchool,
+  useGetWristbandsForCurrentSchool
 } from 'api/requests';
 
 const OverviewSection = ({ schoolData }) => {
@@ -19,6 +20,7 @@ const OverviewSection = ({ schoolData }) => {
   const { data: schoolVendors } = useGetAllVendorsBySchool({}, schoolData?.id);
   const { data: schoolTransactions } = useGetAllTransactionBySchool({}, schoolData?.id);
   const { data: schoolPos } = useGetPOSForSchool({}, schoolData?.id);
+  const { data: schoolWristbands } = useGetWristbandsForCurrentSchool(schoolData?.id, {});
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -43,7 +45,7 @@ const OverviewSection = ({ schoolData }) => {
     },
     {
       title: 'Total Vendors',
-      value: schoolVendors?.totalElements || 0,
+      value: schoolVendors?.data?.totalElements || 0,
       icon: Shop,
       color: 'info'
     },
@@ -55,9 +57,15 @@ const OverviewSection = ({ schoolData }) => {
     },
     {
       title: 'Total POS Devices',
-      value: schoolPos?.totalElements || 0,
+      value: schoolPos?.data?.totalElements || 0,
       icon: Devices,
       color: 'error'
+    },
+    {
+      title: 'Total Wristbands',
+      value: schoolWristbands?.data.totalElements || 0,
+      icon: Clock,
+      color: 'info'
     }
   ];
 

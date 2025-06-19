@@ -14,6 +14,7 @@ import PosFilters from './components/PosFilters';
 import PosTable from './components/PosTable';
 import PosModals from './components/PosModals';
 import { useGetPOS, useGetGeneralSchool } from 'api/requests';
+import { convertDateJS } from 'utils/hooks';
 
 export default function PosManagement() {
   // Use consolidated state management
@@ -28,7 +29,11 @@ export default function PosManagement() {
     page: state.page,
     size: state.rowsPerPage,
     search: state.searchTerm || state.tableSearchTerm || '',
-    sort: ['desc']
+    sort: ['desc'],
+    status: state.status,
+    schoolId: state.school,
+    from: convertDateJS(state.dateRange[0]),
+    to: convertDateJS(state.dateRange[1])
   });
 
   // Get all schools for filters
@@ -44,6 +49,12 @@ export default function PosManagement() {
     const unassigned = posData.filter((p) => p.status === 'active' && !p.schoolId).length;
 
     return { assignedCount: assigned, unassignedCount: unassigned };
+  }, [posData]);
+
+  // extract status from posData
+  const status = useMemo(() => {
+    if (!posData) return [];
+    return [...new Set(posData.map((p) => p.status))];
   }, [posData]);
 
   // Use actions hook
@@ -73,6 +84,8 @@ export default function PosManagement() {
             onDateRangeChange={actions.handleDateRangeChange}
             onSchoolChange={actions.handleSchoolChange}
             onStatusChange={actions.handleStatusChange}
+            school={schoolsData?.data.content || []}
+            status={status || []}
           />
 
           {/* Table Component */}
@@ -88,6 +101,9 @@ export default function PosManagement() {
             onOpenBulkPos={actions.handleOpenBulkPos}
             onOpenAssignPos={actions.handleOpenAssignPos}
             onDeletePos={actions.handleOpenDelete}
+            onDeactivatePOS={actions.handleOpenDeactivate}
+            onActivatePOS={actions.handleOpenActivate}
+            refetchPos={refetchPos}
           />
 
           {/* Modals Component */}
@@ -97,6 +113,7 @@ export default function PosManagement() {
             onFormChange={handleFormChange}
             refetchPos={refetchPos}
             schools={schoolsData?.data.content}
+            availablePosDevices={pos?.data?.content}
           />
         </Container>
       </Box>

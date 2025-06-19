@@ -127,7 +127,10 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
   (res) => {
-    if (!res.data) throw new Error('Request failed');
+    // if (!res.data) throw new Error('Request failed');
+    if (res.status !== 204 && !res.data) {
+      throw new Error('Request failed');
+    }
 
     // Handle different response structures
     if (Object.prototype.hasOwnProperty.call(res.data, 'data')) {

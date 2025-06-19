@@ -20,7 +20,11 @@ const SCH = Loadable(lazy(() => import('pages/schools')));
 const Students = Loadable(lazy(() => import('pages/students')));
 const Vendors = Loadable(lazy(() => import('pages/vendors')));
 const Parents = Loadable(lazy(() => import('pages/parents')));
+const AllParents = Loadable(lazy(() => import('pages/all-parents')));
+const AllStudents = Loadable(lazy(() => import('pages/all-students')));
+const AllVendors = Loadable(lazy(() => import('pages/all-vendors')));
 const SCHVIEW = Loadable(lazy(() => import('pages/schools/view-school')));
+const USERVIEW = Loadable(lazy(() => import('pages/user-management/view-user')));
 const Transactions = Loadable(lazy(() => import('pages/transactions')));
 const Reports = Loadable(lazy(() => import('pages/reports')));
 const UserManagement = Loadable(lazy(() => import('pages/user-management')));
@@ -525,10 +529,28 @@ const MainRoutes = {
         {
           path: 'parents',
           element: <Parents />
-        },
+          },
+
+        {
+          path: 'all-parents',
+          element: <AllParents />
+          },
+
+          {
+              path: "all-students",
+                element: <AllStudents />
+          },
+          {
+              path: "all-vendors",
+                element: <AllVendors />
+          },
         {
           path: 'schools/ViewSchool/:id',
           element: <SCHVIEW />
+        },
+        {
+          path: 'user-management/ViewUser/:id',
+          element: <USERVIEW />
         },
         {
           path: 'transactions',

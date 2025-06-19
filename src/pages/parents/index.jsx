@@ -25,7 +25,7 @@ import {
   Tooltip,
   CircularProgress
 } from '@mui/material';
-import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem } from 'iconsax-react';
+import { SearchNormal1, Add, Edit2, Trash, DocumentUpload, MonitorMobbile, Additem, Refresh } from 'iconsax-react';
 import { ThemeProvider } from '../students/components/theme-provider';
 import { ParentFilters } from './component/parentFilters';
 import { VendorActionModal } from './component/modals/vendorActionModal';
@@ -43,6 +43,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import dayjs from 'dayjs';
 import { convertDateJS } from 'utils/hooks';
+import { lightBlue } from '@mui/material/colors';
 // import { useSelector } from 'store';
 
 const formatDate = (dateString) => {
@@ -104,8 +105,8 @@ export default function VendorManagement() {
       page: state.page,
       limit: state.rowsPerPage,
       search: state.filters.searchTerm || state.tableSearchTerm || '',
-      createdAtFrom: convertDateJS(state.filters.dateRange[0]),
-      createdAtTo: convertDateJS(state.filters.dateRange[1])
+      from: convertDateJS(state.filters.dateRange[0]),
+      to: convertDateJS(state.filters.dateRange[1])
     },
     userInfo?.schoolId
   );
@@ -366,7 +367,7 @@ export default function VendorManagement() {
               Parents List
             </Typography>
             <Box>
-              <Button
+              {/* <Button
                 variant="outlined"
                 startIcon={<MonitorMobbile size={18} variant="Bold" />}
                 sx={{ mr: 1 }}
@@ -374,8 +375,33 @@ export default function VendorManagement() {
                 title="Please use the assign button in the table row to assign wards to a specific parent"
               >
                 Assign Wards
+              </Button> */}
+              <Button
+                variant="outlined"
+                startIcon={<Refresh size={18} variant="Bold" />}
+                sx={{
+                  mr: 1
+                  //   backgroundColor: 'primary.main',
+                  //   '&:hover': {
+                  //     backgroundColor: lightBlue[300]
+                  //   }
+                }}
+                onClick={refetchVendors()}
+              >
+                Refresh
               </Button>
-              <Button variant="outlined" startIcon={<Add size={18} />} sx={{ mr: 1 }} onClick={() => handleOpenModal('add')}>
+              <Button
+                variant="outlined"
+                startIcon={<Add size={18} />}
+                onClick={() => handleOpenModal('add')}
+                sx={{
+                  mr: 1,
+                  //   backgroundColor: 'primary.main',
+                  '&:hover': {
+                    backgroundColor: lightBlue[300]
+                  }
+                }}
+              >
                 Add Parent
               </Button>
             </Box>
@@ -417,16 +443,14 @@ export default function VendorManagement() {
                   {/* <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     #
                   </TableCell> */}
-                  <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Contact</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Address</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Occupation</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Assigned School</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                    ACTIONS
-                  </TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Contact</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Occupation</TableCell>
+                  <TableCell>Assigned School</TableCell>
+                  <TableCell>Created At</TableCell>
+                  <TableCell align="center">ACTIONS</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -462,7 +486,7 @@ export default function VendorManagement() {
                       </IconButton> */}
                         <Tooltip title="Assign Wards">
                           <IconButton size="small" color="primary" onClick={() => handleOpenModal('assign', vendor)}>
-                            <Additem size={18} />
+                            <Additem size={15} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete Parent">
@@ -471,7 +495,7 @@ export default function VendorManagement() {
                             color="error"
                             onClick={() => handleOpenModal('delete', { id: vendor.id, name: vendor.name })}
                           >
-                            <Trash size={18} />
+                            <Trash size={15} />
                           </IconButton>
                         </Tooltip>
                       </TableCell>

@@ -40,7 +40,8 @@ import {
   useUpdateStudentStatus,
   useBulkDeleteStudents,
   useGetWristbandsForCurrentSchool,
-  useAssignWristbandToStudent
+  useAssignWristbandToStudent,
+  useGetStudents
 } from 'api/requests';
 import { useSelector } from 'store';
 import { dispatch } from 'store';
@@ -50,6 +51,8 @@ import { ParentName } from 'pages/nfc-wristbands/components/getParentName';
 import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import { WristbandName } from 'pages/nfc-wristbands/components/getWristbandName';
 import StudentActions from './studentActions';
+import { lightBlue } from '@mui/material/colors';
+import { convertDateJS } from 'utils/hooks';
 
 // Mock data
 const students = [
@@ -143,7 +146,23 @@ export default function StudentManagement() {
     tableSearchTerm: ''
   });
 
-  const { data, refetch: refetchStudents, isLoading } = useGetStudentBySchoolId({}, userInfo?.schoolId);
+  const {
+    data,
+    refetch: refetchStudents,
+    isLoading
+  } = useGetStudentBySchoolId(
+    {
+      page: state.page,
+      size: state.rowsPerPage,
+      search: state.filters.searchTerm || state.tableSearchTerm || '',
+      sort: ['desc'],
+      class: state.filters.selectedClass !== 'All' ? state.filters.selectedClass : undefined,
+      status: state.filters.selectedStatus !== 'All' ? state.filters.selectedStatus : undefined,
+      from: convertDateJS(state.filters.dateRange[0]),
+      to: convertDateJS(state.filters.dateRange[1])
+    },
+    userInfo?.schoolId
+  );
 
   const { data: currentSchoolWristband } = useGetWristbandsForCurrentSchool(userInfo?.schoolId);
 
@@ -380,7 +399,7 @@ export default function StudentManagement() {
   };
 
   const handleDeleteStudent = () => {
-    deleteStudent.mutate(null, {
+    deleteStudent.mutate(state.deleteModal.studentToDelete?.id, {
       onSuccess: () => {
         refetchStudents();
         // Close modal on success
@@ -496,43 +515,40 @@ export default function StudentManagement() {
 
     if (studentToDelete) {
       // Single student delete
-      deleteStudent.mutate(
-        { studentId: studentToDelete.id },
-        {
-          onSuccess: () => {
-            refetchStudents();
-            dispatch(
-              openSnackbar({
-                open: true,
-                message: `Student deleted successfully`,
-                variant: 'alert',
-                alert: {
-                  color: 'success'
-                },
-                close: true
-              })
-            );
-            handleCloseDeleteModal();
-          },
-          onError: (err) => {
-            dispatch(
-              openSnackbar({
-                open: true,
-                message: err.message || 'Failed to delete student. Please try again.',
-                variant: 'alert',
-                alert: {
-                  color: 'error'
-                },
-                close: true
-              })
-            );
-            setState((prev) => ({
-              ...prev,
-              deleteModal: { ...prev.deleteModal, isDeleting: false }
-            }));
-          }
+      deleteStudent.mutate(studentToDelete?.id, {
+        onSuccess: () => {
+          refetchStudents();
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: `Student deleted successfully`,
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              close: true
+            })
+          );
+          handleCloseDeleteModal();
+        },
+        onError: (err) => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: err.message || 'Failed to delete student. Please try again.',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          setState((prev) => ({
+            ...prev,
+            deleteModal: { ...prev.deleteModal, isDeleting: false }
+          }));
         }
-      );
+      });
     } else {
       // Bulk delete
       deleteBulkStudent.mutate(
@@ -634,9 +650,13 @@ export default function StudentManagement() {
         case 'bulk':
           handleBulkUpload(data.file);
           break;
-        case 'edit':
-          handleEditStudent(data);
+        case 'edit': {
+          // Get the student to edit from the modal state
+          const studentToEdit = state.modal.studentToEdit;
+          // Merge the student ID with the form data
+          handleEditStudent({ ...data, id: studentToEdit?.id });
           break;
+        }
         case 'delete':
           handleDeleteStudent(data);
           break;
@@ -672,7 +692,6 @@ export default function StudentManagement() {
       { studentId, wristbandId },
       {
         onSuccess: (response) => {
-          console.log('🚀 ~ handleAssignWristband ~ response:', response);
           dispatch(
             openSnackbar({
               open: true,
@@ -703,8 +722,8 @@ export default function StudentManagement() {
       }
     );
   };
-  // Search handler
-  // Pagination handlers
+
+    // Pagination handlers
   const handleChangePage = (event, newPage) => {
     updateState({ page: newPage });
   };
@@ -769,10 +788,31 @@ export default function StudentManagement() {
               >
                 Assign Wristbands
               </Button> */}
-              <Button variant="outlined" startIcon={<Add size={18} />} sx={{ mr: 1 }} onClick={() => handleOpenModal('add')}>
+              <Button
+                variant="outlined"
+                startIcon={<Add size={18} />}
+                onClick={() => handleOpenModal('add')}
+                sx={{
+                  mr: 1,
+                  //   backgroundColor: 'primary.main',
+                  '&:hover': {
+                    backgroundColor: lightBlue[300]
+                  }
+                }}
+              >
                 Add Student
               </Button>
-              <Button variant="contained" startIcon={<DocumentUpload size={18} />} onClick={() => handleOpenModal('bulk')}>
+              <Button
+                variant="contained"
+                startIcon={<DocumentUpload size={18} />}
+                onClick={() => handleOpenModal('bulk')}
+                sx={{
+                  //   backgroundColor: 'primary.main',
+                  '&:hover': {
+                    backgroundColor: lightBlue[300]
+                  }
+                }}
+              >
                 Add Bulk Students
               </Button>
             </Box>
@@ -840,13 +880,18 @@ export default function StudentManagement() {
                       <TableCell align="center">
                         <Box display="flex" gap={1}>
                           {' '}
-                          <Tooltip title="Assign Student to Wristband">
-                            <IconButton size="small" onClick={() => handleOpenModal('assign', student)} disabled={student.wristbandId} color="info">
+                          <Tooltip title="Assign Wristband to Student">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleOpenModal('assign', student)}
+                              disabled={student.wristbandId}
+                              color="info"
+                            >
                               <Additem size={18} />
                             </IconButton>
-                          </Tooltip>
+                          </Tooltip>{' '}
                           <Tooltip title="Edit Student">
-                            <IconButton size="small" onClick={() => handleEditStudent(student)} color="primary">
+                            <IconButton size="small" onClick={() => handleOpenModal('edit', student)} color="primary">
                               <Edit2 size={18} />
                             </IconButton>
                           </Tooltip>

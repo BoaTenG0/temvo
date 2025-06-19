@@ -2,7 +2,19 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { Book, PasswordCheck, Next, RowVertical, CpuCharge, TableDocument, Subtitle, UserAdd } from 'iconsax-react';
+import {
+  Book,
+  PasswordCheck,
+  Next,
+  RowVertical,
+  CpuCharge,
+  TableDocument,
+  Subtitle,
+  UserAdd,
+  UserSquare,
+  UserOctagon,
+  UserTag
+} from 'iconsax-react';
 
 // icons
 const icons = {
@@ -13,7 +25,10 @@ const icons = {
   plugins: CpuCharge,
   reactTables: TableDocument,
   muiTables: Subtitle,
-  user: UserAdd
+  user: UserAdd,
+  allParents: UserSquare,
+  allStudents: UserOctagon,
+  allVendors: UserTag
 };
 
 // ==============================|| MENU ITEMS - FORMS & TABLES ||============================== //
@@ -29,14 +44,40 @@ const formsTables = {
       title: <FormattedMessage id="User Management" />,
       type: 'item',
       url: '/user-management',
-      icon: icons.user
+      icon: icons.user,
+      breadcrumbs: false
+    },
+    {
+      id: 'parents',
+      title: <FormattedMessage id="Parent Management" />,
+      type: 'item',
+      url: '/all-parents',
+      icon: icons.allParents,
+      breadcrumbs: false
+    },
+    {
+      id: 'students',
+      title: <FormattedMessage id="Student Management" />,
+      type: 'item',
+      url: '/all-students',
+      icon: icons.allStudents,
+      breadcrumbs: false
+    },
+    {
+      id: 'vendors',
+      title: <FormattedMessage id="Vendor Management" />,
+      type: 'item',
+      url: '/all-vendors',
+      icon: icons.allVendors,
+      breadcrumbs: false
     },
     {
       id: 'roles',
       title: <FormattedMessage id="Role & Permissions" />,
       type: 'item',
       url: '/roles',
-      icon: icons.wizard
+      icon: icons.wizard,
+      breadcrumbs: false
     }
     // {
     //   id: 'forms-layout',

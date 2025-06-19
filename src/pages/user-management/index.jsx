@@ -15,6 +15,7 @@ import UserTable from './components/UserTable';
 // import UserModals from './components/UserModals';
 import { useGetGeneralSchool, useGetUsers, useGetRoles } from 'api/requests';
 import UserModals from './modals/userModals';
+import { convertDateJS } from 'utils/hooks';
 
 export default function UserManagement() {
   // Use consolidated state management
@@ -28,39 +29,16 @@ export default function UserManagement() {
     page: state.page,
     size: state.rowsPerPage,
     search: state.searchTerm || state.tableSearchTerm || '',
-    sort: ['desc']
+    sort: ['desc'],
+    role: state.role,
+    from: convertDateJS(state.dateRange[0]),
+    to: convertDateJS(state.dateRange[1])
   });
 
   const usersData = users?.data.content;
 
   const { data: schoolsData } = useGetGeneralSchool();
   const { data: rolesData } = useGetRoles();
-  console.log("🚀 ~ UserManagement ~ rolesData:", rolesData)
-
-  // Get users data (placeholder for now - will be replaced with actual API calls)
-  //   const usersData = useMemo(
-  //     () => [
-  //       {
-  //         id: 1,
-  //         userName: 'Fred',
-  //         email: 'fred@temvo.com',
-  //         phoneNumber: '02445588660',
-  //         role: 'Super Admin',
-  //         assignedSchool: 'N/A',
-  //         status: 'Active'
-  //       },
-  //       {
-  //         id: 2,
-  //         userName: 'Kwame',
-  //         email: 'kwame@school.com',
-  //         phoneNumber: '02445588660',
-  //         role: 'Super Admin',
-  //         assignedSchool: 'Accra Academy',
-  //         status: 'Inactive'
-  //       }
-  //     ],
-  //     []
-  //   );
 
   // Calculate stats from real data
   const { activeCount, inactiveCount } = useMemo(() => {
@@ -98,6 +76,7 @@ export default function UserManagement() {
             onSearchChange={actions.handleSearchChange}
             onRoleChange={actions.handleRoleChange}
             onStatusChange={actions.handleStatusChange}
+            roles={rolesData?.content}
           />
 
           {/* Table Component */}

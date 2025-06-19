@@ -7,7 +7,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 
 const DeleteUserModal = ({ open, onClose, userData, refetchUsers }) => {
   const [error, setError] = useState('');
-  const deleteUserMutation = useDeleteUser();
+  const deleteUserMutation = useDeleteUser(userData?.id);
 
   const handleSubmit = useCallback(async () => {
     if (!userData?.id) {
@@ -15,7 +15,7 @@ const DeleteUserModal = ({ open, onClose, userData, refetchUsers }) => {
       return;
     }
 
-    deleteUserMutation.mutate(userData.id, {
+    deleteUserMutation.mutate(null, {
       onSuccess: () => {
         dispatch(
           openSnackbar({

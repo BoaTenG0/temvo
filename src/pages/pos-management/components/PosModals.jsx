@@ -3,8 +3,10 @@ import NewPosModal from './modals/NewPosModal';
 import BulkPosModal from './modals/BulkPosModal';
 import AssignPosModal from './modals/AssignPosModal';
 import DeletePosModal from './modals/DeletePosModal';
+import DeactivatePOSModal from './modals/DeactivatePosModal';
+import ActivatePOSModal from "./modals/ActivatePosModal";
 
-const PosModals = ({ state, actions, onFormChange, refetchPos }) => {
+const PosModals = ({ state, actions, onFormChange, refetchPos, schools, availablePosDevices }) => {
   const handleNewPosFormChange = (updates) => {
     onFormChange('newPos', updates);
   };
@@ -37,6 +39,7 @@ const PosModals = ({ state, actions, onFormChange, refetchPos }) => {
         selectedFile={state.forms.selectedFile}
         onFileChange={handleFileChange}
         onSubmit={actions.handleBulkRegister}
+        refetchPos={refetchPos}
       />
 
       {/* Assign POS Modal */}
@@ -48,6 +51,8 @@ const PosModals = ({ state, actions, onFormChange, refetchPos }) => {
         onSubmit={actions.handleAssignPosDevices}
         state={state}
         refetchPos={refetchPos}
+        schools={schools}
+        availablePosDevices={availablePosDevices}
       />
 
       {/* Delete POS Modal */}
@@ -56,6 +61,22 @@ const PosModals = ({ state, actions, onFormChange, refetchPos }) => {
         onClose={actions.handleCloseDelete}
         // onConfirm={actions.handleDeletePos}
         refetchPos={refetchPos}
+        state={state}
+      />
+
+      <DeactivatePOSModal
+        state={state}
+        open={state.modals.deactivate}
+        onClose={actions.handleCloseDeactivatePOS}
+        // onConfirm={actions.handleDeleteWristband}
+        refetchWristbands={refetchPos}
+      />
+      <ActivatePOSModal
+        state={state}
+        open={state.modals.activate}
+        onClose={actions.handleCloseActivatePOS}
+        // onConfirm={actions.handleDeleteWristband}
+        refetchWristbands={refetchPos}
       />
     </>
   );

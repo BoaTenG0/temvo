@@ -1,4 +1,6 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+
+import React, { useMemo } from 'react';
 import {
   Box,
   Card,
@@ -24,31 +26,44 @@ import {
   CircularProgress,
   TablePagination
 } from '@mui/material';
-import { Add, Additem, DocumentUpload, SearchFavorite1, Setting3, Trash } from 'iconsax-react';
+import {
+  Add,
+  Additem,
+  Check,
+  CloseCircle,
+  DocumentUpload,
+  SearchFavorite1,
+  SearchNormal,
+  SearchNormal1,
+  Setting3,
+  TickCircle,
+  Trash
+} from 'iconsax-react';
 import { useGetGeneralSchoolById } from 'api/requests';
+import StudentApiKeyCell from 'pages/schools/sections/StudentApiKeyCell';
 
 const rowsPerPageOptions = [10, 20, 50, 100];
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'active':
+    case 'Active':
       return 'success';
-    case 'inactive':
+    case 'Inactive':
       return 'error';
-    case 'revoked':
-      return 'warning';
+    case 'REGISTERED':
+      return 'info';
+    //   return 'warning';
     default:
       return 'default';
   }
 };
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
-  try {
-    return format(new Date(dateString), 'dd/MM/yyyy');
-  } catch {
-    return 'N/A';
-  }
+  return new Date(dateString).toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 };
 
 // SchoolName component integrated within the file
@@ -85,11 +100,26 @@ const PosTable = ({
   onOpenNewPos,
   onOpenBulkPos,
   onOpenAssignPos,
-  onDeletePos
+  onDeletePos,
+  onDeactivatePOS,
+  onActivatePOS
 }) => {
+  const filteredPos = useMemo(() => {
+    if (!posData?.content) return [];
 
-  console.log('posData', posData);
+    let filtered = [...posData.content];
 
+    // Filter by tab value
+    if (state.tabValue === 1) {
+      // Assigned - has schoolId
+      filtered = filtered.filter((w) => w.schoolId && w.status === 'Active');
+    } else if (state.tabValue === 2) {
+      // Unassigned - no schoolId
+      filtered = filtered.filter((w) => !w.schoolId);
+    }
+
+    return filtered;
+  }, [posData?.content, state.tabValue]);
   return (
     <Card sx={{ borderRadius: 2 }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -118,9 +148,9 @@ const PosTable = ({
           <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={onOpenBulkPos}>
             Register Bulk POS
           </Button>
-          {/* <Button variant="contained" color="secondary" startIcon={<Additem />} size="small" onClick={onOpenAssignPos}>
+          <Button variant="contained" color="secondary" startIcon={<Additem />} size="small" onClick={onOpenAssignPos}>
             Assign POS
-          </Button> */}
+          </Button>
         </Stack>
       </Box>
 
@@ -140,7 +170,7 @@ const PosTable = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchFavorite1 fontSize="small" />
+                <SearchNormal1 size={15} />
               </InputAdornment>
             )
           }}
@@ -152,12 +182,13 @@ const PosTable = ({
         <Table sx={{ minWidth: 650 }} size="medium">
           <TableHead>
             <TableRow>
-              <TableCell>Model Name</TableCell>
-              <TableCell>Model Number</TableCell>
+              <TableCell>Model</TableCell>
+              <TableCell>Number</TableCell>
               <TableCell>Serial Number</TableCell>
-              <TableCell>Date Registered</TableCell>
+              <TableCell>Assigned At</TableCell>
               {/* <TableCell>Date Assigned</TableCell> */}
               <TableCell>Assigned School</TableCell>
+              <TableCell>API Key</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -168,21 +199,22 @@ const PosTable = ({
                 <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
                   <CircularProgress size={24} />
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    Loading wristbands...
+                    Loading pos devices...
                   </Typography>
                 </TableCell>
               </TableRow>
-            ) : state.filteredPosDevices.length > 0 ? (
-              state.filteredPosDevices.map((row) => (
+            ) : filteredPos?.length > 0 ? (
+              filteredPos?.map((row) => (
                 <TableRow key={row.id} hover>
-                  <TableCell>{row.modelName}</TableCell>
+                  <TableCell>{row.model}</TableCell>
                   <TableCell>{row.modelNumber}</TableCell>
                   <TableCell>{row.serialNumber}</TableCell>
-                  <TableCell>{formatDate(row.createdAt)}</TableCell>
+                  <TableCell>{formatDate(row.assignedAt)}</TableCell>
                   {/* <TableCell>{row.dateAssigned}</TableCell> */}
                   <TableCell>
                     <SchoolName schoolId={row.schoolId} />{' '}
                   </TableCell>
+                  <StudentApiKeyCell student={row} />
                   <TableCell>
                     <Chip
                       label={row.status}
@@ -196,24 +228,24 @@ const PosTable = ({
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title="Assign POS">
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        onClick={() => onOpenAssignPos(row)}
-                        disabled={row.schoolId} // Disable if already assigned
-                      >
-                        <Additem size={18} />
+                      <IconButton size="small" color="primary" onClick={() => onOpenAssignPos(row)}>
+                        <Additem size={15} />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Deactivate POS">
-                      <IconButton size="small" color="primary" onClick={() => onDeletePos(row.id)}>
-                        <Setting3 fontSize="small" />
+                      <IconButton size="small" color="warning" onClick={() => onDeactivatePOS(row.id)} disabled={row.status !== 'Active'}>
+                        <CloseCircle size={15} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Activate POS">
+                      <IconButton size="small" color="info" onClick={() => onActivatePOS(row.id)} disabled={row.status === 'Active'}>
+                        <TickCircle size={15} />
                       </IconButton>
                     </Tooltip>
 
                     <Tooltip title="Delete POS">
                       <IconButton size="small" color="error" onClick={() => onDeletePos(row.id)}>
-                        <Trash size={18} />
+                        <Trash size={15} />
                       </IconButton>
                     </Tooltip>
                   </TableCell>

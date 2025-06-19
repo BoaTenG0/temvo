@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import {
   Box,
@@ -17,7 +15,7 @@ import {
   Toolbar,
   Stack
 } from '@mui/material';
-import { Building4, People, MoneyRecive, UserOctagon, Shop, Menu as MenuIcon, CloseSquare, DeviceMessage } from 'iconsax-react';
+import { Building4, People, MoneyRecive, UserOctagon, Shop, Menu as MenuIcon, CloseSquare, DeviceMessage, WristClock } from 'iconsax-react';
 import { useParams } from 'react-router-dom';
 import { useGetGeneralSchoolById } from 'api/requests';
 import ClientCTA from 'components/cards/CTA';
@@ -25,12 +23,14 @@ import ClientCTA from 'components/cards/CTA';
 // Import section components
 import OverviewSection from './sections/overview-section';
 import StudentsSection from './sections/students-section';
-import TransactionsSection from './sections/transactions-section';
+// import TransactionsSection from './sections/transactions-section';
 import ParentsSection from './sections/parents-section';
 import VendorsSection from './sections/vendors-section';
 import PosSection from './sections/pos-section';
+import WristbandSection from './sections/wristband-section';
+import TransactionsSection from "./sections/transactions-section";
 
-const DRAWER_WIDTH = 280;
+const DRAWER_WIDTH = 250;
 
 const navigationItems = [
   {
@@ -68,6 +68,12 @@ const navigationItems = [
     label: 'POS Devices',
     icon: DeviceMessage,
     color: 'error'
+  },
+  {
+    id: 'wristbands',
+    label: 'Wristbands',
+    icon: WristClock,
+    color: 'info'
   }
 ];
 
@@ -106,6 +112,8 @@ const ViewSchool = () => {
         return <VendorsSection schoolId={id} />;
       case 'posdevice':
         return <PosSection schoolId={id} />;
+      case 'wristbands':
+        return <WristbandSection schoolId={id} />;
       default:
         return <OverviewSection schoolData={schoolData} />;
     }
@@ -123,9 +131,9 @@ const ViewSchool = () => {
         }}
       >
         <Box display="flex" alignItems="center" gap={2}>
-          <Building4 size="32" color="white" />
+          <Building4 size="30" color="white" />
           <Box>
-            <Typography variant="h6" fontWeight="600" noWrap>
+            <Typography variant="subtitle2" fontWeight="600" noWrap>
               {schoolData?.name || 'School Dashboard'}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.8 }} noWrap>

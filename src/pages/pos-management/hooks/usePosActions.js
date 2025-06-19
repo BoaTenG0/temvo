@@ -17,6 +17,32 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
   const handleTabChange = (event, newValue) => {
     updateState({ tabValue: newValue });
   };
+  const handleOpenDeactivate = (id) => {
+    updateState({ deactivateId: id });
+
+    toggleModal('deactivate', true);
+  };
+  const handleCloseDeactivate = () => {
+    toggleModal('deactivate', false);
+  };
+
+  const handleCloseDeactivatePOS = () => {
+    // Handle delete logic here
+    handleCloseDeactivate();
+  };
+  const handleOpenActivate = (id) => {
+    updateState({ activateId: id });
+
+    toggleModal('activate', true);
+  };
+  const handleCloseActivate = () => {
+    toggleModal('activate', false);
+  };
+
+  const handleCloseActivatePOS = () => {
+    // Handle delete logic here
+    handleCloseActivate();
+  };
 
   // Filter handlers
   const toggleFilters = () => {
@@ -71,7 +97,9 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
     resetForm('assignData');
   };
 
-  const handleOpenDelete = () => {
+  const handleOpenDelete = (id) => {
+    updateState({ deleteId: id });
+
     toggleModal('delete', true);
   };
 
@@ -165,7 +193,7 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
     // Pagination
     handleChangePage,
     handleChangeRowsPerPage,
-    
+
     // Tabs and filters
     handleTabChange,
     toggleFilters,
@@ -174,7 +202,7 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
     handleDateRangeChange,
     handleSchoolChange,
     handleStatusChange,
-    
+
     // Modals
     handleOpenNewPos,
     handleCloseNewPos,
@@ -184,11 +212,17 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
     handleCloseAssignPos,
     handleOpenDelete,
     handleCloseDelete,
-    
+
     // CRUD operations
     handleRegisterPos,
     handleBulkRegister,
     handleAssignPosDevices,
-    handleDeletePos
+    handleDeletePos,
+    handleOpenDeactivate,
+    handleCloseDeactivate,
+    handleOpenActivate,
+    handleCloseActivate,
+    handleCloseActivatePOS,
+    handleCloseDeactivatePOS
   };
 };

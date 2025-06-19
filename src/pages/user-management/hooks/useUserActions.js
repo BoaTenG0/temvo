@@ -74,17 +74,13 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
 
   const handleOpenEdit = useCallback(
     (user) => {
+      console.log('🚀 ~ useUserActions ~ user:', user);
       // Pre-populate edit form with user data
       updateState({
         forms: {
           ...state.forms,
           editUser: {
-            id: user.id,
-            userName: user.userName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-            assignedSchool: user.assignedSchool
+            ...user
           }
         }
       });
@@ -100,13 +96,12 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
 
   const handleOpenDelete = useCallback(
     (user) => {
-      console.log('🚀 ~ useUserActions ~ user:', user);
       updateState({
         forms: {
           ...state.forms,
           deleteUser: {
             id: user.id,
-            userName: user.firstName + " " + user.lastName
+            userName: user.firstName + ' ' + user.lastName
           }
         }
       });
@@ -135,6 +130,12 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
     [state.forms, updateState, toggleModal]
   );
 
+  const handleDateRangeChange = useCallback(
+    (value) => {
+      updateState({ dateRange: value });
+    },
+    [updateState]
+  );
   const handleCloseDelete = useCallback(() => {
     toggleModal('deleteUser', false);
     resetForm('deleteUser');
@@ -143,13 +144,11 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
   // CRUD operations (placeholder implementations)
   const handleCreateUser = useCallback(() => {
     // In a real app, this would call an API
-    console.log('Creating user:', state.forms.newUser);
     handleCloseNewUser();
   }, [state.forms.newUser, handleCloseNewUser]);
 
   const handleUpdateUser = useCallback(() => {
     // In a real app, this would call an API
-    console.log('Updating user:', state.forms.editUser);
     handleCloseEdit();
   }, [state.forms.editUser, handleCloseEdit]);
 
@@ -181,6 +180,7 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
     handleCloseEdit,
     handleOpenDelete,
     handleCloseDelete,
+    handleDateRangeChange,
 
     // CRUD
     handleCreateUser,

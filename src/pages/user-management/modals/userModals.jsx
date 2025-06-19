@@ -32,6 +32,7 @@ const UserModals = ({ state, actions, onFormChange, refetchUsers, schools, roles
         formData={state.forms.editUser}
         onFormChange={handleEditUserFormChange}
         refetchUsers={refetchUsers}
+        roles={roles}
       />
 
       {/* Delete User Modal */}

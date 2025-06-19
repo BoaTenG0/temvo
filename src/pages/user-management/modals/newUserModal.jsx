@@ -83,8 +83,8 @@ const NewUserModal = ({ open, onClose, formData, onFormChange, refetchUsers, rol
       lastName: formData.lastName?.trim() || '',
       email: formData.email.trim().toLowerCase(),
       phone: formData.phone?.trim() || '',
-      //   roles: [formData.role],
-      roles: ['/roles/1'],
+      roles: [`/roles/${formData.role}`],
+      //   roles: ['/roles/1'],
       userType: formData.userType,
       password: formData.password?.trim() || '',
       active: formData.active,
@@ -226,8 +226,9 @@ const NewUserModal = ({ open, onClose, formData, onFormChange, refetchUsers, rol
           size="small"
         >
           <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
-          <MenuItem value="Admin">Admin</MenuItem>
-          <MenuItem value="Teacher">Teacher</MenuItem>
+          <MenuItem value="SCHOOL_ADMIN">School Admin</MenuItem>
+          <MenuItem value="PARENT">Parent</MenuItem>
+          <MenuItem value="VENDOR">Vendor</MenuItem>
         </TextField>
       </Grid>
       <Grid item xs={6}>
@@ -246,7 +247,7 @@ const NewUserModal = ({ open, onClose, formData, onFormChange, refetchUsers, rol
           size="small"
         >
           {roles?.map((role) => (
-            <MenuItem key={role.id} value={role.name}>
+            <MenuItem key={role.id} value={role.id}>
               {role.name}
             </MenuItem>
           ))}

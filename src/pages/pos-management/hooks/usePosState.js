@@ -16,6 +16,9 @@ export const usePosState = () => {
     school: 'All',
     status: 'All',
     tableSearchTerm: '',
+    deleteId: null,
+    deactivateId: null,
+    activateId: null,
 
     // Data
     posDevices: initialPosDevices,

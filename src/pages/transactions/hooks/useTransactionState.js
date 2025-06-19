@@ -1,17 +1,20 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 
 export const useTransactionState = () => {
   // Consolidated state object
+  const initialStartDate = dayjs().subtract(7, 'days');
+  const initialEndDate = dayjs();
   const [state, setState] = useState({
     // Pagination and display
     page: 0,
-    rowsPerPage: 20,
+    rowsPerPage: 10,
     tabValue: 0,
     filtersExpanded: true,
 
     // Search and filters
     searchTerm: '',
-    dateRange: [null, null],
+    dateRange: [initialStartDate.toDate(), initialEndDate.toDate()],
     school: 'All',
     status: 'All',
     tableSearchTerm: '',

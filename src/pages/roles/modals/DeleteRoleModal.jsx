@@ -12,27 +12,36 @@ const DeleteRoleModal = ({ open, onClose, formData, refetchRoles }) => {
   const deleteRoleMutation = useDeleteRole(formData.id);
 
   const handleDelete = async () => {
-    try {
-      setError('');
-      await deleteRoleMutation.mutateAsync();
-
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Role deleted successfully!',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      refetchRoles();
-      onClose();
-    } catch (error) {
-      console.error('Error deleting role:', error);
-      setError(error.response?.data?.message || 'Failed to delete role. Please try again.');
-    }
+    setError('');
+    deleteRoleMutation.mutate(null, {
+      onSuccess: () => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Role deleted successfully!',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            }
+          })
+        );
+        refetchRoles();
+        onClose();
+      },
+      onError: (error) => {
+        setError(error.response?.data?.message || 'Failed to delete role. Please try again.');
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: error.response?.data?.message || 'Failed to delete role. Please try again.',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            }
+          })
+        );
+      }
+    });
   };
 
   const actions = (

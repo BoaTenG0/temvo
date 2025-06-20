@@ -56,14 +56,12 @@ export const useReportActions = (state, updateState, toggleModal, resetForm, rep
 
   const handleExportReport = useCallback(() => {
     // In a real app, this would export the report
-    console.log('Exporting report:', state.forms.exportData);
     handleCloseExport();
   }, [state.forms.exportData, handleCloseExport]);
 
   // Print handlers
   const handlePrintReport = useCallback(() => {
     // In a real app, this would print the report
-    console.log('Printing report');
     window.print();
   }, []);
 

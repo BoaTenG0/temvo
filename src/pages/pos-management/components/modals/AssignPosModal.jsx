@@ -43,7 +43,6 @@ const AssignPosModal = ({
   schools = [],
   selectedAssignPosId
 }) => {
-  console.log('🚀 ~ availablePosDevices:', availablePosDevices);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
   const [selectedPosDevices, setSelectedPosDevices] = useState([]);
@@ -290,8 +289,11 @@ const AssignPosModal = ({
           </IconButton>
         </Box>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
           Select POS devices and assign them to a school.
+        </Typography>
+        <Typography variant="subtitle2" color="text.info" sx={{ mb: 3 }}>
+          Only active and unassigned POS devices are displayed.
         </Typography>
 
         <Grid container spacing={3}>

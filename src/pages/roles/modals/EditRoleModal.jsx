@@ -46,50 +46,63 @@ const EditRoleModal = ({ open, onClose, formData, onFormChange, refetchRoles, pe
     [onFormChange, validationErrors]
   );
 
+  //   const handlePermissionChange = (event, newValue) => {
+  //     const selectedPermissionIds = newValue.map((permission) => permission.id);
+  //     handleInputChange('permissions', selectedPermissionIds);
+  //   };
   const handlePermissionChange = (event, newValue) => {
-    const selectedPermissionIds = newValue.map((permission) => permission.id);
-    handleInputChange('permissions', selectedPermissionIds);
+    const selectedPermissionUris = newValue.map((permission) => `/permissions/${permission.id}`);
+    handleInputChange('permissions', selectedPermissionUris);
   };
 
   const handleSubmit = async () => {
-    try {
-      setError('');
-      setValidationErrors({});
+    setError('');
+    setValidationErrors({});
 
-      // Validate form
-      const errors = validateRoleForm(formData);
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors);
-        return;
-      }
-
-      // Prepare data for submission
-      const submitData = {
-        name: formData.name.trim(),
-        description: formData.description?.trim() || '',
-        permissions: formData.permissions || [],
-        active: formData.active
-      };
-
-      await editRoleMutation.mutateAsync(submitData);
-
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Role updated successfully!',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      refetchRoles();
-      onClose();
-    } catch (error) {
-      console.error('Error updating role:', error);
-      setError(error.response?.data?.message || 'Failed to update role. Please try again.');
+    // Validate form
+    const errors = validateRoleForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
     }
+
+    // Prepare data for submission
+    const submitData = {
+      name: formData.name.trim(),
+      description: formData.description?.trim() || '',
+      permissions: formData.permissions || []
+      // active: formData.active
+    };
+
+    editRoleMutation.mutateAsync(submitData, {
+      onSuccess: (response) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: response.message || 'Role updated successfully!',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            }
+          })
+        );
+        refetchRoles();
+        onClose();
+      },
+      onError: (error) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Updating role unsuccessful!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            }
+          })
+        );
+        setError(error.response?.data?.message || 'Failed to update role. Please try again.');
+      }
+    });
   };
 
   const actions = (
@@ -156,7 +169,8 @@ const EditRoleModal = ({ open, onClose, formData, onFormChange, refetchRoles, pe
             multiple
             fullWidth
             options={permissions}
-            value={permissions.filter((p) => formData.permissions?.includes(p.id)) || []}
+            // value={permissions.filter((p) => formData.permissions?.includes(p.id)) || []}
+            value={permissions.filter((p) => formData.permissions?.includes(`/permissions/${p.id}`)) || []}
             onChange={handlePermissionChange}
             getOptionLabel={(option) => formatPermissionName(option.name)}
             isOptionEqualToValue={(option, value) => option.id === value.id}

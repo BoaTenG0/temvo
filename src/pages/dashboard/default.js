@@ -26,7 +26,10 @@ const DashboardDefault = () => {
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12}>
-        <WelcomeBanner />
+        <WelcomeBanner
+          content="Welcome to the TemVo System Dashboard, where you can monitor and manage all aspects of the system efficiently."
+          title="Explore and manage the TemVo System Dashboard"
+        />
       </Grid>
 
       {/* row 1 */}

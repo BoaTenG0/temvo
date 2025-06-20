@@ -146,31 +146,26 @@ export const useSchoolActions = (state, updateState, toggleModal, resetForm, sch
   // Business logic handlers
   const handleRegisterSchool = useCallback(() => {
     // In a real app, this would make an API call
-    console.log('Registering school:', state.forms.newSchool);
     handleCloseNewSchool();
   }, [state.forms.newSchool, handleCloseNewSchool]);
 
   const handleBulkRegister = useCallback(() => {
     // In a real app, this would process the CSV file
-    console.log('Bulk registering schools from file:', state.forms.selectedFile);
     handleCloseBulkSchool();
   }, [state.forms.selectedFile, handleCloseBulkSchool]);
 
   const handleAssignSchools = useCallback(() => {
     // In a real app, this would assign schools
-    console.log('Assigning schools:', state.forms.assignData);
     handleCloseAssignSchool();
   }, [state.forms.assignData, handleCloseAssignSchool]);
 
   const handleUpdateSchool = useCallback(() => {
     // In a real app, this would update the school
-    console.log('Updating school:', state.schoolData);
     handleCloseEdit();
   }, [state.schoolData, handleCloseEdit]);
 
   const handleDeleteSchool = useCallback(() => {
     // In a real app, this would delete the school
-    console.log('Deleting school:', state.deleteId);
     handleCloseDelete();
   }, [state.deleteId, handleCloseDelete]);
 

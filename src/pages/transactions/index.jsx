@@ -22,7 +22,6 @@ export default function TransactionManagement() {
   const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = useTransactionState();
 
   const userInfo = useSelector((state) => state.user.userInfo);
-  console.log('🚀 ~ TransactionManagement ~ userInfo:', userInfo);
   const {
     data: wallets,
     isLoading: walletsLoading,

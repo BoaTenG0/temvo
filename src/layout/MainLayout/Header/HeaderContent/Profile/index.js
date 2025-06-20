@@ -58,7 +58,6 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   const { logout, user } = useAuth();
-  console.log('🚀 ~ ProfilePage ~ user:', user);
   const handleLogout = async () => {
     try {
       await logout();

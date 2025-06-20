@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // material-ui
 import { Grid, Typography, Button, Stack, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -12,7 +13,7 @@ import WelcomeImage from 'assets/images/analytics/welcome-banner.png';
 
 // ==============================|| ANALYTICS - WELCOME ||============================== //
 
-const WelcomeBanner = () => {
+const WelcomeBanner = ({ title, content }) => {
   const theme = useTheme();
 
   return (
@@ -41,12 +42,12 @@ const WelcomeBanner = () => {
         <Grid item md={6} sm={6} xs={12}>
           <Stack spacing={2} sx={{ padding: 3 }}>
             <Typography variant="h2" color={theme.palette.background.paper}>
-              Explore Redesigned Able Pro
+              {title}
             </Typography>
             <Typography variant="h6" color={theme.palette.background.paper}>
-              The Brand new User Interface with power of Material-UI Components. Explore the Endless possibilities with Able Pro.
+              {content}
             </Typography>
-            <Box sx={{ pt: 1.5 }}>
+            {/* <Box sx={{ pt: 1.5 }}>
               <Button
                 variant="outlined"
                 color="secondary"
@@ -61,7 +62,7 @@ const WelcomeBanner = () => {
               >
                 Exclusive on Themeforest
               </Button>
-            </Box>
+            </Box> */}
           </Stack>
         </Grid>
         <Grid item sm={6} xs={12} sx={{ display: { xs: 'none', sm: 'initial' } }}>

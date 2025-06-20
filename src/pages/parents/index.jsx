@@ -151,7 +151,6 @@ export default function VendorManagement() {
   };
 
   const handleAddParent = async (data) => {
-    console.log('🚀 ~ handleAddVendor ~ data:', data);
     // const vendorData = {
     //   name: data.name.trim(),
     //   phone: data.contact.trim(),
@@ -316,7 +315,7 @@ export default function VendorManagement() {
           handleEditVendor(data);
           break;
         case 'bulk':
-          console.log('Bulk enrolling vendors:', data);
+        //   console.log('Bulk enrolling vendors:', data);
           break;
         case 'delete':
           handleDeleteVendor();

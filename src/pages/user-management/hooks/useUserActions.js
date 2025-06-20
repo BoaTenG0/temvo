@@ -74,7 +74,6 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
 
   const handleOpenEdit = useCallback(
     (user) => {
-      console.log('🚀 ~ useUserActions ~ user:', user);
       // Pre-populate edit form with user data
       updateState({
         forms: {
@@ -154,7 +153,6 @@ export const useUserActions = (state, updateState, toggleModal, resetForm, users
 
   const handleDeleteUser = useCallback(() => {
     // In a real app, this would call an API
-    console.log('Deleting user:', state.forms.deleteUser);
     handleCloseDelete();
   }, [state.forms.deleteUser, handleCloseDelete]);
 

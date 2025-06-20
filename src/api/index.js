@@ -946,8 +946,8 @@ const getPermissionById = async (permissionId) => {
 
 // update permission
 
-const updatePermission = async (permissionId) => {
-  return apiClient.patch({ url: `${Permissions.default}/${permissionId}` });
+const updatePermission = async (data, permissionId) => {
+  return apiClient.patch({ url: `${Permissions.default}/${permissionId}`, data });
 };
 
 // delete permission

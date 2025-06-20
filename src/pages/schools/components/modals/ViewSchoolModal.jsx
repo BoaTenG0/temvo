@@ -4,7 +4,6 @@ import { CloseCircle } from 'iconsax-react';
 import { modalStyle } from '../../constants/schoolConstants';
 
 const ViewSchoolModal = ({ open, onClose, schoolData }) => {
-  console.log('🚀 ~ ViewSchoolModal ~ schoolData:', schoolData);
   if (!schoolData) return null;
 
   return (

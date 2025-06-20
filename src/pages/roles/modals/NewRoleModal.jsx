@@ -35,50 +35,64 @@ const NewRoleModal = ({ open, onClose, formData, onFormChange, refetchRoles, per
     [onFormChange, validationErrors]
   );
 
+  //   const handlePermissionChange = (event, newValue) => {
+  //     const selectedPermissionIds = newValue.map((permission) => permission.id);
+  //     handleInputChange('permissions', selectedPermissionIds);
+  //   };
   const handlePermissionChange = (event, newValue) => {
-    const selectedPermissionIds = newValue.map((permission) => permission.id);
-    handleInputChange('permissions', selectedPermissionIds);
+    const selectedPermissionUris = newValue.map((permission) => `/permissions/${permission.id}`);
+    handleInputChange('permissions', selectedPermissionUris);
   };
 
   const handleSubmit = async () => {
-    try {
-      setError('');
-      setValidationErrors({});
+    setError('');
+    setValidationErrors({});
 
-      // Validate form
-      const errors = validateRoleForm(formData);
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors);
-        return;
-      }
-
-      // Prepare data for submission
-      const submitData = {
-        name: formData.name.trim(),
-        description: formData.description?.trim() || '',
-        permissions: formData.permissions || [],
-        active: formData.active
-      };
-
-      await createRoleMutation.mutateAsync(submitData);
-
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Role created successfully!',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      refetchRoles();
-      onClose();
-    } catch (error) {
-      console.error('Error creating role:', error);
-      setError(error.response?.data?.message || 'Failed to create role. Please try again.');
+    // Validate form
+    const errors = validateRoleForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
     }
+
+    // Prepare data for submission
+    const submitData = {
+      name: formData.name.trim(),
+      description: formData.description?.trim() || '',
+      permissions: formData.permissions || []
+      // active: formData.active
+    };
+
+    createRoleMutation.mutate(submitData, {
+      onSuccess: (response) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: response.message || 'Role created successfully!',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            }
+          })
+        );
+
+        refetchRoles();
+        onClose();
+      },
+      onError: (error) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Creating role unsuccessful!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            }
+          })
+        );
+        setError(error.response?.data?.message || 'Failed to create role. Please try again.');
+      }
+    });
   };
 
   const actions = (
@@ -145,7 +159,8 @@ const NewRoleModal = ({ open, onClose, formData, onFormChange, refetchRoles, per
             multiple
             fullWidth
             options={permissions}
-            value={permissions.filter((p) => formData.permissions?.includes(p.id)) || []}
+            // value={permissions.filter((p) => formData.permissions?.includes(p.id)) || []}
+            value={permissions.filter((p) => formData.permissions?.includes(`/permissions/${p.id}`)) || []}
             onChange={handlePermissionChange}
             getOptionLabel={(option) => formatPermissionName(option.name)}
             isOptionEqualToValue={(option, value) => option.id === value.id}

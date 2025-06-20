@@ -23,7 +23,6 @@ import { SchoolName } from 'pages/nfc-wristbands/components/getSchoolName';
 import { WristbandName } from 'pages/nfc-wristbands/components/getWristbandName';
 
 export function AssignPOSContent({ vendors, selectedVendors: initialSelected, onAction, loading, onClose }) {
-  console.log('🚀 ~ AssignPOSContent ~ vendors:', vendors);
   const [selectedVendors, setSelectedVendors] = useState(initialSelected);
   const [searchTerm, setSearchTerm] = useState('');
 

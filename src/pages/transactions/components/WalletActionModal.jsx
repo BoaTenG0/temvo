@@ -2,7 +2,6 @@ import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, CircularProgress } from '@mui/material';
 
 const WalletActionModal = ({ open, onClose, isActivation, onConfirm, loading, walletId,  }) => {
-  console.log("🚀 ~ WalletActionModal ~ walletId:", walletId)
   const actionText = isActivation ? 'activate' : 'deactivate';
 
   return (

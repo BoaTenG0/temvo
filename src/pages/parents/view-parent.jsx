@@ -139,8 +139,7 @@ export default function ParentProfile() {
   // Get parent data from router state, fallback to sample data for demo
   const parentData = location.state?.vendor || sampleParentData;
 
-  console.log('ParentProfile received parentData:', parentData);
-  console.log('ParentData wards:', parentData?.wards);
+
 
   // Show error if no parent data is provided and no sample data
   if (!parentData) {

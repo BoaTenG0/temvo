@@ -71,7 +71,6 @@ export const useTransactionActions = (state, updateState, toggleModal, resetForm
 
   // Print handlers
   const handlePrintReport = useCallback(() => {
-    console.log('Printing transaction report');
     window.print();
   }, []);
 

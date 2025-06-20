@@ -35,7 +35,6 @@ const refreshAccessToken = async () => {
       throw new Error('No refresh token available');
     }
 
-    // console.log('🔄 Attempting token refresh...');
 
     // Create a separate axios instance for refresh to avoid interceptor loops
     const refreshAxios = axios.create({
@@ -58,7 +57,6 @@ const refreshAccessToken = async () => {
       }
     );
 
-    // console.log('✅ Token refresh response:', response.data);
 
     // Handle different response structures
     let newServiceToken;
@@ -78,7 +76,6 @@ const refreshAccessToken = async () => {
     // Update stored token
     localStorage.setItem('serviceToken', newServiceToken);
     localStorage.setItem('refreshToken', newRefreshToken);
-    // console.log('✅ New token stored successfully');
 
     return newServiceToken;
   } catch (error) {
@@ -104,18 +101,12 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem('serviceToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      //   console.log(
-      //     '📤 Request with token:',
-      //     config.method?.toUpperCase(),
-      //     config.url,
-      //     config.data instanceof FormData ? '(FormData)' : '(JSON)'
-      //   );
+
     } else {
       console.log('⚠️ No token found for request:', config.method?.toUpperCase(), config.url);
     }
 
     // Debug: Log final headers
-    // console.log('🔍 Final request headers:', config.headers);
 
     return config;
   },
@@ -158,20 +149,13 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     const { response } = error || {};
 
-    // console.log('❌ Request failed:', {
-    //   status: response?.status,
-    //   url: originalRequest?.url,
-    //   method: originalRequest?.method,
-    //   error: response?.data
-    // });
+
 
     // Handle 401 errors with token refresh
     if (response?.status === 401 && !originalRequest._retry) {
-      console.log('🔐 401 Unauthorized - attempting token refresh');
 
       if (isRefreshing) {
         // If already refreshing, queue this request
-        console.log('⏳ Token refresh in progress, queueing request...');
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -196,7 +180,6 @@ axiosInstance.interceptors.response.use(
         // Process queued requests
         processQueue(null, newToken);
 
-        console.log('🔄 Retrying original request with new token');
         // Retry the original request
         return axiosInstance(originalRequest);
       } catch (refreshError) {

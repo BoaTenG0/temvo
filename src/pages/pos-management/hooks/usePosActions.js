@@ -186,7 +186,6 @@ export const usePosActions = (state, updateState, toggleModal, resetForm) => {
 
   const handleDeletePos = () => {
     // Handle delete logic here
-    console.log('Delete POS device');
     handleCloseDelete();
   };
 

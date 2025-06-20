@@ -383,7 +383,6 @@ export default function VendorManagement() {
     formData.append('file', file);
     bulkUploadMutation.mutate(formData, {
       onSuccess: (response) => {
-        console.log('🚀 ~ handleBulkUpload ~ response:', response);
         dispatch(
           openSnackbar({
             open: true,
@@ -433,7 +432,7 @@ export default function VendorManagement() {
           break;
         case 'bulk':
           handleBulkUpload(data.file);
-          console.log('Bulk enrolling vendors:', data);
+          //   console.log('Bulk enrolling vendors:', data);
           break;
         case 'delete':
           handleDeleteVendor();

@@ -127,16 +127,7 @@ export const PERMISSION_VALIDATION_SCHEMA = {
 };
 
 // Common permission actions
-export const PERMISSION_ACTIONS = [
-  'CREATE',
-  'READ',
-  'UPDATE',
-  'DELETE',
-  'VIEW',
-  'MANAGE',
-  'EXECUTE',
-  'APPROVE'
-];
+export const PERMISSION_ACTIONS = ['CREATE', 'READ', 'UPDATE', 'DELETE', 'VIEW', 'MANAGE', 'EXECUTE', 'APPROVE'];
 
 // Common resources
 export const PERMISSION_RESOURCES = [
@@ -154,11 +145,11 @@ export const PERMISSION_RESOURCES = [
 
 // Helper functions
 export const formatRoleName = (name) => {
-  return name?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  return name?.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 };
 
 export const formatPermissionName = (name) => {
-  return name?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  return name?.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 };
 
 export const getStatusColor = (status) => {
@@ -185,14 +176,14 @@ export const getStatusLabel = (status) => {
 export const filterRoles = (roles, filters) => {
   if (!roles) return [];
 
-  return roles.filter(role => {
-    const matchesSearch = !filters.search ||
+  return roles.filter((role) => {
+    const matchesSearch =
+      !filters.search ||
       role.name?.toLowerCase().includes(filters.search.toLowerCase()) ||
       role.description?.toLowerCase().includes(filters.search.toLowerCase());
 
-    const matchesStatus = filters.status === 'All' ||
-      (filters.status === 'Active' && role.active) ||
-      (filters.status === 'Inactive' && !role.active);
+    const matchesStatus =
+      filters.status === 'All' || (filters.status === 'Active' && role.active) || (filters.status === 'Inactive' && !role.active);
 
     return matchesSearch && matchesStatus;
   });
@@ -201,14 +192,16 @@ export const filterRoles = (roles, filters) => {
 export const filterPermissions = (permissions, filters) => {
   if (!permissions) return [];
 
-  return permissions.filter(permission => {
-    const matchesSearch = !filters.search ||
+  return permissions.filter((permission) => {
+    const matchesSearch =
+      !filters.search ||
       permission.name?.toLowerCase().includes(filters.search.toLowerCase()) ||
       permission.description?.toLowerCase().includes(filters.search.toLowerCase()) ||
       permission.resource?.toLowerCase().includes(filters.search.toLowerCase()) ||
       permission.action?.toLowerCase().includes(filters.search.toLowerCase());
 
-    const matchesStatus = filters.status === 'All' ||
+    const matchesStatus =
+      filters.status === 'All' ||
       (filters.status === 'Active' && permission.active) ||
       (filters.status === 'Inactive' && !permission.active);
 
@@ -250,13 +243,13 @@ export const validatePermissionForm = (formData) => {
     errors.name = 'Permission name can only contain letters, numbers, spaces, underscores, periods, and hyphens';
   }
 
-  if (!formData.resource?.trim()) {
-    errors.resource = 'Resource is required';
-  }
+  //   if (!formData.resource?.trim()) {
+  //     errors.resource = 'Resource is required';
+  //   }
 
-  if (!formData.action?.trim()) {
-    errors.action = 'Action is required';
-  }
+  //   if (!formData.action?.trim()) {
+  //     errors.action = 'Action is required';
+  //   }
 
   if (formData.description && formData.description.length > PERMISSION_VALIDATION_SCHEMA.description.maxLength) {
     errors.description = `Description must not exceed ${PERMISSION_VALIDATION_SCHEMA.description.maxLength} characters`;

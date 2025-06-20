@@ -221,7 +221,6 @@ export default function StudentManagement() {
     formData.append('file', file);
     bulkCreateStudent.mutate(formData, {
       onSuccess: (response) => {
-        console.log('🚀 ~ handleBulkUpload ~ response:', response);
         dispatch(
           openSnackbar({
             open: true,
@@ -255,7 +254,6 @@ export default function StudentManagement() {
   const handleAddStudent = async (studentData) => {
     createStudent.mutate(studentData, {
       onSuccess: (response) => {
-        console.log('🚀 ~ handleAddStudent ~ response:', response);
         dispatch(
           openSnackbar({
             open: true,

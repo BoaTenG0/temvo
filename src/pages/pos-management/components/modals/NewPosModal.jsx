@@ -88,6 +88,7 @@ const NewPosModal = ({ open, onClose, formData, onFormChange, onSubmit, refetchP
 
     createPosMutation.mutate(posData, {
       onSuccess: (response) => {
+        refetchPOS();
         onClose();
         dispatch(
           openSnackbar({
@@ -100,7 +101,6 @@ const NewPosModal = ({ open, onClose, formData, onFormChange, onSubmit, refetchP
             close: true
           })
         );
-        refetchPOS();
       },
       onError: (err) => {
         setError(err.message || 'Failed to register POS. Please try again.');

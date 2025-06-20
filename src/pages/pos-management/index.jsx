@@ -42,13 +42,14 @@ export default function PosManagement() {
   const posData = pos?.data.content;
 
   // Calculate stats from real data
-  const { assignedCount, unassignedCount } = useMemo(() => {
-    if (!posData) return { assignedCount: 0, unassignedCount: 0 };
+  const { assignedCount, unassignedCount, registeredCount } = useMemo(() => {
+    if (!posData) return { assignedCount: 0, unassignedCount: 0, registeredCount: 0 };
 
-    const assigned = posData.filter((p) => p.status === 'active' && p.schoolId).length;
-    const unassigned = posData.filter((p) => p.status === 'active' && !p.schoolId).length;
+    const assigned = posData.filter((p) => p.status === 'Active' && p.schoolId).length;
+    const unassigned = posData.filter((p) => p.status !== 'Active' && !p.schoolId).length;
+    const registered = posData.filter((p) => p.status === 'REGISTERED').length;
 
-    return { assignedCount: assigned, unassignedCount: unassigned };
+    return { assignedCount: assigned, unassignedCount: unassigned, registeredCount: registered };
   }, [posData]);
 
   // extract status from posData
@@ -74,7 +75,7 @@ export default function PosManagement() {
       <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
         <Container maxWidth="xl">
           {/* Stats Component */}
-          <PosStats assignedCount={assignedCount} unassignedCount={unassignedCount} />
+          <PosStats assignedCount={assignedCount} unassignedCount={unassignedCount} registeredCount={registeredCount} />
 
           {/* Filters Component */}
           <PosFilters

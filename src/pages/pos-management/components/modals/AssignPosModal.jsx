@@ -43,6 +43,7 @@ const AssignPosModal = ({
   schools = [],
   selectedAssignPosId
 }) => {
+  console.log('🚀 ~ availablePosDevices:', availablePosDevices);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
   const [selectedPosDevices, setSelectedPosDevices] = useState([]);
@@ -57,13 +58,30 @@ const AssignPosModal = ({
   const assignPos = useAssignToSchool();
 
   // Filter and paginate POS devices
+  //   const filteredPosDevices = useMemo(() => {
+  //     if (!searchQuery.trim()) {
+  //       return availablePosDevices;
+  //     }
+
+  //     const query = searchQuery.toLowerCase();
+  //     return availablePosDevices.filter(
+  //       (pos) =>
+  //         (pos.status === 'Active' && // Exclude inactive devices
+  //           pos.id.toString().toLowerCase().includes(query)) ||
+  //         (pos.model && pos.model.toLowerCase().includes(query)) ||
+  //         (pos.status && pos.status.toLowerCase().includes(query))
+  //     );
+  //   }, [availablePosDevices, searchQuery]);
   const filteredPosDevices = useMemo(() => {
+    const activeUnassignedDevices = availablePosDevices.filter((pos) => pos.status === 'Active' && !pos.schoolId);
+
     if (!searchQuery.trim()) {
-      return availablePosDevices;
+      return activeUnassignedDevices;
     }
 
     const query = searchQuery.toLowerCase();
-    return availablePosDevices.filter(
+
+    return activeUnassignedDevices.filter(
       (pos) =>
         pos.id.toString().toLowerCase().includes(query) ||
         (pos.model && pos.model.toLowerCase().includes(query)) ||

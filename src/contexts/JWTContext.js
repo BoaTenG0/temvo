@@ -273,11 +273,7 @@ export const JWTProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      console.log({
-        email,
-        password
-      });
-      const response = await authAxios.post('/auth/login', { login: email, password });
+
 
       // Extract data from the API response structure
       const { data } = response.data;
@@ -310,7 +306,6 @@ export const JWTProvider = ({ children }) => {
 
       return { success: true, firstTimeLogin };
     } catch (error) {
-      console.log('🚀 ~ login ~ error:', error);
 
       // Extract error message from various possible error structures
       let errorMessage = 'Login failed';

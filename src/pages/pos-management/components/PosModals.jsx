@@ -3,12 +3,10 @@ import NewPosModal from './modals/NewPosModal';
 import BulkPosModal from './modals/BulkPosModal';
 import AssignPosModal from './modals/AssignPosModal';
 import DeletePosModal from './modals/DeletePosModal';
+import DeactivatePOSModal from './modals/DeactivatePosModal';
+import ActivatePOSModal from './modals/ActivatePosModal';
 
-const PosModals = ({
-  state,
-  actions,
-  onFormChange
-}) => {
+const PosModals = ({ state, actions, onFormChange, refetchPos, schools, availablePosDevices }) => {
   const handleNewPosFormChange = (updates) => {
     onFormChange('newPos', updates);
   };
@@ -30,6 +28,8 @@ const PosModals = ({
         formData={state.forms.newPos}
         onFormChange={handleNewPosFormChange}
         onSubmit={actions.handleRegisterPos}
+        // onSubmit={actions.handleRegisterPos}
+        refetchPos={refetchPos}
       />
 
       {/* Register Bulk POS Modal */}
@@ -39,6 +39,7 @@ const PosModals = ({
         selectedFile={state.forms.selectedFile}
         onFileChange={handleFileChange}
         onSubmit={actions.handleBulkRegister}
+        refetchPos={refetchPos}
       />
 
       {/* Assign POS Modal */}
@@ -48,13 +49,35 @@ const PosModals = ({
         formData={state.forms.assignData}
         onFormChange={handleAssignFormChange}
         onSubmit={actions.handleAssignPosDevices}
+        state={state}
+        refetchPos={refetchPos}
+        schools={schools}
+        availablePosDevices={availablePosDevices}
+        selectedAssignPosId={state.selectedAssignPosId}
       />
 
       {/* Delete POS Modal */}
       <DeletePosModal
         open={state.modals.delete}
         onClose={actions.handleCloseDelete}
-        onConfirm={actions.handleDeletePos}
+        // onConfirm={actions.handleDeletePos}
+        refetchPos={refetchPos}
+        state={state}
+      />
+
+      <DeactivatePOSModal
+        state={state}
+        open={state.modals.deactivate}
+        onClose={actions.handleCloseDeactivatePOS}
+        // onConfirm={actions.handleDeleteWristband}
+        refetchWristbands={refetchPos}
+      />
+      <ActivatePOSModal
+        state={state}
+        open={state.modals.activate}
+        onClose={actions.handleCloseActivatePOS}
+        // onConfirm={actions.handleDeleteWristband}
+        refetchWristbands={refetchPos}
       />
     </>
   );

@@ -36,8 +36,8 @@ export default function WristbandManagement() {
     search: state.searchTerm || state.tableSearchTerm || '',
     sort: ['desc'],
     schoolId: state.school !== '' ? state.school : '',
-    createdAtFrom: convertDateJS(state.dateRange[0]),
-    createdAtTo: convertDateJS(state.dateRange[1])
+    from: convertDateJS(state.dateRange[0]),
+    to: convertDateJS(state.dateRange[1])
   });
 
   // Get all schools for filters

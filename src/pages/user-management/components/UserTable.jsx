@@ -21,9 +21,11 @@ import {
   Chip,
   IconButton,
   CircularProgress,
-  Tooltip
+  Tooltip,
+  TablePagination
 } from '@mui/material';
 import { Add, SearchFavorite1, Edit, CloseCircle, Trash, Eye } from 'iconsax-react';
+import { useNavigate } from 'react-router';
 
 const UserTable = ({
   state,
@@ -34,9 +36,12 @@ const UserTable = ({
   onOpenNewUser,
   onEditUser,
   onDeleteUser,
-  onViewUser
+  onViewUser,
+  onRowsPerPageChange
 }) => {
   const users = usersData?.content || [];
+  const navigate = useNavigate();
+
   const filteredUsers = useMemo(() => {
     if (!usersData?.content) return [];
 
@@ -179,7 +184,15 @@ const UserTable = ({
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title="View User">
-                      <IconButton size="small" color="info" onClick={() => onViewUser(row)}>
+                      {/* onClick={() => onViewUser(row)} */}
+                      <IconButton
+                        size="small"
+                        color="info"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/user-management/ViewUser/${row.id}`);
+                        }}
+                      >
                         <Eye size={18} />
                       </IconButton>
                     </Tooltip>
@@ -189,7 +202,7 @@ const UserTable = ({
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Delete Wristband">
+                    <Tooltip title="Delete User">
                       <IconButton size="small" color="error" onClick={() => onDeleteUser(row)}>
                         <Trash size={18} />
                       </IconButton>
@@ -209,6 +222,24 @@ const UserTable = ({
           </TableBody>
         </Table>
       </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={usersData?.totalElements || 0}
+        rowsPerPage={state.rowsPerPage}
+        page={state.page}
+        onRowsPerPageChange={onRowsPerPageChange}
+        showFirstButton
+        showLastButton
+        sx={{
+          borderTop: '1px solid rgba(224, 224, 224, 1)',
+          '& .MuiTablePagination-toolbar': {
+            paddingLeft: 2,
+            paddingRight: 2
+          }
+        }}
+      />
 
       <Box sx={{ p: 2, borderTop: '1px solid rgba(224, 224, 224, 1)' }}>
         <Typography variant="body2" color="text.secondary">

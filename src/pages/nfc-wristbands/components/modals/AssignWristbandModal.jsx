@@ -6,7 +6,6 @@ import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 
 const AssignWristbandModal = ({ open, onClose, formData, onFormChange, schools, state, refetchWristbands }) => {
-  //   console.log('🚀 ~ AssignWristbandModal ~ state:', state);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
 

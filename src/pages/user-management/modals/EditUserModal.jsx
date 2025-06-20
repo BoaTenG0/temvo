@@ -1,26 +1,27 @@
 import React, { useState, useCallback } from 'react';
-import { Grid, Typography, TextField, Button, Alert, CircularProgress, MenuItem } from '@mui/material';
+import { Grid, Typography, TextField, Button, Alert, CircularProgress, MenuItem, Checkbox } from '@mui/material';
 import ReusableModal from 'components/modal/reusable';
 import { useEditUser } from 'api/requests';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 
-const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) => {
+const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers, roles }) => {
+
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
-  const updateUserMutation = useEditUser();
+  const updateUserMutation = useEditUser(formData?.id);
 
   const validateField = useCallback(
     (name, value) => {
       const errors = { ...validationErrors };
       switch (name) {
-        case 'userName':
+        case 'firstName':
           if (!value.trim()) {
-            errors.userName = 'User name is required';
+            errors.firstName = 'User name is required';
           } else if (value.length < 2) {
-            errors.userName = 'User name must be at least 2 characters';
+            errors.firstName = 'User name must be at least 2 characters';
           } else {
-            delete errors.userName;
+            delete errors.firstName;
           }
           break;
         case 'email':
@@ -32,20 +33,20 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
             delete errors.email;
           }
           break;
-        case 'phoneNumber':
+        case 'phone':
           if (value && value.length < 10) {
             errors.phoneNumber = 'Phone number must be at least 10 digits';
           } else {
             delete errors.phoneNumber;
           }
           break;
-        case 'role':
-          if (!value) {
-            errors.role = 'Role is required';
-          } else {
-            delete errors.role;
-          }
-          break;
+        // case 'role':
+        //   if (!value) {
+        //     errors.role = 'Role is required';
+        //   } else {
+        //     delete errors.role;
+        //   }
+        //   break;
         default:
           break;
       }
@@ -78,12 +79,15 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
     }
 
     const userData = {
-      id: formData.id,
-      userName: formData.userName.trim(),
+      //   id: formData.id,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName?.trim() || '',
       email: formData.email.trim().toLowerCase(),
-      phoneNumber: formData.phoneNumber?.trim() || '',
-      role: formData.role,
-      assignedSchool: formData.assignedSchool?.trim() || ''
+      phone: formData.phone?.trim() || '',
+    //   role: formData.role,
+      active: formData.active,
+      roles: [`/roles/${formData.role}`],
+      userType: formData.userType
     };
 
     updateUserMutation.mutate(userData, {
@@ -109,7 +113,7 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
   }, [formData, validateField, updateUserMutation, onClose, refetchUsers]);
 
   const isFormValid = () => {
-    return formData.userName?.trim() && formData.email?.trim() && formData.role && Object.keys(validationErrors).length === 0;
+    return formData.firstName?.trim() && formData.email?.trim() && Object.keys(validationErrors).length === 0;
   };
 
   const isLoading = updateUserMutation.isPending;
@@ -123,20 +127,37 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
           </Alert>
         </Grid>
       )}
-      <Grid item xs={6}>
-        <Typography variant="subtitle2" gutterBottom>
-          User Name *
-        </Typography>
-        <TextField
-          fullWidth
-          name="userName"
-          placeholder="Enter User Name"
-          value={formData.userName || ''}
-          onChange={handleInputChange}
-          error={!!validationErrors.userName}
-          helperText={validationErrors.userName}
-          disabled={isLoading}
-        />
+      <Grid item container spacing={3}>
+        <Grid item xs={6}>
+          <Typography variant="subtitle2" gutterBottom>
+            First Name *
+          </Typography>
+          <TextField
+            fullWidth
+            name="firstName"
+            placeholder="Enter first name"
+            value={formData.firstName || ''}
+            onChange={handleInputChange}
+            error={!!validationErrors.firstName}
+            helperText={validationErrors.firstName}
+            disabled={isLoading}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Typography variant="subtitle2" gutterBottom>
+            Last Name
+          </Typography>
+          <TextField
+            fullWidth
+            name="lastName"
+            placeholder="Enter last name"
+            value={formData.lastName || ''}
+            onChange={handleInputChange}
+            disabled={isLoading}
+            size="small"
+          />
+        </Grid>
       </Grid>
       <Grid item xs={6}>
         <Typography variant="subtitle2" gutterBottom>
@@ -152,6 +173,7 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
           error={!!validationErrors.email}
           helperText={validationErrors.email}
           disabled={isLoading}
+          size="small"
         />
       </Grid>
       <Grid item xs={6}>
@@ -160,14 +182,36 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
         </Typography>
         <TextField
           fullWidth
-          name="phoneNumber"
+          name="phone"
           placeholder="Enter Phone Number"
-          value={formData.phoneNumber || ''}
+          value={formData.phone || ''}
           onChange={handleInputChange}
-          error={!!validationErrors.phoneNumber}
-          helperText={validationErrors.phoneNumber}
+          error={!!validationErrors.phone}
+          helperText={validationErrors.phone}
           disabled={isLoading}
+          size="small"
         />
+      </Grid>
+      <Grid item xs={6}>
+        <Typography variant="subtitle2" gutterBottom>
+          User Type *
+        </Typography>
+        <TextField
+          select
+          fullWidth
+          name="userType"
+          value={formData.userType || ''}
+          onChange={handleInputChange}
+          error={!!validationErrors.userType}
+          helperText={validationErrors.userType}
+          disabled={isLoading}
+          size="small"
+        >
+          <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
+          <MenuItem value="SCHOOL_ADMIN">School Admin</MenuItem>
+          <MenuItem value="PARENT">Parent</MenuItem>
+          <MenuItem value="VENDOR">Vendor</MenuItem>
+        </TextField>
       </Grid>
       <Grid item xs={6}>
         <Typography variant="subtitle2" gutterBottom>
@@ -182,24 +226,20 @@ const EditUserModal = ({ open, onClose, formData, onFormChange, refetchUsers }) 
           error={!!validationErrors.role}
           helperText={validationErrors.role}
           disabled={isLoading}
+          size="small"
         >
-          <MenuItem value="Super Admin">Super Admin</MenuItem>
-          <MenuItem value="Admin">Admin</MenuItem>
-          <MenuItem value="Teacher">Teacher</MenuItem>
+          {roles?.map((role) => (
+            <MenuItem key={role.id} value={role.id}>
+              {role.name}
+            </MenuItem>
+          ))}
         </TextField>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={6}>
         <Typography variant="subtitle2" gutterBottom>
-          Assigned School
+          Active
         </Typography>
-        <TextField
-          fullWidth
-          name="assignedSchool"
-          placeholder="Enter Assigned School"
-          value={formData.assignedSchool || ''}
-          onChange={handleInputChange}
-          disabled={isLoading}
-        />
+        <Checkbox checked={formData.active} onChange={(e) => onFormChange({ active: e.target.checked })} disabled={isLoading} />
       </Grid>
     </Grid>
   );

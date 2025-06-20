@@ -1,9 +1,13 @@
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
-import { Card, CardContent, Box, Typography, Button, Grid, TextField, MenuItem, InputAdornment } from '@mui/material';
-import { Filter, SearchFavorite } from 'iconsax-react';
+import { Card, CardContent, Box, Typography, Button, Grid, TextField, MenuItem, InputAdornment, Stack } from '@mui/material';
+import { Filter, SearchFavorite, SearchNormal1 } from 'iconsax-react';
 import { schoolOptions, regionOptions, statusOptions } from '../constants/schoolConstants';
+import { DateRangePicker } from 'rsuite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { predefinedRanges } from "pages/nfc-wristbands/util";
 
 const SchoolFilters = ({ state, schools, onToggleFilters, onSearchChange, onDateRangeChange, onSchoolChange, onStatusChange }) => {
   return (
@@ -22,7 +26,7 @@ const SchoolFilters = ({ state, schools, onToggleFilters, onSearchChange, onDate
         {state.filtersExpanded && (
           <Box sx={{ p: 3, pt: 1 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={3}>
+              {/* <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                   School Name
                 </Typography>
@@ -33,9 +37,25 @@ const SchoolFilters = ({ state, schools, onToggleFilters, onSearchChange, onDate
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} md={3}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Date Range
+                </Typography>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <Stack spacing={2}>
+                    <DateRangePicker
+                      ranges={predefinedRanges}
+                      value={state.dateRange}
+                      onChange={onDateRangeChange}
+                      size="lg"
+                      placement="auto"
+                    />
+                  </Stack>
+                </LocalizationProvider>
+              </Grid>
+              {/* <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                   Region
                 </Typography>
@@ -52,9 +72,9 @@ const SchoolFilters = ({ state, schools, onToggleFilters, onSearchChange, onDate
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
+              </Grid> */}
 
-              <Grid item xs={12} md={3}>
+              {/* <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom>
                   Status
                 </Typography>
@@ -65,7 +85,7 @@ const SchoolFilters = ({ state, schools, onToggleFilters, onSearchChange, onDate
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom>
@@ -80,7 +100,7 @@ const SchoolFilters = ({ state, schools, onToggleFilters, onSearchChange, onDate
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchFavorite fontSize="small" />
+                        <SearchNormal1 size={15} />
                       </InputAdornment>
                     )
                   }}

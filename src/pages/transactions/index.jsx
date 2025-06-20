@@ -12,12 +12,16 @@ import { useTransactionActions } from './hooks/useTransactionActions';
 import TransactionStats from './components/TransactionStats';
 import TransactionFilters from './components/TransactionFilters';
 import TransactionTable from './components/TransactionTable';
-import { useGetAllWallets } from "api/requests";
+import { useGetAllWallets } from 'api/requests';
+import { useSelector } from 'store';
+import { convertDateJS } from 'utils/hooks';
+import TransactionsSection from 'pages/schools/sections/transactions-section';
 
 export default function TransactionManagement() {
   // Use consolidated state management
   const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = useTransactionState();
 
+  const userInfo = useSelector((state) => state.user.userInfo);
   const {
     data: wallets,
     isLoading: walletsLoading,
@@ -26,44 +30,25 @@ export default function TransactionManagement() {
     page: state.page,
     size: state.rowsPerPage,
     search: state.searchTerm || state.tableSearchTerm || '',
-    sort: ['desc']
+    sort: ['desc'],
+    from: convertDateJS(state.dateRange[0]),
+    to: convertDateJS(state.dateRange[1]),
+    status: state.status
   });
 
   const transactionsData = wallets?.data.content;
 
-  // Get transactions data (placeholder for now - will be replaced with actual API calls)
-//   const transactionsData = useMemo(
-//     () => [
-//       {
-//         id: 1,
-//         type: 'Temvo-to-Temvo',
-//         school: 'Accra Academy',
-//         amount: '20,000',
-//         dbid: '1718290',
-//         crid: '187303',
-//         date: '17/02/2025',
-//         status: 'Successful'
-//       },
-//       {
-//         id: 2,
-//         type: 'Temvo-to-Temvo',
-//         school: 'Accra Academy',
-//         amount: '20,000',
-//         dbid: '1718290',
-//         crid: '187303',
-//         date: '17/02/2025',
-//         status: 'Failed'
-//       }
-//     ],
-//     []
-//   );
+  const status = useMemo(() => {
+    if (!transactionsData) return [];
+    return [...new Set(transactionsData.map((tx) => tx.status))];
+  }, [transactionsData]);
 
   // Calculate stats from real data
   const { successfulCount, failedCount } = useMemo(() => {
     if (!transactionsData) return { successfulCount: 0, failedCount: 0 };
 
-    const successful = transactionsData.filter((t) => t.status === 'Successful').length;
-    const failed = transactionsData.filter((t) => t.status === 'Failed').length;
+    const successful = transactionsData.filter((t) => t.status === 'ACTIVE').length;
+    const failed = transactionsData.filter((t) => t.status === 'SUSPENDED').length;
 
     return { successfulCount: successful, failedCount: failed };
   }, [transactionsData]);
@@ -73,34 +58,42 @@ export default function TransactionManagement() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
-        <Container maxWidth="xl">
-          {/* Stats Component */}
-          <TransactionStats successfulCount={successfulCount} failedCount={failedCount} />
+      {userInfo.schoolId !== null ? (
+        <TransactionsSection schoolId={userInfo?.schoolId ? userInfo?.schoolId : null} />
+      ) : (
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+          <Container maxWidth="xl">
+            {/* Stats Component */}
+            <TransactionStats successfulCount={successfulCount} failedCount={failedCount} />
 
-          {/* Filters Component */}
-          <TransactionFilters
-            state={state}
-            onToggleFilters={actions.toggleFilters}
-            onSearchChange={actions.handleSearchChange}
-            onDateRangeChange={actions.handleDateRangeChange}
-            onSchoolChange={actions.handleSchoolChange}
-            onStatusChange={actions.handleStatusChange}
-          />
+            {/* Filters Component */}
+            <TransactionFilters
+              state={state}
+              onToggleFilters={actions.toggleFilters}
+              onSearchChange={actions.handleSearchChange}
+              onDateRangeChange={actions.handleDateRangeChange}
+              onSchoolChange={actions.handleSchoolChange}
+              onStatusChange={actions.handleStatusChange}
+              status={status}
+            />
 
-          {/* Table Component */}
-          <TransactionTable
-            state={state}
-            transactionsData={wallets?.data}
-            isLoading={walletsLoading}
-            onTabChange={actions.handleTabChange}
-            onPageChange={actions.handleChangePage}
-            onRowsPerPageChange={actions.handleChangeRowsPerPage}
-            onTableSearchChange={actions.handleTableSearchChange}
-            onPrintReport={actions.handlePrintReport}
-          />
-        </Container>
-      </Box>
+            {/* Table Component */}
+            <TransactionTable
+              state={state}
+              transactionsData={wallets?.data}
+              isLoading={walletsLoading}
+              onTabChange={actions.handleTabChange}
+              onPageChange={actions.handleChangePage}
+              onRowsPerPageChange={actions.handleChangeRowsPerPage}
+              onTableSearchChange={actions.handleTableSearchChange}
+              onPrintReport={actions.handlePrintReport}
+              userInfo={userInfo}
+              refetchWallets={refetchWallets}
+              onRefresh={refetchWallets}
+            />
+          </Container>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

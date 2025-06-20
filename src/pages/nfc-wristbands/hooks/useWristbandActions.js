@@ -48,7 +48,6 @@ export const useWristbandActions = (state, updateState, toggleModal, resetForm) 
   //     toggleModal('newWristband', true);
   //   };
   const handleOpenNewWristband = (wristbandData) => {
-    console.log('Selected wristband:', wristbandData);
     toggleModal('newWristband', true);
     updateState({ wristbandData: wristbandData });
   };

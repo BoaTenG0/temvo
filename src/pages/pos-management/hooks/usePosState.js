@@ -9,18 +9,21 @@ export const usePosState = () => {
     rowsPerPage: 10,
     tabValue: 0,
     filtersExpanded: true,
-    
+
     // Search and filters
     searchTerm: '',
     dateRange: [null, null],
     school: 'All',
     status: 'All',
     tableSearchTerm: '',
-    
+    deleteId: null,
+    deactivateId: null,
+    activateId: null,
+
     // Data
     posDevices: initialPosDevices,
     filteredPosDevices: initialPosDevices,
-    
+
     // Modal states
     modals: {
       newPos: false,
@@ -28,7 +31,10 @@ export const usePosState = () => {
       assignPos: false,
       delete: false
     },
-    
+
+    // Track selected POS for assignment modal
+    selectedAssignPosId: null,
+
     // Form data
     forms: {
       newPos: initialNewPos,
@@ -39,7 +45,7 @@ export const usePosState = () => {
 
   // Update state helper
   const updateState = (updates) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       ...updates
     }));
@@ -47,7 +53,7 @@ export const usePosState = () => {
 
   // Update nested state helper
   const updateNestedState = (key, updates) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       [key]: {
         ...prev[key],
@@ -79,15 +85,15 @@ export const usePosState = () => {
       assignData: initialAssignData,
       selectedFile: null
     };
-    
+
     updateNestedState('forms', {
       [formName]: initialValues[formName]
     });
   };
 
   // Computed values
-  const assignedCount = state.posDevices.filter(p => p.status === 'Assigned').length;
-  const unassignedCount = state.posDevices.filter(p => p.status === 'Unassigned').length;
+  const assignedCount = state.posDevices.filter((p) => p.status === 'Assigned').length;
+  const unassignedCount = state.posDevices.filter((p) => p.status === 'Unassigned').length;
 
   // Filter effect
   useEffect(() => {
@@ -95,19 +101,19 @@ export const usePosState = () => {
 
     // Filter by tab value
     if (state.tabValue === 1) {
-      filtered = filtered.filter(p => p.status === 'Assigned');
+      filtered = filtered.filter((p) => p.status === 'Assigned');
     } else if (state.tabValue === 2) {
-      filtered = filtered.filter(p => p.status === 'Unassigned');
+      filtered = filtered.filter((p) => p.status === 'Unassigned');
     }
 
     // Filter by school
     if (state.school !== 'All') {
-      filtered = filtered.filter(p => p.assignedSchool === state.school);
+      filtered = filtered.filter((p) => p.assignedSchool === state.school);
     }
 
     // Filter by status
     if (state.status !== 'All') {
-      filtered = filtered.filter(p => p.status === state.status);
+      filtered = filtered.filter((p) => p.status === state.status);
     }
 
     // Filter by date range
@@ -115,7 +121,7 @@ export const usePosState = () => {
       const startDate = new Date(state.dateRange[0]);
       const endDate = new Date(state.dateRange[1]);
 
-      filtered = filtered.filter(p => {
+      filtered = filtered.filter((p) => {
         if (p.dateRegistered === 'N/A') return false;
         const parts = p.dateRegistered.split('/');
         const posDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
@@ -126,37 +132,31 @@ export const usePosState = () => {
     // Filter by global search
     if (state.searchTerm) {
       const term = state.searchTerm.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.modelName.toLowerCase().includes(term) ||
-        p.modelNumber.toLowerCase().includes(term) ||
-        p.serialNumber.toLowerCase().includes(term) ||
-        p.assignedSchool.toLowerCase().includes(term) ||
-        p.status.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (p) =>
+          p.modelName.toLowerCase().includes(term) ||
+          p.modelNumber.toLowerCase().includes(term) ||
+          p.serialNumber.toLowerCase().includes(term) ||
+          p.assignedSchool.toLowerCase().includes(term) ||
+          p.status.toLowerCase().includes(term)
       );
     }
 
     // Filter by table search
     if (state.tableSearchTerm) {
       const term = state.tableSearchTerm.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.modelName.toLowerCase().includes(term) ||
-        p.modelNumber.toLowerCase().includes(term) ||
-        p.serialNumber.toLowerCase().includes(term) ||
-        p.assignedSchool.toLowerCase().includes(term) ||
-        p.status.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (p) =>
+          p.modelName.toLowerCase().includes(term) ||
+          p.modelNumber.toLowerCase().includes(term) ||
+          p.serialNumber.toLowerCase().includes(term) ||
+          p.assignedSchool.toLowerCase().includes(term) ||
+          p.status.toLowerCase().includes(term)
       );
     }
 
     updateState({ filteredPosDevices: filtered });
-  }, [
-    state.posDevices,
-    state.tabValue,
-    state.school,
-    state.status,
-    state.dateRange,
-    state.searchTerm,
-    state.tableSearchTerm
-  ]);
+  }, [state.posDevices, state.tabValue, state.school, state.status, state.dateRange, state.searchTerm, state.tableSearchTerm]);
 
   return {
     state,

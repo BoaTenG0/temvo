@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  Grid,
-  Typography
-} from '@mui/material';
+import { Card, CardContent, Grid, Typography } from '@mui/material';
 
 const TransactionStats = ({ successfulCount, failedCount }) => {
   return (
@@ -23,12 +18,12 @@ const TransactionStats = ({ successfulCount, failedCount }) => {
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <Typography variant="h6" color="success.main">
-                  Successful: {successfulCount}
+                  Active: {successfulCount}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="h6" color="error.main">
-                  Failed: {failedCount}
+                  Suspended: {failedCount}
                 </Typography>
               </Grid>
             </Grid>

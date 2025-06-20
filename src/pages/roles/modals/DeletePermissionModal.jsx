@@ -1,44 +1,48 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import {
-  Typography,
-  Button,
-  Alert,
-  CircularProgress,
-  Box
-} from '@mui/material';
+import { Typography, Button, Alert, CircularProgress, Box } from '@mui/material';
 import ReusableModal from 'components/modal/reusable';
 import { useDeletePermission } from 'api/requests';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
-import { Warning2 } from "iconsax-react";
+import { Warning2 } from 'iconsax-react';
 
 const DeletePermissionModal = ({ open, onClose, formData, refetchPermissions }) => {
   const [error, setError] = useState('');
   const deletePermissionMutation = useDeletePermission(formData.id);
 
   const handleDelete = async () => {
-    try {
-      setError('');
-      await deletePermissionMutation.mutateAsync();
+    setError('');
+    deletePermissionMutation.mutate(null, {
+      onSuccess: (response) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Permission deleted successfully!',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            }
+          })
+        );
 
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Permission deleted successfully!',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      refetchPermissions();
-      onClose();
-    } catch (error) {
-      console.error('Error deleting permission:', error);
-      setError(error.response?.data?.message || 'Failed to delete permission. Please try again.');
-    }
+        refetchPermissions();
+        onClose();
+      },
+      onError: (err) => {
+        setError(err.message || 'Failed to delete permission. Please try again.');
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: err.message || 'Failed to delete permission. Please try again.',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            }
+          })
+        );
+      }
+    });
   };
 
   const actions = (
@@ -59,13 +63,7 @@ const DeletePermissionModal = ({ open, onClose, formData, refetchPermissions }) 
   );
 
   return (
-    <ReusableModal
-      open={open}
-      onClose={onClose}
-      title="Delete Permission"
-      actions={actions}
-      maxWidth={500}
-    >
+    <ReusableModal open={open} onClose={onClose} title="Delete Permission" actions={actions} maxWidth={500}>
       <Box sx={{ textAlign: 'center', py: 2 }}>
         <Warning2 sx={{ fontSize: 64, color: 'warning.main', mb: 2 }} />
 

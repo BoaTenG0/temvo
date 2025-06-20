@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import {
   Grid,
@@ -56,12 +55,23 @@ function convertDateJS(isoDateString) {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+// function convertDateJS(isoDateString) {
+//   const date = new Date(isoDateString);
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, '0');
+//   const day = String(date.getDate()).padStart(2, '0');
+//   const hours = String(date.getHours()).padStart(2, '0');
+//   const minutes = String(date.getMinutes()).padStart(2, '0');
+//   const seconds = String(date.getSeconds()).padStart(2, '0');
+
+//   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+// }
 
 const TransactionsSection = ({ schoolId }) => {
   const theme = useTheme();
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(20);
+  const [size, setSize] = useState(10);
 
   const initialStartDate = dayjs().subtract(7, 'days');
   const initialEndDate = dayjs();
@@ -189,7 +199,7 @@ const TransactionsSection = ({ schoolId }) => {
   const transactionSummary = useMemo(() => {
     if (!schoolTrans) return { total: 0, successful: 0, pending: 0, failed: 0 };
 
-    return schoolTrans.reduce(
+    return schoolTrans?.reduce(
       (acc, trans) => {
         acc.total += trans.amount;
         switch (trans.status?.toUpperCase()) {
@@ -572,61 +582,71 @@ const TransactionsSection = ({ schoolId }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {schoolTrans?.map((transaction, index) => (
-                    <TableRow key={index} hover>
-                      <TableCell>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <DocumentText1 size="16" color={theme.palette.primary.main} />
-                          <Box>
-                            <Typography variant="body2" fontWeight="500">
-                              {transaction.transactionReference}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {transaction.externalReference}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="600">
-                          {formatCurrency(transaction.amount)}
+                  {schoolTrans?.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} align="center">
+                        <Typography variant="body2" color="text.secondary">
+                          No transactions found
                         </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          {getTypeIcon(transaction.type)}
-                          <Chip label={transaction.type} color={getTypeColor(transaction.type)} size="small" variant="outlined" />
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          {getStatusIcon(transaction.status)}
-                          <Chip label={transaction.status} color={getStatusColor(transaction.status)} size="small" />
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          {getProviderIcon(transaction.provider)}
-                          <Typography variant="body2">{transaction.provider}</Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">{transaction.channel}</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">{transaction.transDescription}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {transaction.narration}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <Calendar size="16" color={theme.palette.action.active} />
-                          <Typography variant="body2">{formatDate(transaction.createdAt)}</Typography>
-                        </Box>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    schoolTrans?.map((transaction, index) => (
+                      <TableRow key={index} hover>
+                        <TableCell>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <DocumentText1 size="16" color={theme.palette.primary.main} />
+                            <Box>
+                              <Typography variant="body2" fontWeight="500">
+                                {transaction.transactionReference}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {transaction.externalReference}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight="600">
+                            {formatCurrency(transaction.amount)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {getTypeIcon(transaction.type)}
+                            <Chip label={transaction.type} color={getTypeColor(transaction.type)} size="small" variant="outlined" />
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {getStatusIcon(transaction.status)}
+                            <Chip label={transaction.status} color={getStatusColor(transaction.status)} size="small" />
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {getProviderIcon(transaction.provider)}
+                            <Typography variant="body2">{transaction.provider}</Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">{transaction.channel}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">{transaction.transDescription}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {transaction.narration}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <Calendar size="16" color={theme.palette.action.active} />
+                            <Typography variant="body2">{formatDate(transaction.createdAt)}</Typography>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>

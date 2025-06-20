@@ -25,9 +25,23 @@ import {
   CircularProgress,
   TablePagination
 } from '@mui/material';
-import { Add, DocumentUpload, SearchFavorite1, Eye, WatchStatus, TableDocument, Edit, CloseCircle, Trash } from 'iconsax-react';
+import {
+  Add,
+  DocumentUpload,
+  SearchFavorite1,
+  Eye,
+  WatchStatus,
+  TableDocument,
+  Edit,
+  CloseCircle,
+  Trash,
+  Refresh,
+  SearchNormal,
+  SearchNormal1
+} from 'iconsax-react';
 import { rowsPerPageOptions, tabLabels } from '../constants/schoolConstants';
 import { useNavigate } from 'react-router';
+import { lightBlue } from '@mui/material/colors';
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
@@ -51,7 +65,8 @@ const SchoolTable = ({
   onOpenAssignSchool,
   onViewSchool,
   onEditSchool,
-  onDeleteSchool
+  onDeleteSchool,
+  refetch
 }) => {
   const schools = schoolsData?.content || [];
   const navigate = useNavigate();
@@ -78,10 +93,37 @@ const SchoolTable = ({
       >
         <Typography variant="h6">Schools List</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <Button variant="outlined" color="primary" startIcon={<Add />} size="small" onClick={onOpenNewSchool}>
+          <Button size="small" startIcon={<Refresh size={16} />} variant="outlined" onClick={refetch} disabled={isLoading}>
+            Refresh
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+            size="small"
+            onClick={onOpenNewSchool}
+            sx={{
+              //   backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: lightBlue[300]
+              }
+            }}
+          >
             Register New School
           </Button>
-          <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={onOpenBulkSchool}>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<DocumentUpload />}
+            size="small"
+            onClick={onOpenBulkSchool}
+            sx={{
+              //   backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: lightBlue[300]
+              }
+            }}
+          >
             Register Bulk Schools
           </Button>
         </Stack>
@@ -103,7 +145,7 @@ const SchoolTable = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchFavorite1 fontSize="small" />
+                <SearchNormal1 size={15} />
               </InputAdornment>
             )
           }}
@@ -169,26 +211,26 @@ const SchoolTable = ({
                           navigate(`/schools/ViewSchool/${row.id}`);
                         }}
                       >
-                        <Eye size={18} />
+                        <Eye size={15} />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete School">
                       <IconButton size="small" color="error" onClick={() => onDeleteSchool(row.id)}>
-                        <Trash size={18} />
+                        <Trash size={15} />
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="View Assigned Wristbands">
+                    {/* <Tooltip title="View Assigned Wristbands">
                       <IconButton size="small" color="primary">
-                        <WatchStatus size={18} />
+                        <WatchStatus size={15} />
                       </IconButton>
                     </Tooltip>
 
                     <Tooltip title="View Assigned POS">
                       <IconButton size="small" color="primary">
-                        <TableDocument size={18} />
+                        <TableDocument size={15} />
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
 
                     {/* <Tooltip title="Edit School Details">
                         <IconButton size="small" color="primary" onClick={() => onEditSchool(row)}>

@@ -14,27 +14,29 @@ import { ArrowDown, ArrowUp, Book, Calendar, CloudChange, Fatrows, User, DollarS
 import WelcomeBanner from 'sections/dashboard/default/WelcomeBanner';
 import RecentTransactions from './recent-transactions-table';
 import QuickActions from './quick-actions';
-import { useGetGeneralSchool } from 'api/requests';
+import { useGetDashboardOverview } from 'api/requests';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const DashboardDefault = () => {
   const theme = useTheme();
 
-  const { data: schools, isLoading: isSchoolLoading } = useGetGeneralSchool();
-  const totalSchools = schools?.data.content.length || 0;
+  const { data } = useGetDashboardOverview();
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12}>
-        <WelcomeBanner />
+        <WelcomeBanner
+          content="Welcome to the TemVo System Dashboard, where you can monitor and manage all aspects of the system efficiently."
+          title="Explore and manage the TemVo System Dashboard"
+        />
       </Grid>
 
       {/* row 1 */}
       <Grid item xs={12} sm={6} lg={3}>
         <EcommerceDataCard
           title="Total Schools"
-          count={totalSchools}
+          count={data?.totalSchools || 'N/A'}
           iconPrimary={<Fatrows />}
           percentage={
             <Typography color="primary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -48,7 +50,7 @@ const DashboardDefault = () => {
       <Grid item xs={12} sm={6} lg={3}>
         <EcommerceDataCard
           title="Total Students"
-          count="290+"
+          count={data?.totalStudents || 'N/A'}
           color="warning"
           iconPrimary={<User color={theme.palette.warning.dark} />}
           percentage={
@@ -62,8 +64,8 @@ const DashboardDefault = () => {
       </Grid>
       <Grid item xs={12} sm={6} lg={3}>
         <EcommerceDataCard
-          title="Total Successful Transactions (GHC)"
-          count="1,568"
+          title="Monthly Successful Transactions (GHC)"
+          count={data?.totalTransfersThisMonth || 'N/A'}
           color="success"
           iconPrimary={<DollarSquare color={theme.palette.success.darker} />}
           percentage={
@@ -78,7 +80,7 @@ const DashboardDefault = () => {
       <Grid item xs={12} sm={6} lg={3}>
         <EcommerceDataCard
           title="Total POS Devices"
-          count="200"
+          count={data?.totalActivePOSDevices || 'N/A'}
           color="error"
           iconPrimary={<PasswordCheck color={theme.palette.error.dark} />}
           percentage={

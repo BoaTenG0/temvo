@@ -24,45 +24,69 @@ const NewPermissionModal = ({ open, onClose, formData, onFormChange, refetchPerm
   );
 
   const handleSubmit = async () => {
-    try {
-      setError('');
-      setValidationErrors({});
+    // try {
+    setError('');
+    setValidationErrors({});
 
-      // Validate form
-      const errors = validatePermissionForm(formData);
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors);
-        return;
-      }
+    // Validate form
+    const errors = validatePermissionForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
 
-      // Prepare data for submission
-      const submitData = {
+    // Prepare data for submission
+    const submitData = {
+      name: formData.name.trim(),
+      description: formData.description?.trim() || ''
+      // resource: formData.resource.trim(),
+      // action: formData.action.trim(),
+      // active: formData.active
+    };
+
+    createPermissionMutation.mutate(
+      {
         name: formData.name.trim(),
         description: formData.description?.trim() || ''
-        // resource: formData.resource.trim(),
-        // action: formData.action.trim(),
-        // active: formData.active
-      };
+      },
+      {
+        onSuccess: (response) => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: response.message || 'Permission created successfully!',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              }
+            })
+          );
+          refetchPermissions();
+          onClose();
+        },
+        onError: (error) => {
+          setError(error.response?.data?.message || 'Failed to create permission. Please try again.');
+        }
+      }
+    );
 
-      await createPermissionMutation.mutateAsync(submitData);
+    //   dispatch(
+    //     openSnackbar({
+    //       open: true,
+    //       message: 'Permission created successfully!',
+    //       variant: 'alert',
+    //       alert: {
+    //         color: 'success'
+    //       }
+    //     })
+    //   );
 
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Permission created successfully!',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      refetchPermissions();
-      onClose();
-    } catch (error) {
-      console.error('Error creating permission:', error);
-      setError(error.response?.data?.message || 'Failed to create permission. Please try again.');
-    }
+    // refetchPermissions();
+    // onClose();
+    // } catch (error) {
+    //   console.error('Error creating permission:', error);
+    //   setError(error.response?.data?.message || 'Failed to create permission. Please try again.');
+    // }
   };
 
   const actions = (

@@ -14,6 +14,7 @@ import SchoolFilters from './components/SchoolFilters';
 import SchoolTable from './components/SchoolTable';
 import SchoolModals from './components/SchoolModals';
 import { useGetGeneralSchool } from 'api/requests';
+import { convertDateJS } from 'utils/hooks';
 
 export default function SchoolManagement() {
   const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = useSchoolState();
@@ -26,9 +27,10 @@ export default function SchoolManagement() {
     page: state.page,
     size: state.rowsPerPage,
     search: state.searchTerm || state.tableSearchTerm || '',
-    sort: ['desc']
+    sort: ['desc'],
+    from: convertDateJS(state.dateRange[0]),
+    to: convertDateJS(state.dateRange[1])
   });
-
 
   const schoolsData = schoolsDataApi?.data?.content;
 
@@ -89,6 +91,7 @@ export default function SchoolManagement() {
             onViewSchool={actions.handleOpenView}
             onEditSchool={actions.handleOpenEdit}
             onDeleteSchool={actions.handleOpenDelete}
+            refetch={refetchSchools}
           />
 
           {/* Modals Component */}

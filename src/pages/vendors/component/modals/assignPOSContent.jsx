@@ -1,4 +1,4 @@
-'use client';
+/* eslint-disable no-unused-vars */
 
 import { useState } from 'react';
 import {
@@ -19,65 +19,55 @@ import {
 } from '@mui/material';
 import { SearchNormal1 } from 'iconsax-react';
 
-export function AssignPOSContent({ vendors, selectedVendors: initialSelected, onAction, loading, onClose }) {
-  const [selectedVendors, setSelectedVendors] = useState(initialSelected);
+export function AssignPOSContent({ onAction, loading, onClose, posData }) {
+  const [selectedVendors, setSelectedVendors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [posPrefix, setPosPrefix] = useState('POS-');
 
   // Filter unassigned vendors
-  const unassignedVendors = vendors.filter(
+  const unassignedVendors = posData.filter(
     (vendor) =>
-      vendor.status === 'Unassigned' &&
-      (vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.vendorId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.contact.toLowerCase().includes(searchTerm.toLowerCase()))
+      vendor.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.modelNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.serialNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSelectAll = (checked) => {
+  const handleSelectVendor = (vendorId, checked) => {
     if (checked) {
-      setSelectedVendors(unassignedVendors.map((vendor) => vendor.id));
+      setSelectedVendors([vendorId]);
     } else {
       setSelectedVendors([]);
     }
   };
 
-  const handleSelectVendor = (vendorId, checked) => {
-    if (checked) {
-      setSelectedVendors((prev) => [...prev, vendorId]);
-    } else {
-      setSelectedVendors((prev) => prev.filter((id) => id !== vendorId));
-    }
-  };
-
   const handleAssign = () => {
+    if (selectedVendors.length === 0) return;
+    const posId = selectedVendors[0];
     const assignmentData = {
-      vendorIds: selectedVendors,
-      posPrefix,
-      assignmentDate: new Date().toISOString()
+      posId
     };
     onAction(assignmentData);
   };
 
-  const isAllSelected = selectedVendors.length === unassignedVendors.length && unassignedVendors.length > 0;
+  //   const isAllSelected = selectedVendors.length === unassignedVendors.length && unassignedVendors.length > 0;
 
   return (
     <Box>
       <Typography variant="body2" color="text.secondary" gutterBottom>
-        Select vendors to assign POS systems. Only unassigned vendors are shown.
+        Select POS Device to assign to vendor.
       </Typography>
 
       <Box sx={{ mb: 3 }}>
-        <TextField
+        {/* <TextField
           fullWidth
           label="POS ID Prefix"
           value={posPrefix}
           onChange={(e) => setPosPrefix(e.target.value)}
           helperText="POS IDs will be generated with this prefix"
           sx={{ mb: 2 }}
-        />
+        /> */}
         <TextField
           fullWidth
-          placeholder="Search vendors..."
+          placeholder="Search pos device..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -90,7 +80,7 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
         />
       </Box>
 
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
           <Checkbox
             checked={isAllSelected}
@@ -102,17 +92,16 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
           </Typography>
         </Box>
         <Chip label={`${selectedVendors.length} selected`} color="primary" variant="outlined" />
-      </Box>
+      </Box> */}
 
       <TableContainer sx={{ maxHeight: 300, mb: 3 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">Select</TableCell>
-              <TableCell>Vendor Name</TableCell>
-              <TableCell>Vendor ID</TableCell>
-              <TableCell>Contact</TableCell>
-              <TableCell>Business Type</TableCell>
+              <TableCell>Model Name</TableCell>
+              <TableCell>Model Number</TableCell>
+              <TableCell>Serial Number</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -124,10 +113,9 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
                     onChange={(e) => handleSelectVendor(vendor.id, e.target.checked)}
                   />
                 </TableCell>
-                <TableCell>{vendor.name}</TableCell>
-                <TableCell>{vendor.vendorId}</TableCell>
-                <TableCell>{vendor.contact}</TableCell>
-                <TableCell>{vendor.businessType}</TableCell>
+                <TableCell>{vendor.model}</TableCell>
+                <TableCell>{vendor.modelNumber}</TableCell>
+                <TableCell>{vendor.serialNumber}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -137,7 +125,7 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
       {unassignedVendors.length === 0 && (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography color="text.secondary">
-            {searchTerm ? 'No vendors found matching your search.' : 'All vendors have been assigned POS systems.'}
+            {searchTerm ? 'No pos devices found matching your search.' : 'All pos device systems.'}
           </Typography>
         </Box>
       )}
@@ -147,7 +135,7 @@ export function AssignPOSContent({ vendors, selectedVendors: initialSelected, on
           Cancel
         </Button>
         <Button variant="contained" onClick={handleAssign} disabled={selectedVendors.length === 0 || loading} sx={{ minWidth: 120 }}>
-          {loading ? 'Assigning...' : `Assign POS (${selectedVendors.length})`}
+          {loading ? 'Assigning...' : `Assign POS`}
         </Button>
       </DialogActions>
     </Box>

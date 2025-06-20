@@ -45,8 +45,6 @@ export default function RolesAndPermissions() {
     search: state.permissionSearchTerm || state.permissionTableSearchTerm || '',
     sort: ['desc']
   });
-  console.log('🚀 ~ RolesAndPermissions ~ permissions:', permissions);
-
   const roleData = roles?.content;
   // Use actions hook
   const actions = useRoleActions(state, updateState, toggleModal, resetForm, roles?.content);

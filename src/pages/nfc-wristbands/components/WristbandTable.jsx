@@ -28,6 +28,7 @@ import {
 import { Add, Additem, DocumentUpload, SearchFavorite1, Setting3, Trash } from 'iconsax-react';
 import { format } from 'date-fns';
 import { SchoolName } from './getSchoolName'; // Adjust the import path as necessary
+import { lightBlue } from '@mui/material/colors';
 const rowsPerPageOptions = [10, 20, 50, 100];
 
 const getStatusColor = (status) => {
@@ -106,10 +107,34 @@ const WristbandTable = ({
       >
         <Typography variant="h6">Wristband List</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <Button variant="outlined" color="primary" startIcon={<Add />} size="small" onClick={onOpenNewWristband}>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+            size="small"
+            onClick={onOpenNewWristband}
+            sx={{
+            //   backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: lightBlue[300]
+              }
+            }}
+          >
             Register New Wristband
           </Button>
-          <Button variant="outlined" color="primary" startIcon={<DocumentUpload />} size="small" onClick={onOpenBulkWristband}>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<DocumentUpload />}
+            size="small"
+            onClick={onOpenBulkWristband}
+            sx={{
+            //   backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: lightBlue[300]
+              }
+            }}
+          >
             Register Bulk Wristbands
           </Button>
         </Stack>
@@ -192,17 +217,17 @@ const WristbandTable = ({
                         onClick={() => onOpenAssignWristband(row)}
                         disabled={row.schoolId} // Disable if already assigned
                       >
-                        <Additem size={18} />
+                        <Additem size={15} />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Deactivate Wristband">
                       <IconButton size="small" color="warning" onClick={() => onDeactivateWristband(row.id)}>
-                        <Setting3 size={18} />
+                        <Setting3 size={15} />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete Wristband">
                       <IconButton size="small" color="error" onClick={() => onDeleteWristband(row.id)}>
-                        <Trash size={18} />
+                        <Trash size={15} />
                       </IconButton>
                     </Tooltip>
                   </TableCell>

@@ -150,9 +150,13 @@ const ProfilePage = () => {
                         <Stack direction="row" spacing={1.25} alignItems="center">
                           <Avatar alt="profile user" src={avatar1} />
                           <Stack>
-                            <Typography variant="subtitle1">{user?.name}</Typography>
+                            <Typography variant="subtitle1">{user?.firstName + ' ' + user?.lastName}</Typography>
                             <Typography variant="body2" color="secondary">
-                              UI/UX Designer
+                              {user?.userType === 'SCHOOL_ADMIN'
+                                ? 'School Admin'
+                                : user?.userType === 'SUPER_ADMIN'
+                                ? 'Super Admin'
+                                : 'Admin'}
                             </Typography>
                           </Stack>
                         </Stack>

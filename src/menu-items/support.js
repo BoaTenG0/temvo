@@ -28,7 +28,8 @@ const support = {
       title: <FormattedMessage id="System Settings" />,
       type: 'item',
       url: '/system-settings',
-      icon: icons.settings
+      icon: icons.settings,
+      breadcrumbs: false
     }
     // {
     //   id: 'menu-level',

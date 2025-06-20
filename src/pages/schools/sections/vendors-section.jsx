@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -28,6 +29,7 @@ import { useGetAllVendorsBySchool, useEditVendor } from 'api/requests';
 import { VendorActionModal } from 'pages/vendors/component/modals';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { dispatch } from 'store';
+import { POSName } from 'pages/nfc-wristbands/components/getPOSName';
 
 const VendorsSection = ({ schoolId }) => {
   const theme = useTheme();
@@ -39,7 +41,7 @@ const VendorsSection = ({ schoolId }) => {
 
   const { data: vendorsData, isLoading, error } = useGetAllVendorsBySchool({ page, size, search: searchTerm }, schoolId);
 
-  const vendors = vendorsData?.content || [];
+  const vendors = vendorsData?.data?.content || [];
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -145,7 +147,7 @@ const VendorsSection = ({ schoolId }) => {
                     Total Vendors
                   </Typography>
                   <Typography variant="h4" fontWeight="600" color="info.main">
-                    {vendorsData?.totalElements || 0}
+                    {vendorsData?.data?.totalElements || 0}
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: theme.palette.info.light }}>
@@ -156,7 +158,7 @@ const VendorsSection = ({ schoolId }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        {/* <Grid item xs={12} sm={4}>
           <Card elevation={0} sx={{ borderRadius: 2, border: `1px solid ${theme.palette.divider}` }}>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -174,7 +176,7 @@ const VendorsSection = ({ schoolId }) => {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid> */}
 
         <Grid item xs={12} sm={4}>
           <Card elevation={0} sx={{ borderRadius: 2, border: `1px solid ${theme.palette.divider}` }}>
@@ -185,7 +187,7 @@ const VendorsSection = ({ schoolId }) => {
                     Current Page
                   </Typography>
                   <Typography variant="h4" fontWeight="600" color="primary.main">
-                    {page + 1}
+                    {page}
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: theme.palette.primary.light }}>
@@ -222,13 +224,14 @@ const VendorsSection = ({ schoolId }) => {
             <TableHead>
               <TableRow>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Business Type</TableCell>
+                {/* <TableCell>Business Type</TableCell> */}
                 <TableCell>Contact</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Total Sales</TableCell>
-                <TableCell>Date Registered</TableCell>
-                <TableCell align="center">Actions</TableCell>
+                <TableCell>Address</TableCell>
+                {/* <TableCell>Status</TableCell> */}
+                <TableCell>POS</TableCell>
+                {/* <TableCell>Total Sales</TableCell> */}
+                <TableCell>Created Date</TableCell>
+                {/* <TableCell align="center">Actions</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -251,9 +254,9 @@ const VendorsSection = ({ schoolId }) => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography variant="body2">{vendor.businessType || 'N/A'}</Typography>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Box>
                       <Box display="flex" alignItems="center" gap={1} mb={0.5}>
@@ -269,19 +272,22 @@ const VendorsSection = ({ schoolId }) => {
                   <TableCell>
                     <Box display="flex" alignItems="center" gap={1}>
                       <Location size="16" color={theme.palette.action.active} />
-                      <Typography variant="body2">{vendor.location || 'N/A'}</Typography>
+                      <Typography variant="body2">{vendor.address || 'N/A'}</Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Chip label={vendor.status || 'ACTIVE'} color={vendor.status === 'ACTIVE' ? 'success' : 'default'} size="small" />
-                  </TableCell>
-                  <TableCell>
+                  </TableCell> */}
+                  {/* <TableCell>
                     <Box display="flex" alignItems="center" gap={1}>
                       <MoneyRecive size="16" color={theme.palette.action.active} />
                       <Typography variant="body2" fontWeight="500">
                         {formatCurrency(vendor.totalSales)}
                       </Typography>
                     </Box>
+                  </TableCell> */}
+                  <TableCell>
+                    <POSName assignedPOSDeviceIds={vendor.assignedPOSDeviceIds} />
                   </TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center" gap={1}>
@@ -289,11 +295,11 @@ const VendorsSection = ({ schoolId }) => {
                       <Typography variant="body2">{vendor.createdAt ? formatDate(vendor.createdAt) : 'N/A'}</Typography>
                     </Box>
                   </TableCell>
-                  <TableCell align="center">
+                  {/* <TableCell align="center">
                     <IconButton onClick={() => handleEditVendor(vendor)} title="Edit Vendor" size="small" color="primary">
                       <Edit2 />
                     </IconButton>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
@@ -302,7 +308,7 @@ const VendorsSection = ({ schoolId }) => {
 
         <TablePagination
           component="div"
-          count={vendorsData?.totalElements || 0}
+          count={vendorsData?.data?.totalElements || 0}
           page={page}
           onPageChange={(event, newPage) => setPage(newPage)}
           rowsPerPage={size}

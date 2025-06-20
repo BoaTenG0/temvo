@@ -31,29 +31,31 @@ const widget = {
       title: <FormattedMessage id="Dashboard" />,
       type: 'item',
       url: '/dashboard/default',
-      icon: icons.home
+      icon: icons.home,
+      breadcrumbs: false
     },
-    {
-      id: 'nfc',
-      title: <FormattedMessage id="NFC Wristbands" />,
-      type: 'item',
-      url: '/nfc-wristbands',
-      icon: icons.cpu
-    },
-    {
-      id: 'pos',
-      title: <FormattedMessage id="POS Management" />,
-      type: 'item',
-      url: '/pos-management',
-      icon: icons.pos
-    },
+    // {
+    //   id: 'nfc',
+    //   title: <FormattedMessage id="NFC Wristbands" />,
+    //   type: 'item',
+    //   url: '/nfc-wristbands',
+    //   icon: icons.cpu
+    // },
+    // {
+    //   id: 'pos',
+    //   title: <FormattedMessage id="POS Management" />,
+    //   type: 'item',
+    //   url: '/pos-management',
+    //   icon: icons.pos,
+    //   breadcrumbs: false
+    // },
     {
       id: 'students',
       title: <FormattedMessage id="Students" />,
       type: 'item',
       url: '/students',
       icon: icons.people,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'vendors',

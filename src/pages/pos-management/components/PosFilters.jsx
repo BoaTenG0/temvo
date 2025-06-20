@@ -1,31 +1,15 @@
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  TextField,
-  MenuItem,
-  Button,
-  InputAdornment,
-  Stack
-} from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography, TextField, MenuItem, Button, InputAdornment, Stack, Autocomplete } from '@mui/material';
 import { DateRangePicker } from 'rsuite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { Filter, SearchFavorite } from 'iconsax-react';
+import { Filter, SearchFavorite, SearchNormal1 } from 'iconsax-react';
 import { predefinedRanges } from '../util';
 import { schoolOptions, statusOptions } from '../constants/posConstants';
 
-const PosFilters = ({
-  state,
-  onToggleFilters,
-  onSearchChange,
-  onDateRangeChange,
-  onSchoolChange,
-  onStatusChange
-}) => {
+const PosFilters = ({ state, onToggleFilters, onSearchChange, onDateRangeChange, onSchoolChange, onStatusChange, school, status }) => {
   return (
     <Card sx={{ mb: 4, borderRadius: 2 }}>
       <CardContent sx={{ p: 0 }}>
@@ -58,45 +42,36 @@ const PosFilters = ({
                   </Stack>
                 </LocalizationProvider>
               </Grid>
-              
+
               <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                   School Name
                 </Typography>
-                <TextField 
-                  select 
-                  fullWidth 
-                  size="small" 
-                  value={state.school} 
-                  onChange={(e) => onSchoolChange(e.target.value)}
-                >
-                  {schoolOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
+
+                <Autocomplete
+                  fullWidth
+                  size="small"
+                  options={school}
+                  getOptionLabel={(option) => option.name}
+                  value={school.find((s) => s.id === state.school) || null}
+                  onChange={(_, newValue) => onSchoolChange(newValue?.id || '')}
+                  renderInput={(params) => <TextField {...params} placeholder="Select school" />}
+                />
               </Grid>
-              
+
               <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom>
                   Status
                 </Typography>
-                <TextField 
-                  select 
-                  fullWidth 
-                  size="small" 
-                  value={state.status} 
-                  onChange={(e) => onStatusChange(e.target.value)}
-                >
-                  {statusOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                <TextField select fullWidth size="small" value={state.status} onChange={(e) => onStatusChange(e.target.value)}>
+                  {status?.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
                     </MenuItem>
                   ))}
                 </TextField>
               </Grid>
-              
+
               <Grid item xs={12} md={3}>
                 <Typography variant="subtitle2" gutterBottom>
                   Global Search
@@ -110,7 +85,7 @@ const PosFilters = ({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchFavorite fontSize="small" />
+                        <SearchNormal1 size={15} />
                       </InputAdornment>
                     )
                   }}

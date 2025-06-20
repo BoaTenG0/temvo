@@ -10,7 +10,7 @@ import { validatePermissionForm, PERMISSION_ACTIONS, PERMISSION_RESOURCES } from
 const EditPermissionModal = ({ open, onClose, formData, onFormChange, refetchPermissions }) => {
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
-  const updatePermissionMutation = useUpdatePermission(formData.id);
+  const updatePermissionMutation = useUpdatePermission(formData?.id);
 
   const handleInputChange = useCallback(
     (field, value) => {
@@ -24,45 +24,59 @@ const EditPermissionModal = ({ open, onClose, formData, onFormChange, refetchPer
   );
 
   const handleSubmit = async () => {
-    try {
-      setError('');
-      setValidationErrors({});
+    setError('');
+    setValidationErrors({});
 
-      // Validate form
-      const errors = validatePermissionForm(formData);
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors);
-        return;
-      }
-
-      // Prepare data for submission
-      const submitData = {
-        name: formData.name.trim(),
-        description: formData.description?.trim() || '',
-        resource: formData.resource.trim(),
-        action: formData.action.trim(),
-        active: formData.active
-      };
-
-      await updatePermissionMutation.mutateAsync(submitData);
-
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Permission updated successfully!',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      refetchPermissions();
-      onClose();
-    } catch (error) {
-      console.error('Error updating permission:', error);
-      setError(error.response?.data?.message || 'Failed to update permission. Please try again.');
+    // Validate form
+    const errors = validatePermissionForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
     }
+
+    // Prepare data for submission
+    const submitData = {
+      name: formData.name.trim(),
+      description: formData.description?.trim() || '',
+      resource: formData.resource.trim(),
+      action: formData.action.trim(),
+      active: formData.active
+    };
+
+    updatePermissionMutation.mutate(
+      {
+        name: formData.name.trim(),
+        description: formData.description?.trim() || ''
+      },
+      {
+        onSuccess: (response) => {
+          refetchPermissions();
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: response.message || 'Permission updated successfully!',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              }
+            })
+          );
+          onClose();
+        },
+        onError: (error) => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: error.response?.data?.message || 'Failed to update permission. Please try again.',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              }
+            })
+          );
+        }
+      }
+    );
   };
 
   const actions = (
@@ -110,7 +124,7 @@ const EditPermissionModal = ({ open, onClose, formData, onFormChange, refetchPer
           />
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <Autocomplete
             fullWidth
             options={PERMISSION_RESOURCES}
@@ -154,7 +168,7 @@ const EditPermissionModal = ({ open, onClose, formData, onFormChange, refetchPer
             clearOnBlur
             handleHomeEndKeys
           />
-        </Grid>
+        </Grid> */}
 
         <Grid item xs={12}>
           <TextField
@@ -170,7 +184,7 @@ const EditPermissionModal = ({ open, onClose, formData, onFormChange, refetchPer
           />
         </Grid>
 
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <FormControlLabel
             control={<Switch checked={formData.active} onChange={(e) => handleInputChange('active', e.target.checked)} color="primary" />}
             label="Active"
@@ -178,7 +192,7 @@ const EditPermissionModal = ({ open, onClose, formData, onFormChange, refetchPer
           <Typography variant="caption" color="text.secondary" display="block">
             Inactive permissions cannot be assigned to roles
           </Typography>
-        </Grid>
+        </Grid> */}
       </Grid>
     </ReusableModal>
   );

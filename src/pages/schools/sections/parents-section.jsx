@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import {
   Paper,
@@ -19,19 +18,35 @@ import {
   Chip,
   Grid,
   Card,
-  CardContent
+  CardContent,
+  Stack
 } from '@mui/material';
 import { UserOctagon, SearchNormal1, Call, Sms, Calendar, People } from 'iconsax-react';
 import { useTheme } from '@mui/material/styles';
 import { useGetParentBySchoolIdd } from 'api/requests';
+import { predefinedRanges } from 'pages/nfc-wristbands/util';
+import { DateRangePicker } from 'rsuite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import '../../../assets/datestyle.css';
+import dayjs from 'dayjs';
+import { useDebounce } from "hooks/useDebounce";
 
 const ParentsSection = ({ schoolId }) => {
   const theme = useTheme();
+  const initialStartDate = dayjs().subtract(7, 'days');
+  const initialEndDate = dayjs();
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState([initialStartDate.toDate(), initialEndDate.toDate()]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const { data: parentsData, isLoading, error } = useGetParentBySchoolIdd({ page, size, search: searchTerm }, schoolId);
+  const {
+    data: parentsData,
+    isLoading,
+    error
+  } = useGetParentBySchoolIdd({ page, size, search: debouncedSearchTerm, from: dateRange[0], to: dateRange[1] }, schoolId);
 
   const parents = parentsData?.content || [];
 
@@ -128,7 +143,7 @@ const ParentsSection = ({ schoolId }) => {
                     Current Page
                   </Typography>
                   <Typography variant="h4" fontWeight="600" color="info.main">
-                    {page + 1}
+                    {page}
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: theme.palette.info.light }}>
@@ -142,20 +157,42 @@ const ParentsSection = ({ schoolId }) => {
 
       {/* Search and Filters */}
       <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-        <TextField
-          fullWidth
-          label="Search Parents"
-          placeholder="Search by name, email, or phone"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchNormal1 size="20" color={theme.palette.action.active} />
-              </InputAdornment>
-            )
-          }}
-        />
+        <Stack direction="row" spacing={2} alignItems="center" mb={2}>
+          <TextField
+            fullWidth
+            label="Search Parents"
+            placeholder="Search by name, email, or phone"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchNormal1 size="20" color={theme.palette.action.active} />
+                </InputAdornment>
+              )
+            }}
+          />
+          <Grid item xs={12} md={3}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <Stack spacing={2}>
+                <DateRangePicker
+                  startText="Start"
+                  endText="End"
+                  ranges={predefinedRanges}
+                  value={dateRange}
+                  onChange={(newValue) => setDateRange(newValue)}
+                  renderInput={(startProps, endProps) => (
+                    <>
+                      <TextField {...startProps} />
+                      <Box sx={{ mx: 1 }}> to </Box>
+                      <TextField {...endProps} />
+                    </>
+                  )}
+                />
+              </Stack>
+            </LocalizationProvider>
+          </Grid>
+        </Stack>
       </Paper>
 
       {/* Parents Table */}

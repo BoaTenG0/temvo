@@ -131,7 +131,7 @@ const BulkWristbandModal = ({ open, onClose, selectedFile, onFileChange, refetch
     return selectedFile && Object.keys(validationErrors).length === 0;
   };
 
-  const isLoading = bulkUploadMutation.isLoading;
+  const isLoading = bulkUploadMutation.isPending;
 
   const renderContent = () => (
     <Box>

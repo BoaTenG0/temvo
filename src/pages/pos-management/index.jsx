@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import '../../assets/datestyle.css';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Container } from '@mui/material';
 
@@ -13,13 +13,53 @@ import PosStats from './components/PosStats';
 import PosFilters from './components/PosFilters';
 import PosTable from './components/PosTable';
 import PosModals from './components/PosModals';
+import { useGetPOS, useGetGeneralSchool } from 'api/requests';
+import { convertDateJS } from 'utils/hooks';
 
 export default function PosManagement() {
   // Use consolidated state management
-  const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm, assignedCount, unassignedCount } = usePosState();
+  const { state, updateState, updateNestedState, toggleModal, updateForm, resetForm } = usePosState();
+
+  // Get wristbands with pagination and filters
+  const {
+    data: pos,
+    isLoading: posLoading,
+    refetch: refetchPos
+  } = useGetPOS({
+    page: state.page,
+    size: state.rowsPerPage,
+    search: state.searchTerm || state.tableSearchTerm || '',
+    sort: ['desc'],
+    status: state.status,
+    schoolId: state.school,
+    from: convertDateJS(state.dateRange[0]),
+    to: convertDateJS(state.dateRange[1])
+  });
+
+  // Get all schools for filters
+  const { data: schoolsData } = useGetGeneralSchool();
+
+  const posData = pos?.data.content;
+
+  // Calculate stats from real data
+  const { assignedCount, unassignedCount, registeredCount } = useMemo(() => {
+    if (!posData) return { assignedCount: 0, unassignedCount: 0, registeredCount: 0 };
+
+    const assigned = posData.filter((p) => p.status === 'Active' && p.schoolId).length;
+    const unassigned = posData.filter((p) => p.status !== 'Active' && !p.schoolId).length;
+    const registered = posData.filter((p) => p.status === 'REGISTERED').length;
+
+    return { assignedCount: assigned, unassignedCount: unassigned, registeredCount: registered };
+  }, [posData]);
+
+  // extract status from posData
+  const status = useMemo(() => {
+    if (!posData) return [];
+    return [...new Set(posData.map((p) => p.status))];
+  }, [posData]);
 
   // Use actions hook
-  const actions = usePosActions(state, updateState, toggleModal, resetForm);
+  const actions = usePosActions(state, updateState, toggleModal, resetForm, posData);
 
   // Form change handler
   const handleFormChange = (formName, updates) => {
@@ -35,7 +75,7 @@ export default function PosManagement() {
       <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
         <Container maxWidth="xl">
           {/* Stats Component */}
-          <PosStats assignedCount={assignedCount} unassignedCount={unassignedCount} />
+          <PosStats assignedCount={assignedCount} unassignedCount={unassignedCount} registeredCount={registeredCount} />
 
           {/* Filters Component */}
           <PosFilters
@@ -45,22 +85,37 @@ export default function PosManagement() {
             onDateRangeChange={actions.handleDateRangeChange}
             onSchoolChange={actions.handleSchoolChange}
             onStatusChange={actions.handleStatusChange}
+            school={schoolsData?.data.content || []}
+            status={status || []}
           />
 
           {/* Table Component */}
           <PosTable
             state={state}
+            posData={pos?.data}
+            isLoading={posLoading}
             onTabChange={actions.handleTabChange}
+            onPageChange={actions.handleChangePage}
             onRowsPerPageChange={actions.handleChangeRowsPerPage}
             onTableSearchChange={actions.handleTableSearchChange}
             onOpenNewPos={actions.handleOpenNewPos}
             onOpenBulkPos={actions.handleOpenBulkPos}
             onOpenAssignPos={actions.handleOpenAssignPos}
             onDeletePos={actions.handleOpenDelete}
+            onDeactivatePOS={actions.handleOpenDeactivate}
+            onActivatePOS={actions.handleOpenActivate}
+            refetchPos={refetchPos}
           />
 
           {/* Modals Component */}
-          <PosModals state={state} actions={actions} onFormChange={handleFormChange} />
+          <PosModals
+            state={state}
+            actions={actions}
+            onFormChange={handleFormChange}
+            refetchPos={refetchPos}
+            schools={schoolsData?.data.content}
+            availablePosDevices={pos?.data?.content}
+          />
         </Container>
       </Box>
     </ThemeProvider>

@@ -12,9 +12,6 @@ export const useAddParent = () => {
   return useMutation({ mutationFn: (data) => userService.addParent(data) });
 };
 
-
-
-
 export const useGetParentById = (parentId) => {
   return useQuery({
     queryKey: ['parent', parentId],
@@ -140,8 +137,8 @@ export const useGetWristbandById = (wristbandId) => {
   });
 };
 
-export const useAssignWristbandToStudent = (wristbandId) => {
-  return useMutation({ mutationFn: (data) => userService.assignWristbandToStudent(data, wristbandId) });
+export const useAssignWristbandToStudent = () => {
+  return useMutation({ mutationFn: (data) => userService.assignWristbandToStudent(data) });
 };
 
 export const useAssignWristbandToSchool = (wristbandId) => {
@@ -182,10 +179,10 @@ export const useActivateWristband = (wristbandId) => {
   return useMutation({ mutationFn: (data) => userService.activateWristband(data, wristbandId) });
 };
 
-export const useGetWristbandsForCurrentSchool = (schoolId) => {
+export const useGetWristbandsForCurrentSchool = (schoolId, filters) => {
   return useQuery({
-    queryKey: ['wristbands-for-school', schoolId],
-    queryFn: () => userService.getWristbandsForCurrentSchool(schoolId)
+    queryKey: ['wristbands-for-school', schoolId, filters],
+    queryFn: () => userService.getWristbandsForCurrentSchool(schoolId, filters)
   });
 };
 
@@ -226,10 +223,10 @@ export const useGetGeneralSchool = (filters) => {
   });
 };
 
-export const useGetAllWallets = () => {
+export const useGetAllWallets = (filters) => {
   return useQuery({
-    queryKey: ['all-wallets'],
-    queryFn: () => userService.getAllWallets()
+    queryKey: ['all-wallets', filters],
+    queryFn: () => userService.getAllWallets(filters)
   });
 };
 
@@ -363,11 +360,12 @@ export const useCreateStudent = () => {
 export const useBulkUploadStudents = () => {
   return useMutation({ mutationFn: (data) => userService.bulkUploadStudents(data) });
 };
-export const useEditStudent = (studentId) => {
-  return useMutation({ mutationFn: (data) => userService.updateStudent(data, studentId) });
+export const useEditStudent = () => {
+  return useMutation({ mutationFn: (data) => userService.updateStudent(data) });
 };
-export const useDeleteStudent = (studentId) => {
-  return useMutation({ mutationFn: () => userService.deleteStudent(studentId) });
+
+export const useDeleteStudent = () => {
+  return useMutation({ mutationFn: (studentId) => userService.deleteStudent(studentId) });
 };
 
 // bulk delete students
@@ -381,12 +379,12 @@ export const useGetStudentBySchoolId = (filters, schoolId) => {
   });
 };
 
-export const useUpdateStudentStatus = (studentId) => {
-  return useMutation({ mutationFn: (data) => userService.updateStudentStatus(data, studentId) });
+export const useUpdateStudentStatus = () => {
+  return useMutation({ mutationFn: (data) => userService.updateStudentStatus(data) });
 };
 
-export const useReassignStudent = (studentId) => {
-  return useMutation({ mutationFn: (data) => userService.reassignStudentToSchool(data, studentId) });
+export const useReassignStudent = () => {
+  return useMutation({ mutationFn: (data) => userService.reassignStudentToSchool(data) });
 };
 
 // Function to handle creating a new vendor
@@ -412,8 +410,8 @@ export const useDeleteVendor = (vendorId) => {
   return useMutation({ mutationFn: () => userService.deleteVendor(vendorId) });
 };
 
-export const useAssignPOStoVendor = (vendorId) => {
-  return useMutation({ mutationFn: (data) => userService.assignPOStoVendor(data, vendorId) });
+export const useAssignPOStoVendor = () => {
+  return useMutation({ mutationFn: (data) => userService.assignPOStoVendor(data) });
 };
 
 export const useGetPOSDeviceByVendorId = (vendorId) => {
@@ -423,9 +421,44 @@ export const useGetPOSDeviceByVendorId = (vendorId) => {
   });
 };
 
-export const useGetVendors = (filters) => {
+export const useGetVendors = (filters, vendorId) => {
+  return useQuery({
+    queryKey: ['vendors', filters, vendorId],
+    queryFn: () => userService.getVenders(filters, vendorId)
+  });
+};
+export const useGetAllVendors = (filters) => {
   return useQuery({
     queryKey: ['vendors', filters],
-    queryFn: () => userService.getVenders(filters)
+    queryFn: () => userService.getAllVenders(filters)
+  });
+};
+
+export const useGetDashboardOverview = () => {
+  return useQuery({
+    queryKey: ['dashboard-overview'],
+    queryFn: () => userService.getDashboardOverview()
+  });
+};
+
+export const useActivateWallet = () => {
+  return useMutation({ mutationFn: (data) => userService.activateWallet(data) });
+};
+
+export const useDeactivateWallet = () => {
+  return useMutation({ mutationFn: (data) => userService.deActivateWallet(data) });
+};
+
+export const useGetUserWalletTransactions = (filters, userId) => {
+  return useQuery({
+    queryKey: ['wallet-transactions', filters, userId],
+    queryFn: () => userService.getUserWalletTransactions(filters, userId)
+  });
+};
+
+export const useGetWalletByUserId = (userId) => {
+  return useQuery({
+    queryKey: ['wallet', userId],
+    queryFn: () => userService.getWalletByUserId(userId)
   });
 };
